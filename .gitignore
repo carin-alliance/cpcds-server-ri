@@ -2,6 +2,9 @@
 target/
 *.iml
 
+.classpath
+.project
+
 # Compiled class file
 *.class
 

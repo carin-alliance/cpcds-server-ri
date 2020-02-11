@@ -60,8 +60,8 @@ public class JpaRestfulServer extends RestfulServer {
     super.initialize();
 
     /*
-     * Create a FhirContext object that uses the version of FHIR
-     * specified in the properties file.
+     * Create a FhirContext object that uses the version of FHIR specified in the
+     * properties file.
      */
     ApplicationContext appCtx = (ApplicationContext) getServletContext()
         .getAttribute("org.springframework.web.context.WebApplicationContext.ROOT");
@@ -69,7 +69,7 @@ public class JpaRestfulServer extends RestfulServer {
     Set<String> supportedResourceTypes = HapiProperties.getSupportedResourceTypes();
 
     if (!supportedResourceTypes.isEmpty() && !supportedResourceTypes.contains("SearchParameter")) {
-        supportedResourceTypes.add("SearchParameter");
+      supportedResourceTypes.add("SearchParameter");
     }
 
     if (!supportedResourceTypes.isEmpty()) {
@@ -105,23 +105,22 @@ public class JpaRestfulServer extends RestfulServer {
     registerProvider(systemProvider);
 
     /*
-     * The conformance provider exports the supported resources, search parameters, etc for
-     * this server. The JPA version adds resourceProviders counts to the exported statement, so it
-     * is a nice addition.
+     * The conformance provider exports the supported resources, search parameters,
+     * etc for this server. The JPA version adds resourceProviders counts to the
+     * exported statement, so it is a nice addition.
      *
-     * You can also create your own subclass of the conformance provider if you need to
-     * provide further customization of your server's CapabilityStatement
+     * You can also create your own subclass of the conformance provider if you need
+     * to provide further customization of your server's CapabilityStatement
      */
     if (fhirVersion == FhirVersionEnum.DSTU2) {
-      IFhirSystemDao<ca.uhn.fhir.model.dstu2.resource.Bundle, MetaDt> systemDao = appCtx
-          .getBean("mySystemDaoDstu2", IFhirSystemDao.class);
+      IFhirSystemDao<ca.uhn.fhir.model.dstu2.resource.Bundle, MetaDt> systemDao = appCtx.getBean("mySystemDaoDstu2",
+          IFhirSystemDao.class);
       JpaConformanceProviderDstu2 confProvider = new JpaConformanceProviderDstu2(this, systemDao,
           appCtx.getBean(DaoConfig.class));
       confProvider.setImplementationDescription("HAPI FHIR DSTU2 Server");
       setServerConformanceProvider(confProvider);
     } else if (fhirVersion == FhirVersionEnum.DSTU3) {
-      IFhirSystemDao<Bundle, Meta> systemDao = appCtx
-          .getBean("mySystemDaoDstu3", IFhirSystemDao.class);
+      IFhirSystemDao<Bundle, Meta> systemDao = appCtx.getBean("mySystemDaoDstu3", IFhirSystemDao.class);
       JpaConformanceProviderDstu3 confProvider = new JpaConformanceProviderDstu3(this, systemDao,
           appCtx.getBean(DaoConfig.class));
       confProvider.setImplementationDescription("HAPI FHIR DSTU3 Server");
@@ -166,17 +165,16 @@ public class JpaRestfulServer extends RestfulServer {
     setDefaultResponseEncoding(HapiProperties.getDefaultEncoding());
 
     /*
-     * This configures the server to page search results to and from
-     * the database, instead of only paging them to memory. This may mean
-     * a performance hit when performing searches that return lots of results,
-     * but makes the server much more scalable.
+     * This configures the server to page search results to and from the database,
+     * instead of only paging them to memory. This may mean a performance hit when
+     * performing searches that return lots of results, but makes the server much
+     * more scalable.
      */
     setPagingProvider(appCtx.getBean(DatabaseBackedPagingProvider.class));
 
     /*
-     * This interceptor formats the output using nice colourful
-     * HTML output when the request is detected to come from a
-     * browser.
+     * This interceptor formats the output using nice colourful HTML output when the
+     * request is detected to come from a browser.
      */
     ResponseHighlighterInterceptor responseHighlighterInterceptor = new ResponseHighlighterInterceptor();
     ;
@@ -193,10 +191,17 @@ public class JpaRestfulServer extends RestfulServer {
     this.registerInterceptor(loggingInterceptor);
 
     /*
+     * Add Authorization interceptor
+     */
+    PatientAuthorizationInterceptor authorizationInterceptor = new PatientAuthorizationInterceptor();
+    this.registerInterceptor(authorizationInterceptor);
+
+    /*
      * If you are hosting this server at a specific DNS name, the server will try to
      * figure out the FHIR base URL based on what the web container tells it, but
-     * this doesn't always work. If you are setting links in your search bundles that
-     * just refer to "localhost", you might want to use a server address strategy:
+     * this doesn't always work. If you are setting links in your search bundles
+     * that just refer to "localhost", you might want to use a server address
+     * strategy:
      */
     String serverAddress = HapiProperties.getServerAddress();
     if (serverAddress != null && serverAddress.length() > 0) {
@@ -204,11 +209,11 @@ public class JpaRestfulServer extends RestfulServer {
     }
 
     /*
-     * If you are using DSTU3+, you may want to add a terminology uploader, which allows
-     * uploading of external terminologies such as Snomed CT. Note that this uploader
-     * does not have any security attached (any anonymous user may use it by default)
-     * so it is a potential security vulnerability. Consider using an AuthorizationInterceptor
-     * with this feature.
+     * If you are using DSTU3+, you may want to add a terminology uploader, which
+     * allows uploading of external terminologies such as Snomed CT. Note that this
+     * uploader does not have any security attached (any anonymous user may use it
+     * by default) so it is a potential security vulnerability. Consider using an
+     * AuthorizationInterceptor with this feature.
      */
     if (false) { // <-- DISABLED RIGHT NOW
       registerProvider(appCtx.getBean(TerminologyUploaderProvider.class));
@@ -217,8 +222,7 @@ public class JpaRestfulServer extends RestfulServer {
     // If you want to enable the $trigger-subscription operation to allow
     // manual triggering of a subscription delivery, enable this provider
     if (false) { // <-- DISABLED RIGHT NOW
-      SubscriptionTriggeringProvider retriggeringProvider = appCtx
-          .getBean(SubscriptionTriggeringProvider.class);
+      SubscriptionTriggeringProvider retriggeringProvider = appCtx.getBean(SubscriptionTriggeringProvider.class);
       registerProvider(retriggeringProvider);
     }
 
@@ -243,8 +247,7 @@ public class JpaRestfulServer extends RestfulServer {
 
       config.addExposedHeader("Location");
       config.addExposedHeader("Content-Location");
-      config.setAllowedMethods(
-          Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
+      config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
       config.setAllowCredentials(HapiProperties.getCorsAllowedCredentials());
 
       // Create the interceptor and register it
@@ -254,13 +257,12 @@ public class JpaRestfulServer extends RestfulServer {
 
     // If subscriptions are enabled, we want to register the interceptor that
     // will activate them and match results against them
-    if (HapiProperties.getSubscriptionWebsocketEnabled() ||
-        HapiProperties.getSubscriptionEmailEnabled() ||
-        HapiProperties.getSubscriptionRestHookEnabled()) {
-      // Loads subscription interceptors (SubscriptionActivatingInterceptor, SubscriptionMatcherInterceptor)
+    if (HapiProperties.getSubscriptionWebsocketEnabled() || HapiProperties.getSubscriptionEmailEnabled()
+        || HapiProperties.getSubscriptionRestHookEnabled()) {
+      // Loads subscription interceptors (SubscriptionActivatingInterceptor,
+      // SubscriptionMatcherInterceptor)
       // with activation of scheduled subscription
-      SubscriptionInterceptorLoader subscriptionInterceptorLoader = appCtx
-          .getBean(SubscriptionInterceptorLoader.class);
+      SubscriptionInterceptorLoader subscriptionInterceptorLoader = appCtx.getBean(SubscriptionInterceptorLoader.class);
       subscriptionInterceptorLoader.registerInterceptors();
 
       // Subscription debug logging
@@ -272,39 +274,38 @@ public class JpaRestfulServer extends RestfulServer {
     DaoRegistry daoRegistry = appCtx.getBean(DaoRegistry.class);
     IInterceptorBroadcaster interceptorBroadcaster = appCtx.getBean(IInterceptorBroadcaster.class);
     if (HapiProperties.getAllowCascadingDeletes()) {
-      CascadingDeleteInterceptor cascadingDeleteInterceptor = new CascadingDeleteInterceptor(
-          daoRegistry, interceptorBroadcaster);
+      CascadingDeleteInterceptor cascadingDeleteInterceptor = new CascadingDeleteInterceptor(daoRegistry,
+          interceptorBroadcaster);
       getInterceptorService().registerInterceptor(cascadingDeleteInterceptor);
     }
 
     // Binary Storage
     if (HapiProperties.isBinaryStorageEnabled()) {
-      BinaryStorageInterceptor binaryStorageInterceptor = appCtx
-          .getBean(BinaryStorageInterceptor.class);
+      BinaryStorageInterceptor binaryStorageInterceptor = appCtx.getBean(BinaryStorageInterceptor.class);
       getInterceptorService().registerInterceptor(binaryStorageInterceptor);
     }
 
     // Validation
     IValidatorModule validatorModule;
     switch (fhirVersion) {
-            case DSTU2:
-                validatorModule = appCtx.getBean("myInstanceValidatorDstu2", IValidatorModule.class);
-                break;
-      case DSTU3:
-        validatorModule = appCtx.getBean("myInstanceValidatorDstu3", IValidatorModule.class);
-        break;
-      case R4:
-        validatorModule = appCtx.getBean("myInstanceValidatorR4", IValidatorModule.class);
-        break;
-      case R5:
-        validatorModule = appCtx.getBean("myInstanceValidatorR5", IValidatorModule.class);
-        break;
-            // These versions are not supported by HAPI FHIR JPA
-            case DSTU2_HL7ORG:
-            case DSTU2_1:
-      default:
-        validatorModule = null;
-        break;
+    case DSTU2:
+      validatorModule = appCtx.getBean("myInstanceValidatorDstu2", IValidatorModule.class);
+      break;
+    case DSTU3:
+      validatorModule = appCtx.getBean("myInstanceValidatorDstu3", IValidatorModule.class);
+      break;
+    case R4:
+      validatorModule = appCtx.getBean("myInstanceValidatorR4", IValidatorModule.class);
+      break;
+    case R5:
+      validatorModule = appCtx.getBean("myInstanceValidatorR5", IValidatorModule.class);
+      break;
+    // These versions are not supported by HAPI FHIR JPA
+    case DSTU2_HL7ORG:
+    case DSTU2_1:
+    default:
+      validatorModule = null;
+      break;
     }
     if (validatorModule != null) {
       if (HapiProperties.getValidateRequestsEnabled()) {
@@ -336,15 +337,14 @@ public class JpaRestfulServer extends RestfulServer {
         allowedBundleTypes.add(type.toCode());
       });
       DaoConfig config = appCtx.getBean(DaoConfig.class);
-      config.setBundleTypesAllowedForStorage(
-          Collections.unmodifiableSet(new TreeSet<>(allowedBundleTypes)));
+      config.setBundleTypesAllowedForStorage(Collections.unmodifiableSet(new TreeSet<>(allowedBundleTypes)));
     }
-  
-        // Bulk Export
-        if (HapiProperties.getBulkExportEnabled()) {
-            registerProvider(appCtx.getBean(BulkDataExportProvider.class));
-        }
 
+    // Bulk Export
+    if (HapiProperties.getBulkExportEnabled()) {
+      registerProvider(appCtx.getBean(BulkDataExportProvider.class));
     }
+
+  }
 
 }

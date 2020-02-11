@@ -1,6 +1,7 @@
 require 'httparty'
 
 TEST_DATA_DIR = "CPCDS_patient_data"
+BEARER_TOKEN = "Bearer 39ff939jgg"
 FHIR_SERVER = 'http://localhost:8080/cpcds-server/fhir/'
 SUPPORTED_RESOURCE_TYPES = ['Patient', 'Claim', 'ExplanationOfBenefit']
 $count = 0
@@ -22,10 +23,10 @@ def upload_resource(resource, server)
     if SUPPORTED_RESOURCE_TYPES.include? resource_type
         id = resource[:id]
         begin
-            HTTParty.put(
+            response = HTTParty.put(
                 "#{server}/#{resource_type}/#{id}",
                 body: resource.to_json,
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json', 'Authorization': BEARER_TOKEN }
             )
             rescue StandardError
         end
