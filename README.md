@@ -9,11 +9,24 @@ To start the server simply build and run using docker. The container will automa
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
-docker build -t cpcds-server-ri .
-docker run -p 8080:8080 cpcds-server-ri
+docker load --input cpcds-server.tar
+docker run -p 8080:8080 cpcds-server
 ```
 
 The server will then be browesable at http://localhost:8080/ and the FHIR endpoint will be available at http://localhost:8080/fhir
+
+## Manually Building Docker Image
+
+The tarball included in the repo is an image with test data already loaded into the server. To build and start a new image
+
+```bash
+git clone https://github.com/carin-alliance/cpcds-server-ri.git
+cd cpcds-server-ri
+docker build -t cpcds-server .
+docker run -p 8080:8080 cpcds-server
+```
+
+To load the test data following "Uploading Test Data" instructions below.
 
 ## Manually Running
 
