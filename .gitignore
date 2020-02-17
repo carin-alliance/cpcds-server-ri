@@ -2,6 +2,9 @@
 target/
 *.iml
 
+# Image tar file
+cpcds-server.tar
+
 .classpath
 .project
 
