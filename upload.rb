@@ -3,6 +3,7 @@ require 'httparty'
 TEST_DATA_DIR = "CPCDS_patient_data"
 BEARER_TOKEN = "Bearer 39ff939jgg"
 FHIR_SERVER = 'http://localhost:8080/cpcds-server/fhir/'
+DEBUG = false # Set to true to only upload first bundle
 $count = 0
 
 
@@ -12,6 +13,7 @@ def upload_test_patient_data(server)
     filenames.each do |filename|
         bundle = JSON.parse(File.read(filename), symbolize_names: true)
         upload_bundle(bundle, server)
+        break if DEBUG
     end
 end
 
