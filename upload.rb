@@ -18,16 +18,15 @@ def upload_test_patient_data(server)
 end
 
 def upload_bundle(bundle, server)
-    puts "Uploading bundle #{$count + 1}..."
+    puts "Uploading bundle #{bundle[:entry][0][:resource][:id]}..."
     begin
         response = HTTParty.post(server, 
             body: bundle.to_json, 
             headers: { 'Content-Type': 'application/json', 'Authorization': BEARER_TOKEN }
         )
+        response.code >= 200 && response.code < 300 ? (puts "  ...uploaded bundle #{$count}"; $count += 1) : (puts "  ...FAILED: code #{response.code}")
         rescue StandardError
     end
-    $count += 1
-    puts "  ... uploaded bundle #{$count}"
 end
 
 if ARGV.length == 0
