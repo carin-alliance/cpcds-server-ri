@@ -1,6 +1,6 @@
 require 'httparty'
 
-TEST_DATA_DIR = "CPCDS_patient_data"
+TEST_DATA_DIR = "data"
 BEARER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjcGNkcy1zZXJ2ZXItcmkiLCJwYXRpZW50IjoiYWRtaW4iLCJpYXQiOjE1ODIwNTQxMzV9.nUZKr9WUMXPG2v3iDSbz03fcZJm41nUHIiNmL80PJh0"
 FHIR_SERVER = 'http://localhost:8080/cpcds-server/fhir/'
 DEBUG = false # Set to true to only upload first bundle
