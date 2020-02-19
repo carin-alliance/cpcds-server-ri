@@ -9,24 +9,11 @@ To start the server simply build and run using docker. The container will automa
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
-docker load --input cpcds-server.tar
-docker run -p 8080:8080 cpcds-server
-```
-
-The server will then be browesable at http://localhost:8080/ and the FHIR endpoint will be available at http://localhost:8080/fhir
-
-## Manually Building Docker Image
-
-The tarball included in the repo is an image with test data already loaded into the server. To build and start a new image
-
-```bash
-git clone https://github.com/carin-alliance/cpcds-server-ri.git
-cd cpcds-server-ri
 docker build -t cpcds-server .
 docker run -p 8080:8080 cpcds-server
 ```
 
-To load the test data following "Uploading Test Data" instructions below.
+This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/ and the FHIR endpoint will be available at http://localhost:8080/fhir
 
 ## Manually Running
 
@@ -72,4 +59,4 @@ By default the upload script will use http://localhost:8080/cpcds-server/fhir as
 
 To clear the database delete the directory `target/database` and rerun the server.
 
-Note: The upload script will only upload Patient, Claim, and ExplanationOfBenefit resources.
+Note: The master branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch.
