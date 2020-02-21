@@ -57,12 +57,14 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
         // If the user is a specific patient, we create the following rule chain:
         // Allow the user to read anything in their own patient compartment
-        // Allow the user to write anything in their own patient compartment
+        // Allow the user to read anything not in a patient compartment
         // If a client request doesn't pass either of the above, deny it
         if (userIdPatientId != null) {
             return new RuleBuilder().allow().read().allResources().inCompartment("Patient", userIdPatientId).andThen()
-                    .allow().write().allResources().inCompartment("Patient", userIdPatientId).andThen().denyAll()
-                    .build();
+                    .allow().read().resourcesOfType("Practitioner").withAnyId().andThen().allow().read()
+                    .resourcesOfType("PractitionerRole").withAnyId().andThen().allow().read()
+                    .resourcesOfType("Organization").withAnyId().andThen().allow().read().resourcesOfType("Location")
+                    .withAnyId().andThen().denyAll().build();
         }
 
         // If the user is an admin, allow everything
