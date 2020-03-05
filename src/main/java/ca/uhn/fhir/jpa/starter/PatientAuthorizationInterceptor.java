@@ -27,6 +27,11 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
         IdType userIdPatientId = null;
         boolean userIsAdmin = false;
 
+        // Get the Authorization Secret
+        String secret = "secret";
+        if (System.getenv("jwt.secret") != null)
+            secret = System.getenv("jwt.secret");
+
         // Get the JWT token from the Authorization header
         String authHeader = theRequestDetails.getHeader("Authorization");
         String regex = "Bearer (.*)";
@@ -40,10 +45,10 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
         try {
             // Verify and decode the JWT token
-            Algorithm algorithm = Algorithm.HMAC256("secret");
-            JWTVerifier verifier = JWT.require(algorithm).withIssuer("cpcds-server-ri").build();
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            JWTVerifier verifier = JWT.require(algorithm).withIssuer("http://localhost:8180").build();
             DecodedJWT jwt = verifier.verify(token);
-            String patientId = jwt.getClaim("patient").asString();
+            String patientId = jwt.getClaim("client_id").asString();
 
             // Set the userIdPatientId based on the token
             if (patientId.equals("admin"))
@@ -52,6 +57,7 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
                 userIdPatientId = new IdType("Patient", patientId);
         } catch (JWTVerificationException exception) {
             // Invalid signature/claims
+            // TODO: add more detailed exception handling
             throw new AuthenticationException("Authorization failed: bad signature");
         }
 
