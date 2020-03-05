@@ -8,7 +8,7 @@ The quickest way to get the server up and running is by pulling the built image 
 
 ```bash
 docker pull blangley/cpcds-server-ri
-docker run -p 8080:8080 cpcds-server-ri
+docker run -p 8080:8080 blangley/cpcds-server-ri
 ```
 
 This will deploy the server to http://localhost:8080/fhir.
