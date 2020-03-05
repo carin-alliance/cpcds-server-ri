@@ -4,18 +4,29 @@ This project is a reference FHIR server for the [Consumer-Directed Payer Data Ex
 
 ## Quickstart
 
+The quickest way to get the server up and running is by pulling the built image from docker hub.
+
+```bash
+docker pull blangley/cpcds-server-ri
+docker run -p 8080:8080 cpcds-server-ri
+```
+
+This will deploy the server to http://localhost:8080/fhir.
+
+## Building Locally with Docker
+
 To start the server simply build and run using docker. The container will automatically build and deploy using a tomcat server.
 
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
-docker build -t cpcds-server .
-docker run -p 8080:8080 cpcds-server
+docker build -t cpcds-server-ri .
+docker run -p 8080:8080 cpcds-server-ri
 ```
 
 This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/ and the FHIR endpoint will be available at http://localhost:8080/fhir
 
-## Manually Running
+## Manual Build and Run
 
 Clone the repo and build the server:
 
@@ -32,13 +43,13 @@ Note: This has only been tested using Java 8. Later version may not be supported
 
 ## GET Requests
 
-The server uses JWT tokens to authenticate the user on the server. At this point the payload is insecure (will be changing). The tokens are signed using HMAC SHA256 with "secret" as the secret. For production versions the secret should be 64 bits and obviously kept secret. The server expects the `iss` claim to be `cpcds-server-ri`. The `patient.id` is encoded in the `patient` claim as a string. The JWT tokens for a few test patients is provided below.
+This server is protected and requires users to authenticate before obtaining access to protected resources. The reference authorization server for this RI is the [CPCDS Auth Server](https://github.com/carin-alliance/cpcds-auth-server). Follow direction on the README to get the authorization server up and running. Instructions on how to obtain an access token can be found on the same README.
 
-| Patient ID | JWT token                                                                                                                                                         |
-| ---------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1          | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjcGNkcy1zZXJ2ZXItcmkiLCJwYXRpZW50IjoiMSIsImlhdCI6MTU4MjA1NDEzNX0.soTbe6tuu0pkNUkmLZJ24dLH9KvSunLkWxul07mV4a0      |
-| 689        | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjcGNkcy1zZXJ2ZXItcmkiLCJwYXRpZW50IjoiNjg5IiwiaWF0IjoxNTgyMDU0MTM1fQ.6Xgy_d5MBi316cSEmqmJJY_s065uClmcjnNePnQkZuk   |
-| admin      | eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjcGNkcy1zZXJ2ZXItcmkiLCJwYXRpZW50IjoiYWRtaW4iLCJpYXQiOjE1ODIwNTQxMzV9.nUZKr9WUMXPG2v3iDSbz03fcZJm41nUHIiNmL80PJh0 |
+Once an access token is received it must be sent in the `Authorization` header using the correct `token_type` returned by the auth server. Using the default secret of "secret" an admin key valid until Jan 1, 2021 (for testing purposes) is:
+
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxODAiLCJleHAiOjE2MDk0NzcyMDAsImlhdCI6MTU4MzM0Njg1MywiY2xpZW50X2lkIjoiYWRtaW4ifQ.z1OVJO8HlFr87gtoPPGxSzHCf4O63LxYuE4PNzPRmxg
+```
 
 ## Uploading Test Data
 
