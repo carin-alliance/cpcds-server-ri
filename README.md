@@ -48,7 +48,7 @@ This server is protected and requires users to authenticate before obtaining acc
 Once an access token is received it must be sent in the `Authorization` header using the correct `token_type` returned by the auth server. Using the default secret of "secret" an admin key valid until Jan 1, 2021 (for testing purposes) is:
 
 ```
-eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxODAiLCJleHAiOjE2MDk0NzcyMDAsImlhdCI6MTU4MzM0Njg1MywiY2xpZW50X2lkIjoiYWRtaW4ifQ.z1OVJO8HlFr87gtoPPGxSzHCf4O63LxYuE4PNzPRmxg
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvY3BjZHMtc2VydmVyL2ZoaXIiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxODAiLCJleHAiOjE2MDk0NzcyMDAsImlhdCI6MTU4MzM0Njg1MywiY2xpZW50X2lkIjoiYWRtaW4ifQ.CwEBs8HhQ_jblbIDLZmtgfDAD8rWeyXwwNnQJr16dKM
 ```
 
 ## Uploading Test Data

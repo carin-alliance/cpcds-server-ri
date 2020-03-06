@@ -8,24 +8,18 @@ import ca.uhn.fhir.jpa.binstore.BinaryStorageInterceptor;
 import ca.uhn.fhir.jpa.bulk.BulkDataExportProvider;
 import ca.uhn.fhir.jpa.dao.DaoConfig;
 import ca.uhn.fhir.jpa.dao.DaoRegistry;
-import ca.uhn.fhir.jpa.dao.IFhirSystemDao;
 import ca.uhn.fhir.jpa.interceptor.CascadingDeleteInterceptor;
 import ca.uhn.fhir.jpa.provider.GraphQLProvider;
-import ca.uhn.fhir.jpa.provider.JpaConformanceProviderDstu2;
 import ca.uhn.fhir.jpa.provider.JpaSystemProviderDstu2;
 import ca.uhn.fhir.jpa.provider.SubscriptionTriggeringProvider;
 import ca.uhn.fhir.jpa.provider.TerminologyUploaderProvider;
-import ca.uhn.fhir.jpa.provider.dstu3.JpaConformanceProviderDstu3;
 import ca.uhn.fhir.jpa.provider.dstu3.JpaSystemProviderDstu3;
-import ca.uhn.fhir.jpa.provider.r4.JpaConformanceProviderR4;
 import ca.uhn.fhir.jpa.provider.r4.JpaSystemProviderR4;
-import ca.uhn.fhir.jpa.provider.r5.JpaConformanceProviderR5;
 import ca.uhn.fhir.jpa.provider.r5.JpaSystemProviderR5;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
 import ca.uhn.fhir.jpa.subscription.SubscriptionInterceptorLoader;
 import ca.uhn.fhir.jpa.subscription.module.interceptor.SubscriptionDebugLogInterceptor;
 import ca.uhn.fhir.jpa.util.ResourceProviderFactory;
-import ca.uhn.fhir.model.dstu2.composite.MetaDt;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.server.HardcodedServerAddressStrategy;
 import ca.uhn.fhir.rest.server.RestfulServer;
@@ -38,9 +32,7 @@ import ca.uhn.fhir.validation.IValidatorModule;
 import ca.uhn.fhir.validation.ResultSeverityEnum;
 import java.util.HashSet;
 import java.util.TreeSet;
-import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
-import org.hl7.fhir.dstu3.model.Meta;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.cors.CorsConfiguration;
@@ -54,7 +46,6 @@ public class JpaRestfulServer extends RestfulServer {
 
   private static final long serialVersionUID = 1L;
 
-  @SuppressWarnings("unchecked")
   @Override
   protected void initialize() throws ServletException {
     super.initialize();
@@ -83,18 +74,9 @@ public class JpaRestfulServer extends RestfulServer {
     FhirVersionEnum fhirVersion = HapiProperties.getFhirVersion();
     ResourceProviderFactory resourceProviders;
     Object systemProvider;
-    if (fhirVersion == FhirVersionEnum.DSTU2) {
-      resourceProviders = appCtx.getBean("myResourceProvidersDstu2", ResourceProviderFactory.class);
-      systemProvider = appCtx.getBean("mySystemProviderDstu2", JpaSystemProviderDstu2.class);
-    } else if (fhirVersion == FhirVersionEnum.DSTU3) {
-      resourceProviders = appCtx.getBean("myResourceProvidersDstu3", ResourceProviderFactory.class);
-      systemProvider = appCtx.getBean("mySystemProviderDstu3", JpaSystemProviderDstu3.class);
-    } else if (fhirVersion == FhirVersionEnum.R4) {
+    if (fhirVersion == FhirVersionEnum.R4) {
       resourceProviders = appCtx.getBean("myResourceProvidersR4", ResourceProviderFactory.class);
       systemProvider = appCtx.getBean("mySystemProviderR4", JpaSystemProviderR4.class);
-    } else if (fhirVersion == FhirVersionEnum.R5) {
-      resourceProviders = appCtx.getBean("myResourceProvidersR5", ResourceProviderFactory.class);
-      systemProvider = appCtx.getBean("mySystemProviderR5", JpaSystemProviderR5.class);
     } else {
       throw new IllegalStateException();
     }
@@ -112,33 +94,9 @@ public class JpaRestfulServer extends RestfulServer {
      * You can also create your own subclass of the conformance provider if you need
      * to provide further customization of your server's CapabilityStatement
      */
-    if (fhirVersion == FhirVersionEnum.DSTU2) {
-      IFhirSystemDao<ca.uhn.fhir.model.dstu2.resource.Bundle, MetaDt> systemDao = appCtx.getBean("mySystemDaoDstu2",
-          IFhirSystemDao.class);
-      JpaConformanceProviderDstu2 confProvider = new JpaConformanceProviderDstu2(this, systemDao,
-          appCtx.getBean(DaoConfig.class));
-      confProvider.setImplementationDescription("HAPI FHIR DSTU2 Server");
-      setServerConformanceProvider(confProvider);
-    } else if (fhirVersion == FhirVersionEnum.DSTU3) {
-      IFhirSystemDao<Bundle, Meta> systemDao = appCtx.getBean("mySystemDaoDstu3", IFhirSystemDao.class);
-      JpaConformanceProviderDstu3 confProvider = new JpaConformanceProviderDstu3(this, systemDao,
-          appCtx.getBean(DaoConfig.class));
-      confProvider.setImplementationDescription("HAPI FHIR DSTU3 Server");
-      setServerConformanceProvider(confProvider);
-    } else if (fhirVersion == FhirVersionEnum.R4) {
-      IFhirSystemDao<org.hl7.fhir.r4.model.Bundle, org.hl7.fhir.r4.model.Meta> systemDao = appCtx
-          .getBean("mySystemDaoR4", IFhirSystemDao.class);
-      JpaConformanceProviderR4 confProvider = new JpaConformanceProviderR4(this, systemDao,
-          appCtx.getBean(DaoConfig.class));
-      confProvider.setImplementationDescription("HAPI FHIR R4 Server");
-      setServerConformanceProvider(confProvider);
-    } else if (fhirVersion == FhirVersionEnum.R5) {
-      IFhirSystemDao<org.hl7.fhir.r5.model.Bundle, org.hl7.fhir.r5.model.Meta> systemDao = appCtx
-          .getBean("mySystemDaoR5", IFhirSystemDao.class);
-      JpaConformanceProviderR5 confProvider = new JpaConformanceProviderR5(this, systemDao,
-          appCtx.getBean(DaoConfig.class));
-      confProvider.setImplementationDescription("HAPI FHIR R5 Server");
-      setServerConformanceProvider(confProvider);
+
+    if (fhirVersion == FhirVersionEnum.R4) {
+      setServerConformanceProvider(new Metadata());
     } else {
       throw new IllegalStateException();
     }
@@ -294,24 +252,12 @@ public class JpaRestfulServer extends RestfulServer {
     // Validation
     IValidatorModule validatorModule;
     switch (fhirVersion) {
-    case DSTU2:
-      validatorModule = appCtx.getBean("myInstanceValidatorDstu2", IValidatorModule.class);
-      break;
-    case DSTU3:
-      validatorModule = appCtx.getBean("myInstanceValidatorDstu3", IValidatorModule.class);
-      break;
-    case R4:
-      validatorModule = appCtx.getBean("myInstanceValidatorR4", IValidatorModule.class);
-      break;
-    case R5:
-      validatorModule = appCtx.getBean("myInstanceValidatorR5", IValidatorModule.class);
-      break;
-    // These versions are not supported by HAPI FHIR JPA
-    case DSTU2_HL7ORG:
-    case DSTU2_1:
-    default:
-      validatorModule = null;
-      break;
+      case R4:
+        validatorModule = appCtx.getBean("myInstanceValidatorR4", IValidatorModule.class);
+        break;
+      default:
+        validatorModule = null;
+        break;
     }
     if (validatorModule != null) {
       if (HapiProperties.getValidateRequestsEnabled()) {
