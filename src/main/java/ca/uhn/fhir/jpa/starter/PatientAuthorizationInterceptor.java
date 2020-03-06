@@ -50,8 +50,7 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
             try {
                 // Verify and decode the JWT token
                 Algorithm algorithm = Algorithm.HMAC256(secret);
-                // TODO: make iss shared
-                JWTVerifier verifier = JWT.require(algorithm).withIssuer("http://localhost:8180")
+                JWTVerifier verifier = JWT.require(algorithm).withIssuer(HapiProperties.getAuthServerAddress())
                         .withAudience(theRequestDetails.getFhirServerBase()).build();
                 DecodedJWT jwt = verifier.verify(token);
                 String patientId = jwt.getClaim("client_id").asString();

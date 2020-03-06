@@ -19,15 +19,13 @@ public class Metadata extends ServerCapabilityStatementProvider {
 
     @Override
     public CapabilityStatement getServerConformance(HttpServletRequest request, RequestDetails requestDetails) {
-        // TODO: read from config
-        final String AUTH_SERVER = "http://localhost:8180";
 
         CapabilityStatement c = super.getServerConformance(request, requestDetails);
 
         Extension oauthExtension = new Extension();
         ArrayList<Extension> uris = new ArrayList<Extension>();
-        uris.add(new Extension("token", new UriType(AUTH_SERVER + "/token")));
-        uris.add(new Extension("authorize", new UriType(AUTH_SERVER + "/authorize")));
+        uris.add(new Extension("token", new UriType(HapiProperties.getAuthServerAddress() + "/token")));
+        uris.add(new Extension("authorize", new UriType(HapiProperties.getAuthServerAddress() + "/authorize")));
         oauthExtension.setUrl("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris");
         oauthExtension.setExtension(uris);
 
