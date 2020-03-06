@@ -34,8 +34,8 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
             // Get the Authorization Secret
             String secret = "secret";
-            if (System.getenv("jwt.secret") != null)
-                secret = System.getenv("jwt.secret");
+            if (System.getenv("jwtsecret") != null)
+                secret = System.getenv("jwtsecret");
 
             // Get the JWT token from the Authorization header
             String regex = "Bearer (.*)";

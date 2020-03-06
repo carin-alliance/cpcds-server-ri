@@ -11,7 +11,7 @@ docker pull blangley/cpcds-server-ri
 docker run -p 8080:8080 blangley/cpcds-server-ri
 ```
 
-This will deploy the server to http://localhost:8080/fhir.
+This will deploy the server to http://localhost:8080/cpcds-server/fhir.
 
 ## Building Locally with Docker
 
@@ -24,7 +24,7 @@ docker build -t cpcds-server-ri .
 docker run -p 8080:8080 cpcds-server-ri
 ```
 
-This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/ and the FHIR endpoint will be available at http://localhost:8080/fhir
+This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
 
 ## Manual Build and Run
 
@@ -51,6 +51,18 @@ Once an access token is received it must be sent in the `Authorization` header u
 eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvY3BjZHMtc2VydmVyL2ZoaXIiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxODAiLCJleHAiOjE2MDk0NzcyMDAsImlhdCI6MTU4MzM0Njg1MywiY2xpZW50X2lkIjoiYWRtaW4ifQ.CwEBs8HhQ_jblbIDLZmtgfDAD8rWeyXwwNnQJr16dKM
 ```
 
+## Configuration
+
+There are a few pieces which must be configured on this server.
+
+The first is the shared secret between this server and the Auth server. By default the secret is simply "secret", but a stronger secret should be used in practice. This can be configured by setting the `jwt.secret` enviornment variable
+
+```bash
+export jwtsecret="new secret"
+```
+
+If you are running both the CPCPDS server and auth server on localhost using the default port no other configuration is necessary. If the base URLs need to be configured they can be set in `src/main/resources/hapi.properties` and changing the `server_address` and `auth_server_address` properties.
+
 ## Uploading Test Data
 
 The Ruby script `upload.rb` uploads test data into the FHIR server. The easiest way to run is with [Bundler](https://bundler.io/). To install Bundler
@@ -70,4 +82,4 @@ By default the upload script will use http://localhost:8080/cpcds-server/fhir as
 
 To clear the database delete the directory `target/database` and rerun the server.
 
-Note: The master branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch.
+Note: The master branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch. The database is read from `target/database/h2.mv.db`. A copy of the database with the test data preloaded can be found in the `/data` directory. Copying this into `target/database` will allow the server to have a read only copy of the loaded database.
