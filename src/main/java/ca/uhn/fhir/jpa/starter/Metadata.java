@@ -25,7 +25,7 @@ public class Metadata extends ServerCapabilityStatementProvider {
         Extension oauthExtension = new Extension();
         ArrayList<Extension> uris = new ArrayList<Extension>();
         uris.add(new Extension("token", new UriType(HapiProperties.getAuthServerAddress() + "/token")));
-        uris.add(new Extension("authorize", new UriType(HapiProperties.getAuthServerAddress() + "/authorize")));
+        uris.add(new Extension("authorize", new UriType(HapiProperties.getAuthServerAddress() + "/authorization")));
         oauthExtension.setUrl("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris");
         oauthExtension.setExtension(uris);
 
