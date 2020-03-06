@@ -8,6 +8,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import org.hl7.fhir.r4.model.IdType;
@@ -59,10 +61,12 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
                     userIsAdmin = true;
                 else
                     userIdPatientId = new IdType("Patient", patientId);
+            } catch (SignatureVerificationException exception) {
+                throw new AuthenticationException("Authorization failed: invalid signature", exception);
+            } catch (TokenExpiredException exception) {
+                throw new AuthenticationException("Authorization failed: access token expired", exception);
             } catch (JWTVerificationException exception) {
-                // Invalid signature/claims
-                // TODO: add more detailed exception handling
-                throw new AuthenticationException("Authorization failed: bad signature");
+                throw new AuthenticationException("Authorization failed", exception);
             }
 
             // If the user is a specific patient, we create the following rule chain:
