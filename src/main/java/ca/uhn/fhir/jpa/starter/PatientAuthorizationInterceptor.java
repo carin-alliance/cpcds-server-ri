@@ -4,13 +4,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import com.okta.jwt.AccessTokenVerifier;
+import com.okta.jwt.Jwt;
+import com.okta.jwt.JwtVerificationException;
+import com.okta.jwt.JwtVerifiers;
 
 import org.hl7.fhir.r4.model.IdType;
 
@@ -32,11 +29,6 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
         if (authHeader != null) {
 
-            // Get the Authorization Secret
-            String secret = "secret";
-            if (System.getenv("jwtsecret") != null)
-                secret = System.getenv("jwtsecret");
-
             // Get the JWT token from the Authorization header
             String regex = "Bearer (.*)";
             Pattern pattern = Pattern.compile(regex);
@@ -49,22 +41,19 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
             try {
                 // Verify and decode the JWT token
-                Algorithm algorithm = Algorithm.HMAC256(secret);
-                JWTVerifier verifier = JWT.require(algorithm).withIssuer(HapiProperties.getAuthServerAddress())
-                        .withAudience(theRequestDetails.getFhirServerBase()).build();
-                DecodedJWT jwt = verifier.verify(token);
-                String patientId = jwt.getClaim("client_id").asString();
+                AccessTokenVerifier jwtVerifier = JwtVerifiers.accessTokenVerifierBuilder()
+                        .setIssuer(HapiProperties.getAuthServerAddress())
+                        .setAudience(theRequestDetails.getFhirServerBase()).build();
+                Jwt jwt = jwtVerifier.decode(token);
+                String patientId = jwt.getClaims().get("patient_id").toString();
 
                 // Set the userIdPatientId based on the token
                 if (patientId.equals("admin"))
                     userIsAdmin = true;
                 else
                     userIdPatientId = new IdType("Patient", patientId);
-            } catch (SignatureVerificationException exception) {
-                throw new AuthenticationException("Authorization failed: invalid signature", exception);
-            } catch (TokenExpiredException exception) {
-                throw new AuthenticationException("Authorization failed: access token expired", exception);
-            } catch (JWTVerificationException exception) {
+            } catch (JwtVerificationException exception) {
+                System.out.println(exception);
                 throw new AuthenticationException("Authorization failed", exception);
             }
 
