@@ -49,6 +49,8 @@ To authenticate with the server use the dummy patient `synthea.patient@example.c
 
 The server will then return a token which can be used in the Authorization header (type Bearer token) to make GET requests.
 
+Note: For testing purposes hard coded values of the code*challenge and code_verifier are `qjrzSW9gMiUgpUvqgEPE4*-8swvyCtfOVvg55o5S_es`and`M25iVXpKU3puUjFaYWg3T1NDTDQtcW1ROUY5YXlwalNoc0hhakxifmZHag` respectively.
+
 The admin of the authorization server is [blangley@mitre.org](mailto:blangley@mitre.org).
 
 ## Configuration
