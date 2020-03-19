@@ -43,15 +43,13 @@ Note: This has only been tested using Java 8. Later version may not be supported
 
 ## GET Requests
 
-This server is protected and requires users to authenticate before obtaining access to protected resources. This RI uses an Okta OAuth2 Server. The root address of the server is https://dev-610235.okta.com/oauth2/aus41l4rzyXcafD534x6/ and following the OAuth protocol a list of the endpoints can be found at https://dev-610235.okta.com/oauth2/aus41l4rzyXcafD534x6/.well-known/oauth-authorization-server.
+This server is protected and requires users to authenticate before obtaining access to protected resources. The reference authorization server for this RI is the [CPCDS Auth Server](https://github.com/carin-alliance/cpcds-auth-server). Follow direction on the README to get the authorization server up and running. Instructions on how to obtain an access token can be found on the same README.
 
-To authenticate with the server use the dummy patient `synthea.patient@example.com` with password `Password1`. The patientId for Synthea Patient is `1`.
+Once an access token is received it must be sent in the `Authorization` header using the correct `token_type` returned by the auth server. Using the default secret of "secret" an admin key valid until Jan 1, 2021 (for testing purposes) is:
 
-The server will then return a token which can be used in the Authorization header (type Bearer token) to make GET requests.
-
-Note: For testing purposes hard coded values of the code*challenge and code_verifier are `qjrzSW9gMiUgpUvqgEPE4*-8swvyCtfOVvg55o5S_es`and`M25iVXpKU3puUjFaYWg3T1NDTDQtcW1ROUY5YXlwalNoc0hhakxifmZHag` respectively.
-
-The admin of the authorization server is [blangley@mitre.org](mailto:blangley@mitre.org).
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvY3BjZHMtc2VydmVyL2ZoaXIiLCJwYXRpZW50X2lkIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxODAiLCJleHAiOjE2MDk0NTkyMDAsImlhdCI6MTU4NDYyNzk3OSwiY2xpZW50X2lkIjoiMG9hNDFqaTg4Z1VqQUtIaUU0eDYiLCJqdGkiOiJmY2ViMmRkZi1iNmEzLTQzNGUtYTcxNC1hZTM3OTJmMDA0OGYifQ.RnsF8aUf7njeIAPS6JhctArhbx5wiOQvntSrM8gsg1s
+```
 
 ## Configuration
 
