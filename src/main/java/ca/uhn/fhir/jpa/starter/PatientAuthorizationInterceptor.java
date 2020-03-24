@@ -20,9 +20,6 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import org.hl7.fhir.r4.model.IdType;
 
@@ -123,16 +120,21 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
      */
     private RSAPublicKey getRSAPublicKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         // Get the public key from the auth server
-        OkHttpClient client = new OkHttpClient();
+        // OkHttpClient client = new OkHttpClient();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        Request request = new Request.Builder().url(HapiProperties.getAuthServerAddress() + "/.well-known/jwks.json")
-                .build();
-        Response response = client.newCall(request).execute();
-        if (response.code() != 200)
-            throw new AuthenticationException(
-                    "Unable to GET " + HapiProperties.getAuthServerAddress() + "/.well-known/jwks.json");
-        String body = response.body().string();
+        // TODO: Make this GET request work within a docker container
+        /*
+         * Request request = new
+         * Request.Builder().url(HapiProperties.getAuthServerAddress() +
+         * "/.well-known/jwks.json") .build(); System.out.println(request.urlString());
+         * Response response = client.newCall(request).execute(); if (response.code() !=
+         * 200) throw new AuthenticationException( "Unable to GET " +
+         * HapiProperties.getAuthServerAddress() + "/.well-known/jwks.json"); String
+         * body = response.body().string();
+         */
+        String body = "{ 'keys': [ { 'kty': 'RSA', 'e': '2542507730329925502019959402417157606871382892503593304032212496853538284138894186312740754437083011799807189636117018396940516735918014461610794552420857', 'use': 'sig', 'kid': 'NjVBRjY5MDlCMUIwNzU4RTA2QzZFMDQ4QzQ2MDAyQjVDNjk1RTM2Qg', 'alg': 'RS256', 'n': '5690166698804597197330905768480486858877596610886363234480576904931540875874759967271069328480055496837733730620168171327423013607454238318286896004712153' } ] }";
+
         Jwks jwks = gson.fromJson(body, Jwks.class);
 
         // Get the specific key from jwks
