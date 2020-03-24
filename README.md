@@ -45,11 +45,7 @@ Note: This has only been tested using Java 8. Later version may not be supported
 
 This server is protected and requires users to authenticate before obtaining access to protected resources. The reference authorization server for this RI is the [CPCDS Auth Server](https://github.com/carin-alliance/cpcds-auth-server). Follow direction on the README to get the authorization server up and running. Instructions on how to obtain an access token can be found on the same README.
 
-Once an access token is received it must be sent in the `Authorization` header using the correct `token_type` returned by the auth server. Using the default secret of "secret" an admin key valid until Jan 1, 2021 (for testing purposes) is:
-
-```
-eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvY3BjZHMtc2VydmVyL2ZoaXIiLCJwYXRpZW50X2lkIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgxODAiLCJleHAiOjE2MDk0NTkyMDAsImlhdCI6MTU4NDYyNzk3OSwiY2xpZW50X2lkIjoiMG9hNDFqaTg4Z1VqQUtIaUU0eDYiLCJqdGkiOiJmY2ViMmRkZi1iNmEzLTQzNGUtYTcxNC1hZTM3OTJmMDA0OGYifQ.RnsF8aUf7njeIAPS6JhctArhbx5wiOQvntSrM8gsg1s
-```
+Once an access token is received it must be sent in the `Authorization` header using the correct `token_type` returned by the auth server.
 
 ## Configuration
 

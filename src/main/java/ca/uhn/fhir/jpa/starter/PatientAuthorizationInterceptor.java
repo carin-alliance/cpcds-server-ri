@@ -1,5 +1,12 @@
 package ca.uhn.fhir.jpa.starter;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +18,11 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.hl7.fhir.r4.model.IdType;
 
@@ -32,24 +44,19 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
         if (authHeader != null) {
 
-            // Get the Authorization Secret
-            String secret = "secret";
-            if (System.getenv("jwtsecret") != null)
-                secret = System.getenv("jwtsecret");
-
-            // Get the JWT token from the Authorization header
-            String regex = "Bearer (.*)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(authHeader);
-            String token = "";
-            if (matcher.find() && matcher.groupCount() == 1)
-                token = matcher.group(1);
-            else
-                throw new AuthenticationException("Authorization header is not in the form \"Bearer <token>\"");
-
             try {
+                // Get the JWT token from the Authorization header
+                String regex = "Bearer (.*)";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(authHeader);
+                String token = "";
+                if (matcher.find() && matcher.groupCount() == 1)
+                    token = matcher.group(1);
+                else
+                    throw new AuthenticationException("Authorization header is not in the form \"Bearer <token>\"");
+
                 // Verify and decode the JWT token
-                Algorithm algorithm = Algorithm.HMAC256(secret);
+                Algorithm algorithm = Algorithm.RSA256(getRSAPublicKey(), null);
                 JWTVerifier verifier = JWT.require(algorithm).withIssuer(HapiProperties.getAuthServerAddress())
                         .withAudience(theRequestDetails.getFhirServerBase()).build();
                 DecodedJWT jwt = verifier.verify(token);
@@ -60,6 +67,15 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
                     userIsAdmin = true;
                 else
                     userIdPatientId = new IdType("Patient", patientId);
+            } catch (IOException exception) {
+                System.out.println(exception);
+                throw new AuthenticationException("Authorization failed: unable to retrieve RSA Keys", exception);
+            } catch (NoSuchAlgorithmException exception) {
+                System.out.println(exception);
+                throw new AuthenticationException("Authorization failed: unable to use RSA Keys", exception);
+            } catch (InvalidKeySpecException exception) {
+                System.out.println(exception);
+                throw new AuthenticationException("Authorization failed: unable to use RSA Keys", exception);
             } catch (SignatureVerificationException exception) {
                 System.out.println(exception);
                 throw new AuthenticationException("Authorization failed: invalid signature", exception);
@@ -93,5 +109,48 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
         // good to be defensive
         return new RuleBuilder().allow().metadata().andThen().denyAll().build();
 
+    }
+
+    /**
+     * Helper method to get the RSAPublicKey from the authorization server
+     * 
+     * TODO: Update this method to take in a kid
+     * 
+     * @return the RSAPublicKey for verifying the signature
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    private RSAPublicKey getRSAPublicKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        // Get the public key from the auth server
+        OkHttpClient client = new OkHttpClient();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Request request = new Request.Builder().url(HapiProperties.getAuthServerAddress() + "/.well-known/jwks.json")
+                .build();
+        Response response = client.newCall(request).execute();
+        if (response.code() != 200)
+            throw new AuthenticationException(
+                    "Unable to GET " + HapiProperties.getAuthServerAddress() + "/.well-known/jwks.json");
+        String body = response.body().string();
+        Jwks jwks = gson.fromJson(body, Jwks.class);
+
+        // Get the specific key from jwks
+        BigInteger modulus = null;
+        BigInteger publicExponent = null;
+        for (RSAKey key : jwks.getKeys()) {
+            if (key.getAlgorithm().equals("RS256") && key.getUse().equals("sig")) {
+                modulus = new BigInteger(key.getModulus());
+                publicExponent = new BigInteger(key.getExponent());
+            }
+        }
+
+        if (modulus == null || publicExponent == null) {
+            throw new AuthenticationException("No public RS256 key for verifying signature");
+        }
+
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, publicExponent);
+        return (RSAPublicKey) kf.generatePublic(publicKeySpec);
     }
 }
