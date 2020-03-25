@@ -52,8 +52,12 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
                 else
                     throw new AuthenticationException("Authorization header is not in the form \"Bearer <token>\"");
 
+                // Decode the header to get the kid
+                DecodedJWT jwtHeader = JWT.decode(token);
+                String kid = jwtHeader.getKeyId();
+
                 // Verify and decode the JWT token
-                Algorithm algorithm = Algorithm.RSA256(getRSAPublicKey(), null);
+                Algorithm algorithm = Algorithm.RSA256(getRSAPublicKey(kid), null);
                 JWTVerifier verifier = JWT.require(algorithm).withIssuer(HapiProperties.getAuthServerAddress())
                         .withAudience(theRequestDetails.getFhirServerBase()).build();
                 DecodedJWT jwt = verifier.verify(token);
@@ -111,14 +115,14 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
     /**
      * Helper method to get the RSAPublicKey from the authorization server
      * 
-     * TODO: Update this method to take in a kid
-     * 
+     * @param kid - the key id to get
      * @return the RSAPublicKey for verifying the signature
      * @throws IOException
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    private RSAPublicKey getRSAPublicKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private RSAPublicKey getRSAPublicKey(String kid)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         // Get the public key from the auth server
         // OkHttpClient client = new OkHttpClient();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -141,14 +145,14 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
         BigInteger modulus = null;
         BigInteger publicExponent = null;
         for (RSAKey key : jwks.getKeys()) {
-            if (key.getAlgorithm().equals("RS256") && key.getUse().equals("sig")) {
+            if (key.getAlgorithm().equals("RS256") && key.getUse().equals("sig") && key.getKeyId().equals(kid)) {
                 modulus = new BigInteger(key.getModulus());
                 publicExponent = new BigInteger(key.getExponent());
             }
         }
 
         if (modulus == null || publicExponent == null) {
-            throw new AuthenticationException("No public RS256 key for verifying signature");
+            throw new AuthenticationException("No public RS256 key (" + kid + ") for verifying signature");
         }
 
         KeyFactory kf = KeyFactory.getInstance("RSA");
