@@ -2,12 +2,9 @@ package ca.uhn.fhir.jpa.starter;
 
 import ca.uhn.fhir.context.ConfigurationException;
 import ca.uhn.fhir.context.FhirVersionEnum;
-import ca.uhn.fhir.jpa.search.elastic.ElasticsearchHibernatePropertiesBuilder;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.server.ETagSupportEnum;
 import com.google.common.annotations.VisibleForTesting;
-import org.hibernate.search.elasticsearch.cfg.ElasticsearchIndexStatus;
-import org.hibernate.search.elasticsearch.cfg.IndexSchemaManagementStrategy;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -73,10 +70,6 @@ public class HapiProperties {
     public static final String EXPIRE_SEARCH_RESULTS_AFTER_MINS = "retain_cached_searches_mins";
     private static Properties ourProperties;
 
-    public static boolean isElasticSearchEnabled() {
-        return HapiProperties.getPropertyBoolean("elasticsearch.enabled", false);
-    }
-
     /*
      * Force the configuration to be reloaded
      */
@@ -96,20 +89,6 @@ public class HapiProperties {
 
     public static Properties getJpaProperties() {
         Properties retVal = loadProperties();
-
-        if (isElasticSearchEnabled()) {
-            ElasticsearchHibernatePropertiesBuilder builder = new ElasticsearchHibernatePropertiesBuilder();
-            builder.setRequiredIndexStatus(getPropertyEnum("elasticsearch.required_index_status",
-                    ElasticsearchIndexStatus.class, ElasticsearchIndexStatus.YELLOW));
-            builder.setRestUrl(getProperty("elasticsearch.rest_url"));
-            builder.setUsername(getProperty("elasticsearch.username"));
-            builder.setPassword(getProperty("elasticsearch.password"));
-            builder.setIndexSchemaManagementStrategy(getPropertyEnum("elasticsearch.schema_management_strateg",
-                    IndexSchemaManagementStrategy.class, IndexSchemaManagementStrategy.CREATE));
-            builder.setDebugRefreshAfterWrite(getPropertyBoolean("elasticsearch.debug.refresh_after_write", false));
-            builder.setDebugPrettyPrintJsonLog(getPropertyBoolean("elasticsearch.debug.pretty_print_json_log", false));
-            builder.apply(retVal);
-        }
 
         return retVal;
     }

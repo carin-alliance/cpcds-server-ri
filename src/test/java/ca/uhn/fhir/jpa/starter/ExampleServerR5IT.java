@@ -32,6 +32,11 @@ import java.util.concurrent.TimeUnit;
 import static ca.uhn.fhir.util.TestUtil.waitForSize;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Test R5 Server
+ * 
+ * Test code should be removed for production build
+ */
 public class ExampleServerR5IT {
 
     private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ExampleServerR5IT.class);
@@ -79,8 +84,7 @@ public class ExampleServerR5IT {
         subscription.setStatus(Subscription.SubscriptionStatus.REQUESTED);
 
         Subscription.SubscriptionChannelComponent channel = new Subscription.SubscriptionChannelComponent();
-        channel.getType().addCoding()
-                .setSystem(SubscriptionChannelType.WEBSOCKET.getSystem())
+        channel.getType().addCoding().setSystem(SubscriptionChannelType.WEBSOCKET.getSystem())
                 .setCode(SubscriptionChannelType.WEBSOCKET.toCode());
         channel.getPayload().setContentType("application/json");
         subscription.setChannel(channel);
@@ -89,14 +93,19 @@ public class ExampleServerR5IT {
         IIdType mySubscriptionId = methodOutcome.getId();
 
         // Wait for the subscription to be activated
-        waitForSize(1, () -> ourClient.search().forResource(Subscription.class).where(Subscription.STATUS.exactly().code("active")).cacheControl(new CacheControlDirective().setNoCache(true)).returnBundle(Bundle.class).execute().getEntry().size());
+        waitForSize(1,
+                () -> ourClient.search().forResource(Subscription.class)
+                        .where(Subscription.STATUS.exactly().code("active"))
+                        .cacheControl(new CacheControlDirective().setNoCache(true)).returnBundle(Bundle.class).execute()
+                        .getEntry().size());
 
         /*
          * Attach websocket
          */
 
         WebSocketClient myWebSocketClient = new WebSocketClient();
-        SocketImplementation mySocketImplementation = new SocketImplementation(mySubscriptionId.getIdPart(), EncodingEnum.JSON);
+        SocketImplementation mySocketImplementation = new SocketImplementation(mySubscriptionId.getIdPart(),
+                EncodingEnum.JSON);
 
         myWebSocketClient.start();
         URI echoUri = new URI("ws://localhost:" + ourPort + "/hapi-fhir-jpaserver/websocket");

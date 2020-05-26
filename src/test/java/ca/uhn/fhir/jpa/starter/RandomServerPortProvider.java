@@ -7,11 +7,13 @@ import java.util.List;
 
 /**
  * Provides server ports
+ * 
+ * Test code should be removed for production build
  */
 public class RandomServerPortProvider {
 
-	private static List<Integer> ourPorts = new ArrayList<Integer>(); 
-	
+	private static List<Integer> ourPorts = new ArrayList<Integer>();
+
 	public static int findFreePort() {
 		ServerSocket server;
 		try {
@@ -33,4 +35,3 @@ public class RandomServerPortProvider {
 	}
 
 }
- 

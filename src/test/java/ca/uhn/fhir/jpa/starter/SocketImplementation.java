@@ -11,6 +11,11 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Test websocket implementation
+ * 
+ * Test code should be removed for production build
+ */
 @WebSocket
 public class SocketImplementation {
 
@@ -42,8 +47,8 @@ public class SocketImplementation {
 	}
 
 	/**
-	 * This method is executed when the client is connecting to the server.
-	 * In this case, we are sending a message to create the subscription dynamiclly
+	 * This method is executed when the client is connecting to the server. In this
+	 * case, we are sending a message to create the subscription dynamiclly
 	 *
 	 * @param session
 	 */

@@ -37,7 +37,7 @@ mvn dependency:resolve
 mvn jetty:run
 ```
 
-The server will then be browesable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
+The server will then be browseable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
 
 Note: This has only been tested using Java 8. Later version may not be supported.
 
@@ -58,6 +58,8 @@ The Ruby script `upload.rb` uploads test data into the FHIR server. The easiest 
 ```bash
 sudo gem install bundler
 ```
+
+Before executing the script a bearer token must be obtained from the authorization server. Follow the instructions from https://github.com/carin-alliance/cpcds-auth-server for the token. Add this token to the `BEARER_TOKEN` variable on line 4.
 
 Then execute the upload script
 

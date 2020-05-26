@@ -51,7 +51,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.11</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -69,12 +68,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>javax.mail-api</artifactId>
-        </dependency>
-        -->
 
         <!-- This dependency includes the core HAPI-FHIR classes -->
         <dependency>
@@ -235,18 +228,6 @@
             <artifactId>jetty-webapp</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.helger</groupId>
-            <artifactId>ph-schematron</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>Saxon-HE</artifactId>
-                    <groupId>net.sf.saxon</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-			-->
 
         <!--
         For some reason JavaDoc crashed during site generation unless we have this dependency

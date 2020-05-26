@@ -94,12 +94,7 @@ public class JpaRestfulServer extends RestfulServer {
      * You can also create your own subclass of the conformance provider if you need
      * to provide further customization of your server's CapabilityStatement
      */
-
-    if (fhirVersion == FhirVersionEnum.R4) {
-      setServerConformanceProvider(new Metadata());
-    } else {
-      throw new IllegalStateException();
-    }
+    setServerConformanceProvider(new Metadata());
 
     /*
      * ETag Support
@@ -211,7 +206,7 @@ public class JpaRestfulServer extends RestfulServer {
 
       config.addExposedHeader("Location");
       config.addExposedHeader("Content-Location");
-      config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
+      config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "HEAD"));
       config.setAllowCredentials(HapiProperties.getCorsAllowedCredentials());
 
       // Create the interceptor and register it
