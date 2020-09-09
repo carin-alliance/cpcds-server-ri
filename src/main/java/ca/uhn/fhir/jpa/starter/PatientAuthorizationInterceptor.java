@@ -100,9 +100,9 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
             if (userIdPatientId != null) {
                 return new RuleBuilder().allow().read().allResources().inCompartment("Patient", userIdPatientId)
                         .andThen().allow().read().resourcesOfType("Practitioner").withAnyId().andThen().allow().read()
-                        .resourcesOfType("PractitionerRole").withAnyId().andThen().allow().read()
                         .resourcesOfType("Organization").withAnyId().andThen().allow().read()
-                        .resourcesOfType("Location").withAnyId().andThen().denyAll().build();
+                        .resourcesOfType("Location").withAnyId().andThen().allow().metadata().andThen().denyAll()
+                        .build();
             }
 
             // If the user is an admin, allow everything
