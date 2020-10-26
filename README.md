@@ -44,16 +44,15 @@ Note: The upload script will only upload Patient, Claim, and ExplanationOfBenefi
 1. Start the server with `mvn jetty:run`. Note you will need to use JDK8 for this.
 1. In a separate terminal, run `bundle exec ruby upload.rb` to upload data to the server. The resources from `CPCDS_patient_data` and the example resources from the IG will be uploaded.
 1. Once the upload has completed, use `CTRL+c` to stop the server.
-1. Now it is necessary to copy this data into the master branch. First, copy the database to a new folder that isn't tracked by git: `cp target/database/h2.mv.db h2.mv.db`.
-1. Change to the master branch: `git checkout master`.
+1. Now it is necessary to copy this data into the master branch. Change to the master branch: `git checkout master`.
 1. Remove the old database `rm -f data/h2.mv.db`.
-1. Move the new database to the correct location `mv h2.mv.db data/h2.mv.db`.
+1. Move the new database to the correct location `mv target/database/h2.mv.db data/h2.mv.db`.
 1. Stage the new database with `git add data`.
 1. Commit the database with `git commit -m 'update data'`.
 1. Push up your changes with `git push`.
 1. Now the AWS instance needs to be updated. Build the docker image `docker build -t blangley/cpcds-server-ri .`.
 1. Push the new image to dockerhub with `docker push blangley/cpcds-server-ri`.
-1. Now connect to the AWS instance `ssh -i {pem file} ubuntu@`.
+1. Now connect to the AWS instance `ssh -i {pem file} ubuntu@ec2-18-217-72-168.us-east-2.compute.amazonaws.com `.
 1. Stop the running image ``.
 1. Pull the newly created image `sudo docker pull blangley/cpcds-server-ri`.
 1. Run the new docker image `sudo docker run -d -p 8080:8080 blangley/cpcds-server-ri`.
