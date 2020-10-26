@@ -48,6 +48,7 @@ public class HapiProperties {
     static final String MAX_PAGE_SIZE = "max_page_size";
     static final String SERVER_BASE = "server_base";
     static final String SERVER_ADDRESS = "server_address";
+    static final String AUTH_SERVER_BASE = "auth_server_base";
     static final String AUTH_SERVER_ADDRESS = "auth_server_address";
     static final String SERVER_ID = "server.id";
     static final String SERVER_NAME = "server.name";
@@ -239,7 +240,7 @@ public class HapiProperties {
     }
 
     public static String getAuthServerAddress() {
-        return HapiProperties.getProperty(SERVER_BASE) + HapiProperties.getProperty(AUTH_SERVER_ADDRESS);
+        return HapiProperties.getProperty(AUTH_SERVER_BASE) + HapiProperties.getProperty(AUTH_SERVER_ADDRESS);
     }
 
     public static Integer getDefaultPageSize() {
