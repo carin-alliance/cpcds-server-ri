@@ -2,6 +2,9 @@
 
 This project is a reference FHIR server for the [Consumer-Directed Payer Data Exchange Implementation Guide](https://build.fhir.org/ig/HL7/carin-bb/toc.html) (also know as Carin Blue Button Implementation Guide). It is based on the [HAPI FHIR JPA Server](https://github.com/hapifhir/hapi-fhir-jpaserver-starter).
 
+The server is hosted live at http://ec2-18-217-72-168.us-east-2.compute.amazonaws.com:8080/cpcds-server/fhir
+The authorization endpoint is http://ec2-18-221-169-54.us-east-2.compute.amazonaws.com:8180/authorization
+
 ## Quickstart
 
 The quickest way to get the server up and running is by pulling the built image from docker hub.
@@ -53,23 +56,4 @@ If the address of CPCDS server or authorization server change they must be updat
 
 ## Uploading Test Data
 
-The Ruby script `upload.rb` uploads test data into the FHIR server. The easiest way to run is with [Bundler](https://bundler.io/). To install Bundler
-
-```bash
-sudo gem install bundler
-```
-
-Before executing the script a bearer token must be obtained from the authorization server. Follow the instructions from https://github.com/carin-alliance/cpcds-auth-server for the token. Add this token to the `BEARER_TOKEN` variable on line 4.
-
-Then execute the upload script
-
-```bash
-bundle install
-bundle exec ruby upload.rb {FHIR Server}
-```
-
-By default the upload script will use http://localhost:8080/cpcds-server/fhir as the FHIR server. To upload to a different endpoint provide the full URL as the first argument.
-
-To clear the database delete the directory `target/database` and rerun the server.
-
-Note: The master branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch. The database is read from `target/database/h2.mv.db`. A copy of the database with the test data preloaded can be found in the `/data` directory. Copying this into `target/database` will allow the server to have a read only copy of the loaded database.
+The master branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch. The database is read from `target/database/h2.mv.db`. A copy of the database with the test data preloaded can be found in the `/data` directory. Copying this into `target/database` will allow the server to have a read only copy of the loaded database.
