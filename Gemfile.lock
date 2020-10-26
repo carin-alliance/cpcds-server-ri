@@ -8,12 +8,14 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
     multi_xml (0.6.0)
+    rubyzip (2.3.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   httparty
+  rubyzip
 
 BUNDLED WITH
    2.1.4

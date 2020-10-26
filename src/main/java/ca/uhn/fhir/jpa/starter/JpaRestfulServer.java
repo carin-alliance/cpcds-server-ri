@@ -191,12 +191,6 @@ public class JpaRestfulServer extends RestfulServer {
     this.registerInterceptor(loggingInterceptor);
 
     /*
-     * Add Authorization interceptor
-     */
-    PatientAuthorizationInterceptor authorizationInterceptor = new PatientAuthorizationInterceptor();
-    this.registerInterceptor(authorizationInterceptor);
-
-    /*
      * If you are hosting this server at a specific DNS name, the server will try to
      * figure out the FHIR base URL based on what the web container tells it, but
      * this doesn't always work. If you are setting links in your search bundles
