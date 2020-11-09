@@ -41,14 +41,18 @@ Note: The upload script will only upload Patient, Claim, and ExplanationOfBenefi
 ## Steps
 
 1. Usually, you will want to remove all the data from the server with `rm -rf target` so that the server starts with a blank slate. Skip this step if you want to retain the existing data.
-1. Start the server with `mvn jetty:run`. Note you will need to use JDK8 for this.
+1. If you need to build the docker image, run `./build-docker-image.sh` first. If you have recreated the image since the last time `docker-compose` was run you will be prompted to create a new image (click `y`).
+1. Run `docker-compose up` to start the server.
 1. In a separate terminal, run `bundle exec ruby upload.rb` to upload data to the server. The resources from `CPCDS_patient_data` and the example resources from the IG will be uploaded.
-1. Once the upload has completed, use `CTRL+c` to stop the server.
-1. Now it is necessary to copy this data into the master branch. Change to the master branch: `git checkout master`.
-1. Remove the old database `rm -f data/h2.mv.db`.
-1. Move the new database to the correct location `cp target/database/h2.mv.db data/.`.
-1. Stage the new database with `git add data`.
-1. Commit the database with `git commit -m 'update data'`.
+1. Once the upload has completed, use `CTRL+c` or run `docker-compose down` to stop the server.
+   Stage the new data with `git add data`.
+1. Commit the data with `git commit -m 'update data'`.
+1. Now it is necessary to copy this data into the master branch. First, copy the data to a new folder which isn't tracked by git `cp -r data data2`.
+1. Change to the `master` branch `git checkout master`.
+1. Remove the old data `rm -rf data`.
+1. Move the new data to the correct location `mv data2 data`.
+1. Stage the new data with `git add data`.
+1. Commit the data with `git commit -m 'update data'`.
 1. Push up your changes with `git push`.
 1. Now the AWS instance needs to be updated. Build the docker image `docker build -t blangley/cpcds-server-ri .`.
 1. Push the new image to dockerhub with `docker push blangley/cpcds-server-ri`.
