@@ -40,7 +40,7 @@ Note: The upload script will only upload Patient, Claim, and ExplanationOfBenefi
 
 ## Steps
 
-1. Usually, you will want to remove all the data from the server with `rm -rf target` so that the server starts with a blank slate. Skip this step if you want to retain the existing data.
+1. Usually, you will want to remove all the data from the server with `rm -rf data` so that the server starts with a blank slate. Skip this step if you want to retain the existing data.
 1. If you need to build the docker image, run `./build-docker-image.sh` first. If you have recreated the image since the last time `docker-compose` was run you will be prompted to create a new image (click `y`).
 1. Run `docker-compose up` to start the server.
 1. In a separate terminal, run `bundle exec ruby upload.rb` to upload data to the server. The resources from `CPCDS_patient_data` and the example resources from the IG will be uploaded.
