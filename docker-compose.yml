@@ -1,0 +1,10 @@
+version: "3"
+services:
+  cpcds-server-ri:
+    image: blangley/cpcds-server-ri
+    container_name: cpcds-server-ri
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/var/lib/jetty/target
