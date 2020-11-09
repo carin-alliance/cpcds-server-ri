@@ -98,10 +98,12 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
             // Allow the user to read anything not in a patient compartment
             // If a client request doesn't pass either of the above, deny it
             if (userIdPatientId != null) {
-                return new RuleBuilder().allow().read().allResources().inCompartment("Patient", userIdPatientId)
-                        .andThen().allow().read().resourcesOfType("Practitioner").withAnyId().andThen().allow().read()
-                        .resourcesOfType("Organization").withAnyId().andThen().allow().read()
-                        .resourcesOfType("Location").withAnyId().andThen().allow().metadata().andThen().denyAll()
+                return new RuleBuilder().allow().read().resourcesOfType("Coverage").inCompartment("Patient", userIdPatientId)
+                        .andThen().allow().read().resourcesOfType("ExplanationOfBenefit").inCompartment("Patient", userIdPatientId)
+                        .andThen().allow().read().resourcesOfType("Patient").inCompartment("Patient", userIdPatientId)
+                        .andThen().allow().read().resourcesOfType("Practitioner").withAnyId()
+                        .andThen().allow().read().resourcesOfType("Organization").withAnyId()
+                        .andThen().allow().metadata().andThen().denyAll()
                         .build();
             }
 
@@ -111,8 +113,8 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
             }
         }
 
-        // By default, deny everything. This should never get hit, but it's
-        // good to be defensive
+        // By default, deny everything except the metadata. This is for
+        // unathorized users
         return new RuleBuilder().allow().metadata().andThen().denyAll().build();
 
     }

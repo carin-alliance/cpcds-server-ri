@@ -1,0 +1,1046 @@
+{
+  "resourceType": "Bundle",
+  "id": "b823568a-ad80-4832-af3a-601f50d32b43",
+  "meta": {
+    "lastUpdated": "2020-11-02T16:16:52.199+00:00"
+  },
+  "type": "searchset",
+  "total": 1,
+  "link": [
+    {
+      "relation": "self",
+      "url": "http://localhost:8000/ExplanationOfBenefit?_format=json&_include=ExplanationOfBenefit%3Apatient&_include=ExplanationOfBenefit%3Acare-team&_include=ExplanationOfBenefit%3Acoverage&_include=ExplanationOfBenefit%3Ainsurer&_include=ExplanationOfBenefit%3Apatient&_include=ExplanationOfBenefit%3Apayee&_include=ExplanationOfBenefit%3Aprovider&patient=6"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "http://localhost:8000/ExplanationOfBenefit/11",
+      "resource": {
+        "resourceType": "ExplanationOfBenefit",
+        "id": "11",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2020-10-26T16:12:08.069+00:00",
+          "profile": [
+            "http://hl7.org/fhir/us/carin/StructureDefinition/carin-bb-explanationofbenefit-professional-nonclinician"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-identifier",
+            "value": "4E19-A16E-02249BD89CD6"
+          }
+        ],
+        "status": "active",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+              "code": "Professional or Non-Clinician",
+              "display": "Professional or Non-Clinician"
+            }
+          ]
+        },
+        "use": "claim",
+        "patient": {
+          "reference": "Patient/6"
+        },
+        "created": "2009-01-03",
+        "insurer": {
+          "reference": "Organization/45"
+        },
+        "provider": {
+          "reference": "Organization/32"
+        },
+        "facility": {
+          "reference": "Location/41"
+        },
+        "outcome": "complete",
+        "careTeam": [
+          {
+            "sequence": 1,
+            "provider": {
+              "reference": "PractitionerRole/23"
+            },
+            "role": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-claimcareteamrole",
+                  "code": "performing",
+                  "display": "Servicing or Rendering provider"
+                }
+              ]
+            }
+          },
+          {
+            "sequence": 2,
+            "provider": {
+              "reference": "PractitionerRole/26"
+            },
+            "role": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-claimcareteamrole",
+                  "code": "pcp",
+                  "display": "Primary care provider"
+                }
+              ]
+            }
+          }
+        ],
+        "supportingInfo": [
+          {
+            "sequence": 1,
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBSupportingInfoType",
+                  "code": "billingnetworkcontractingstatus",
+                  "display": "billingnetworkcontractingstatus"
+                }
+              ]
+            },
+            "code": {
+              "coding": [
+                {
+                  "code": "A"
+                }
+              ]
+            }
+          },
+          {
+            "sequence": 2,
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBSupportingInfoType",
+                  "code": "sitenetworkcontractingstatus",
+                  "display": "sitenetworkcontractingstatus"
+                }
+              ]
+            },
+            "code": {
+              "coding": [
+                {
+                  "code": "contracted"
+                }
+              ]
+            }
+          },
+          {
+            "sequence": 3,
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBSupportingInfoType",
+                  "code": "clmrecvddate",
+                  "display": "clmrecvddate"
+                }
+              ]
+            },
+            "timingDate": "2009-01-03"
+          },
+          {
+            "sequence": 4,
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBSupportingInfoType",
+                  "code": "servicefacility",
+                  "display": "servicefacility"
+                }
+              ]
+            },
+            "code": {
+              "coding": [
+                {
+                  "code": "DE12349"
+                }
+              ]
+            }
+          }
+        ],
+        "diagnosis": [
+          {
+            "sequence": 1,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "O80",
+                  "display": "Diagnosis description 4"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "principal",
+                    "display": "principal"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 2,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "A30.1"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "secondary",
+                    "display": "secondary"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 3,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "A31.1"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "secondary",
+                    "display": "secondary"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 4,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "A05.1"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "secondary",
+                    "display": "secondary"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 5,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "O80"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-diagnosistype-professional",
+                    "code": "principal(header)",
+                    "display": "principal(header)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 6,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "A30.1"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-diagnosistype-professional",
+                    "code": "secondary(header)",
+                    "display": "secondary(header)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 7,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "A31.1"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-diagnosistype-professional",
+                    "code": "secondary(header)",
+                    "display": "secondary(header)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 8,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "A05.1"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-diagnosistype-professional",
+                    "code": "secondary(header)",
+                    "display": "secondary(header)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 9,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "S40.861A"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-diagnosistype-professional",
+                    "code": "secondary(header)",
+                    "display": "secondary(header)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 10,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "I21.3"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-diagnosistype-professional",
+                    "code": "secondary(header)",
+                    "display": "secondary(header)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 11,
+            "diagnosisCodeableConcept": {
+              "coding": [
+                {
+                  "code": "C67.3"
+                }
+              ]
+            },
+            "type": [
+              {
+                "coding": [
+                  {
+                    "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-diagnosistype-professional",
+                    "code": "secondary(header)",
+                    "display": "secondary(header)"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "insurance": [
+          {
+            "focal": true,
+            "coverage": {
+              "reference": "Coverage/1"
+            }
+          },
+          {
+            "focal": false,
+            "coverage": {
+              "reference": "Coverage/4"
+            }
+          }
+        ],
+        "item": [
+          {
+            "sequence": 1,
+            "category": {
+              "coding": [
+                {
+                  "code": "type4"
+                }
+              ]
+            },
+            "productOrService": {
+              "coding": [
+                {
+                  "code": "2023F",
+                  "display": "Procedure description 4"
+                }
+              ]
+            },
+            "servicedPeriod": {
+              "start": "2009-01-01",
+              "end": "2009-01-02"
+            },
+            "locationCodeableConcept": {
+              "coding": [
+                {
+                  "code": "OF"
+                }
+              ]
+            },
+            "quantity": {
+              "value": 3.0
+            },
+            "adjudication": [
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                      "code": "submittedamount",
+                      "display": "submitted amount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 14.00
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                      "code": "allowedamount",
+                      "display": "allowed amount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 14.00
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                      "code": "deductibleamount",
+                      "display": "deductible amount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 5.00
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                      "code": "coinsuranceamount",
+                      "display": "coinsurance amount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 2.00
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                      "code": "copayamount",
+                      "display": "copay amount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 1.50
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                      "code": "cobamount",
+                      "display": "cob amount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 9
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                      "code": "paymentamount",
+                      "display": "payment amount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 3.00
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                      "code": "patientpayamount",
+                      "display": "patient pay amount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 2.5
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-adjudicationcategory",
+                      "code": "memberliability",
+                      "display": "member liability"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 8.50
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-adjudicationcategory",
+                      "code": "discount",
+                      "display": "discount"
+                    }
+                  ]
+                },
+                "amount": {
+                  "value": 0.00
+                }
+              },
+              {
+                "category": {
+                  "coding": [
+                    {
+                      "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-adjudicationcategory",
+                      "code": "N",
+                      "display": "N"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "total": [
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                  "code": "submittedamount",
+                  "display": "submitted amount"
+                }
+              ]
+            },
+            "amount": {
+              "value": 14.00
+            }
+          },
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                  "code": "allowedamount",
+                  "display": "allowed amount"
+                }
+              ]
+            },
+            "amount": {
+              "value": 14.00
+            }
+          },
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                  "code": "deductibleamount",
+                  "display": "deductible amount"
+                }
+              ]
+            },
+            "amount": {
+              "value": 5.00
+            }
+          },
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                  "code": "coinsuranceamount",
+                  "display": "coinsurance amount"
+                }
+              ]
+            },
+            "amount": {
+              "value": 2.00
+            }
+          },
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                  "code": "copayamount",
+                  "display": "copay amount"
+                }
+              ]
+            },
+            "amount": {
+              "value": 1.50
+            }
+          },
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                  "code": "cobamount",
+                  "display": "cob amount"
+                }
+              ]
+            },
+            "amount": {
+              "value": 9
+            }
+          },
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                  "code": "paymentamount",
+                  "display": "payment amount"
+                }
+              ]
+            },
+            "amount": {
+              "value": 3.00
+            }
+          },
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin/CodeSystem/carin-bb-adjudicationcategory",
+                  "code": "patientpayamount",
+                  "display": "patient pay amount"
+                }
+              ]
+            },
+            "amount": {
+              "value": 2.5
+            }
+          },
+          {
+            "category": {
+              "coding": [
+                {
+                  "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/explanationofbenefit-adjudicationcategory",
+                  "code": "memberliability",
+                  "display": "member liability"
+                }
+              ]
+            },
+            "amount": {
+              "value": 8.50
+            }
+          }
+        ],
+        "payment": {
+          "type": {
+            "coding": [
+              {
+                "code": "P"
+              }
+            ]
+          },
+          "date": "2009-01-05"
+        }
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8000/Patient/6",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "6",
+        "meta": {
+          "lastUpdated": "2020-10-26T16:12:06.423+00:00",
+          "profile": [
+            "http://hl7.org/fhir/us/carin/StructureDefinition/carin-bb-patient"
+          ]
+        },
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2106-3"
+                }
+              },
+              {
+                "url": "text"
+              }
+            ]
+          }
+        ],
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MB"
+                }
+              ]
+            },
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/patient-identifier-memberid",
+            "value": "4D2F-88E5-60A4FDE99679"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/patient-identifier-medrecnum",
+            "value": "98765428"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType",
+                  "code": "pat"
+                }
+              ]
+            },
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/patient-identifier-patacctnum",
+            "value": "ABCDEFAB"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType",
+                  "code": "um"
+                }
+              ]
+            },
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/patient-identifier-medrecnum",
+            "value": "98765428"
+          }
+        ],
+        "name": [
+          {
+            "family": "Doe",
+            "given": [
+              "Jack"
+            ]
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1998-12-17",
+        "address": [
+          {
+            "district": "12011",
+            "state": "FL",
+            "postalCode": "54321",
+            "country": "USA"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8000/Organization/32",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "32",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2020-10-26T16:12:06.037+00:00",
+          "profile": [
+            "http://hl7.org/fhir/us/carin/StructureDefinition/carin-bb-organization"
+          ]
+        },
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType",
+                  "code": "npi",
+                  "display": "National provider identifier"
+                }
+              ]
+            },
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "KL12346"
+          }
+        ],
+        "active": true,
+        "name": "Org# KL12346"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8000/PractitionerRole/23",
+      "resource": {
+        "resourceType": "PractitionerRole",
+        "id": "23",
+        "meta": {
+          "lastUpdated": "2020-10-26T16:12:08.603+00:00",
+          "profile": [
+            "http://hl7.org/fhir/us/carin/StructureDefinition/carin-bb-practitionerrole"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/practitionerrole-identifier-professional",
+            "value": "BC12357"
+          }
+        ],
+        "practitioner": {
+          "reference": "Practitioner/35"
+        },
+        "organization": {
+          "reference": "Organization/32"
+        },
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(232) 323-2323"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8000/PractitionerRole/26",
+      "resource": {
+        "resourceType": "PractitionerRole",
+        "id": "26",
+        "meta": {
+          "lastUpdated": "2020-10-26T16:12:08.610+00:00",
+          "profile": [
+            "http://hl7.org/fhir/us/carin/StructureDefinition/carin-bb-practitionerrole"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/practitionerrole-identifier-professional",
+            "value": "BC12358"
+          }
+        ],
+        "practitioner": {
+          "reference": "Practitioner/38"
+        },
+        "organization": {
+          "reference": "Organization/32"
+        },
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(262) 626-2626"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8000/Coverage/1",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "1",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2020-10-26T16:12:05.628+00:00",
+          "profile": [
+            "http://hl7.org/fhir/us/carin/StructureDefinition/carin-bb-coverage"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/coverage-identifier",
+            "value": "4415-9F05-9AACD23D4E6C"
+          }
+        ],
+        "status": "active",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/coverage-selfpay",
+              "code": "pay"
+            }
+          ]
+        },
+        "subscriberId": "A1CD1234H56789012",
+        "beneficiary": {
+          "reference": "Patient/1"
+        },
+        "relationship": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/subscriber-relationship",
+              "code": "child"
+            }
+          ]
+        },
+        "period": {
+          "start": "2019-04-01"
+        },
+        "payor": [
+          {
+            "reference": "Organization/43"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "http://localhost:8000/Coverage/4",
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "4",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2020-10-26T16:12:05.718+00:00",
+          "profile": [
+            "http://hl7.org/fhir/us/carin/StructureDefinition/carin-bb-coverage"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://www.bcbs.com/fhir/ns/StructureDefinition/coverage-identifier",
+            "value": "4C44-88ED-68D76FC75A6F"
+          }
+        ],
+        "status": "active",
+        "type": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "AUTOPOL"
+            }
+          ]
+        },
+        "subscriberId": "A2CD1234H56783314",
+        "beneficiary": {
+          "reference": "Patient/2"
+        },
+        "relationship": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/subscriber-relationship",
+              "code": "child"
+            }
+          ]
+        },
+        "period": {
+          "start": "2019-04-01"
+        },
+        "payor": [
+          {
+            "reference": "Organization/45"
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    }
+  ]
+}
