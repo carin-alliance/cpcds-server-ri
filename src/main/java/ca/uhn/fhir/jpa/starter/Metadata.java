@@ -13,24 +13,25 @@ import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementRestComponen
 import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementRestSecurityComponent;
 import org.hl7.fhir.r4.model.CapabilityStatement.RestfulCapabilityMode;
 
+import ca.uhn.fhir.jpa.starter.authorization.AuthUtils;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 
 public class Metadata extends ServerCapabilityStatementProvider {
 
     public static String getOauthTokenUrl(HttpServletRequest request) {
-       return HapiProperties.getAuthServerAddress() + "/token"; 
+        return AuthUtils.getServiceBaseUrl(request) + "/oauth/token"; 
     }
 
     public static String getOauthAuthorizationUrl(HttpServletRequest request) {
-       return HapiProperties.getAuthServerAddress() + "/authorization"; 
+        return AuthUtils.getServiceBaseUrl(request) + "/oauth/authorization"; 
     }
 
     public static String getOauthIntrospectionUrl(HttpServletRequest request) {
-        return HapiProperties.getAuthServerAddress() + "/introspect";
+        return AuthUtils.getServiceBaseUrl(request) + "/oauth/introspect"; 
     }
 
     public static String getOauthRegisterUrl(HttpServletRequest request) {
-        return HapiProperties.getAuthServerAddress() + "/register/client";
+        return AuthUtils.getServiceBaseUrl(request) + "/oauth/register/client"; 
     }
 
     @Override
@@ -39,9 +40,10 @@ public class Metadata extends ServerCapabilityStatementProvider {
         CapabilityStatement c = super.getServerConformance(request, requestDetails);
 
         Extension oauthExtension = new Extension();
-        ArrayList<Extension> uris = new ArrayList<Extension>();
+        ArrayList<Extension> uris = new ArrayList<>();
         uris.add(new Extension("token", new UriType(getOauthTokenUrl(request))));
         uris.add(new Extension("authorize", new UriType(getOauthAuthorizationUrl(request))));
+        uris.add(new Extension("introspect", new UriType(getOauthIntrospectionUrl(request))));
         oauthExtension.setUrl("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris");
         oauthExtension.setExtension(uris);
 

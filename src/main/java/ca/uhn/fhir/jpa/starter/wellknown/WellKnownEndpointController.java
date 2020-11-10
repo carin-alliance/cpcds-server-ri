@@ -45,7 +45,7 @@ public class WellKnownEndpointController {
      * @throws IOException when the request fails
      */
     @GetMapping(path = "/smart-configuration", produces = {"application/json"})
-        public String getWellKnownJson(HttpServletRequest theRequest) {
+    public String getWellKnownJson(HttpServletRequest theRequest) {
 
         JSONObject wellKnownJson = new JSONObject();
         wellKnownJson.put(WELL_KNOWN_AUTHORIZATION_ENDPOINT_KEY, Metadata.getOauthAuthorizationUrl(theRequest));

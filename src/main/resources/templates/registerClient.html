@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register Client</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <style>
+      body {
+        background-color: #000000;
+      }
+      #form-container {
+        margin-top: 50px;
+        padding: 20px;
+        background-color: #ededed;
+        border-radius: 20px;
+      }
+      #clientInfo {
+        word-wrap: break-word;
+      }
+      h2,
+      h4 {
+        text-align: center;
+      }
+      input,
+      button {
+        margin: 10px;
+      }
+    </style>
+    <div class="container">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-6" id="form-container">
+          <h2>CPCDS Server New Client Register</h2>
+          <form id="form" onsubmit="register(event)">
+            <input
+              id="redirectUri"
+              class="form-control"
+              type="text"
+              placeholder="Redirect Uri"
+            />
+            <button
+              type="submit"
+              class="btn btn-outline-primary btn-lg btn-block"
+            >
+              Register Client
+            </button>
+          </form>
+          <div id="clientInfo" style="display: none;">
+            <h4>New Client Registered</h6>
+            <div>ID: <span id="id"></span></div>
+            <div>Secret: <span id="secret"></span></div>
+            <div>Redirect URI: <span id="redirect"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function register(event) {
+        event.preventDefault();
+
+        document.getElementById("form").style.display = "none";
+
+        let redirectUri = document.getElementById("redirectUri").value;
+
+        let request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+          console.log(this.response);
+          let response = JSON.parse(this.response);
+          document.getElementById("id").innerHTML = response.id;
+          document.getElementById("secret").innerHTML = response.secret;
+          document.getElementById("redirect").innerHTML = response.redirect;
+          document.getElementById("clientInfo").style.display = "block";
+        };
+        request.open(
+          "POST",
+          "/register/client?redirect_uri=" + redirectUri,
+          true
+        );
+        request.send();
+      }
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

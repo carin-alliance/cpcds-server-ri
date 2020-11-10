@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LogOn</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <style>
+      body {
+        background-color: #000000;
+      }
+      #logon {
+        margin-top: 50px;
+        padding: 20px;
+        background-color: #ededed;
+        border-radius: 20px;
+      }
+      h2 {
+        text-align: center;
+      }
+      input,
+      button {
+        margin: 10px;
+      }
+    </style>
+    <div class="container">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-6" id="logon">
+          <h2>CPCDS Server Login</h2>
+          <form onsubmit="login(event)" autocomplete="off">
+            <input
+              id="username"
+              class="form-control"
+              type="text"
+              placeholder="Username"
+            />
+            <input
+              id="password"
+              class="form-control"
+              type="password"
+              placeholder="Password"
+            />
+            <button
+              type="submit"
+              class="btn btn-outline-primary btn-lg btn-block"
+            >
+              Log On
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function login(event) {
+        event.preventDefault();
+        let urlParams = new URLSearchParams(window.location.search);
+
+        let body = {
+          username: document.getElementById("username").value,
+          password: document.getElementById("password").value,
+        };
+
+        let request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+          console.log(this.response);
+          let response = JSON.parse(this.response);
+          window.location = response.redirect;
+        };
+        request.open("POST", window.location.search, true);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify(body));
+      }
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
