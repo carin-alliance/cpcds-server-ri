@@ -17,6 +17,22 @@ import ca.uhn.fhir.rest.api.server.RequestDetails;
 
 public class Metadata extends ServerCapabilityStatementProvider {
 
+    public static String getOauthTokenUrl(HttpServletRequest request) {
+       return HapiProperties.getAuthServerAddress() + "/token"; 
+    }
+
+    public static String getOauthAuthorizationUrl(HttpServletRequest request) {
+       return HapiProperties.getAuthServerAddress() + "/authorization"; 
+    }
+
+    public static String getOauthIntrospectionUrl(HttpServletRequest request) {
+        return HapiProperties.getAuthServerAddress() + "/introspect";
+    }
+
+    public static String getOauthRegisterUrl(HttpServletRequest request) {
+        return HapiProperties.getAuthServerAddress() + "/register/client";
+    }
+
     @Override
     public CapabilityStatement getServerConformance(HttpServletRequest request, RequestDetails requestDetails) {
 
@@ -24,8 +40,8 @@ public class Metadata extends ServerCapabilityStatementProvider {
 
         Extension oauthExtension = new Extension();
         ArrayList<Extension> uris = new ArrayList<Extension>();
-        uris.add(new Extension("token", new UriType(HapiProperties.getAuthServerAddress() + "/token")));
-        uris.add(new Extension("authorize", new UriType(HapiProperties.getAuthServerAddress() + "/authorization")));
+        uris.add(new Extension("token", new UriType(getOauthTokenUrl(request))));
+        uris.add(new Extension("authorize", new UriType(getOauthAuthorizationUrl(request))));
         oauthExtension.setUrl("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris");
         oauthExtension.setExtension(uris);
 
