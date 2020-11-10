@@ -32,10 +32,8 @@ public class OauthEndpointController {
     /**
      * TODO:
      *  Port introspect endpoint
-     *  PatientAuthorizationInterceptor
      *  Move & rename Authorization db
      *  Logger
-     *  Update hapi.properties
      *  Update metadata
      *  Update .well-known/jwks
      *  Update readme

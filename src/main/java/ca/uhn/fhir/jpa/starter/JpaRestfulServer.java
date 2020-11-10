@@ -152,14 +152,14 @@ public class JpaRestfulServer extends RestfulServer {
     /*
      * Add Read Only interceptor
      */
-    // ReadOnlyInterceptor readOnlyInterceptor = new ReadOnlyInterceptor();
-    // this.registerInterceptor(readOnlyInterceptor);
+    ReadOnlyInterceptor readOnlyInterceptor = new ReadOnlyInterceptor();
+    this.registerInterceptor(readOnlyInterceptor);
 
     /*
      * Add Search Parameter interceptor
      */
-    // SearchInterceptor searchInterceptor = new SearchInterceptor();
-    // this.registerInterceptor(searchInterceptor);
+    SearchInterceptor searchInterceptor = new SearchInterceptor();
+    this.registerInterceptor(searchInterceptor);
 
     /*
      * If you are hosting this server at a specific DNS name, the server will try to

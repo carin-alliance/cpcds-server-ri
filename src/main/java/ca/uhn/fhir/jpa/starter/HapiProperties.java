@@ -239,11 +239,6 @@ public class HapiProperties {
         return HapiProperties.getProperty(SERVER_BASE) + HapiProperties.getProperty(SERVER_ADDRESS);
     }
 
-    public static String getAuthServerAddress() {
-        return System.getenv("AUTH_SERVER");
-        // return HapiProperties.getProperty(AUTH_SERVER_BASE) + HapiProperties.getProperty(AUTH_SERVER_ADDRESS);
-    }
-
     public static Integer getDefaultPageSize() {
         return HapiProperties.getIntegerProperty(DEFAULT_PAGE_SIZE, 20);
     }
