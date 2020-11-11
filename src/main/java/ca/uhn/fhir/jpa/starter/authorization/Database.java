@@ -3,6 +3,9 @@ package ca.uhn.fhir.jpa.starter.authorization;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import ca.uhn.fhir.jpa.starter.ServerLogger;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -20,11 +23,12 @@ import java.sql.ResultSetMetaData;
  */
 public class Database {
 
-    private String SQL_FILE;
+    private static final Logger logger = ServerLogger.getLogger();
+
     private static final String CREATE_SQL_FILE = "src/main/java/ca/uhn/fhir/jpa/starter/authorization/CreateDatabase.sql";
 
-    private static final String styleFile = "src/main/resources/style.html";
-    private static final String scriptFile = "src/main/resources/script.html";
+    private static final String STYLE_FILE = "src/main/resources/style.html";
+    private static final String SCRIPT_FILE = "src/main/resources/script.html";
 
     private static String style = "";
     private static String script = "";
@@ -36,9 +40,9 @@ public class Database {
     // (so that we don't lose everything between a connection closing and the next
     // being opened)
     private static final String JDBC_TYPE = "jdbc:h2:";
-    private static final String JDBC_FILE = "database";
+    private static final String JDBC_FILE = "oauth";
     private static final String JDBC_OPTIONS = ";DB_CLOSE_DELAY=-1";
-    private String JDBC_STRING;
+    private String jdbcString;
 
     public enum Table {
         USERS("Users"), CLIENTS("Clients");
@@ -58,34 +62,34 @@ public class Database {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
-            throw new Error(e);
+            logger.log(Level.SEVERE, "Database::ClassNotFoundException:org.h2.driver", e);
         }
     }
 
     private Connection getConnection() throws SQLException {
-        Connection connection = DriverManager.getConnection(JDBC_STRING);
+        Connection connection = DriverManager.getConnection(jdbcString);
         connection.setAutoCommit(true);
         return connection;
     }
 
     public Database() {
-        this("./");
+        this("./target/database/");
     }
 
     public Database(String relativePath) {
-        JDBC_STRING = JDBC_TYPE + relativePath + JDBC_FILE + JDBC_OPTIONS;
-        System.out.println("JDBC: " + JDBC_STRING);
-        SQL_FILE = relativePath + CREATE_SQL_FILE;
+        jdbcString = JDBC_TYPE + relativePath + JDBC_FILE + JDBC_OPTIONS;
+        logger.info("JDBC: " + jdbcString);
         try (Connection connection = getConnection()) {
-            String sql = new String(Files.readAllBytes(Paths.get(SQL_FILE).toAbsolutePath()));
-            connection.prepareStatement(sql.replace("\"", "")).execute();
-            System.out.println(sql);
+            String sql = new String(Files.readAllBytes(Paths.get(CREATE_SQL_FILE).toAbsolutePath()));
+            logger.info(sql);
 
-            style = new String(Files.readAllBytes(Paths.get(relativePath + styleFile).toAbsolutePath()));
-            script = new String(Files.readAllBytes(Paths.get(relativePath + scriptFile).toAbsolutePath()));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            try (PreparedStatement stmt = connection.prepareStatement(sql.replace("\"", ""))) {
+                stmt.execute();
+            }
+
+            style = new String(Files.readAllBytes(Paths.get(STYLE_FILE).toAbsolutePath()));
+            script = new String(Files.readAllBytes(Paths.get(SCRIPT_FILE).toAbsolutePath()));
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -97,9 +101,11 @@ public class Database {
 
     public String runQuery(String sqlQuery, boolean printClobs, boolean outputHtml) {
         String ret = "";
-        try (Connection connection = getConnection()) {
-            // build and execute the query
+        try (
+            Connection connection = getConnection();
             PreparedStatement stmt = connection.prepareStatement(sqlQuery);
+        ) {
+            // build and execute the query
             ResultSet rs = stmt.executeQuery();
 
             // get the number of columns
@@ -182,15 +188,19 @@ public class Database {
      * @return User
      */
     private User readUser(Map<String, Object> constraintParams) {
-        System.out.println("Database::read(Users, " + constraintParams.toString() + ")");
+        logger.info("Database::read(Users, " + constraintParams.toString() + ")");
         User result = null;
-        if (constraintParams != null) {
+        if (constraintParams.size() > 0) {
             try (Connection connection = getConnection()) {
                 String sql = "SELECT TOP 1 patient_id, username, password, timestamp, refresh_token FROM Users WHERE "
                         + generateClause(constraintParams, WHERE_CONCAT) + " ORDER BY timestamp DESC;";
                 PreparedStatement stmt = generateStatement(sql, Collections.singletonList(constraintParams),
                         connection);
-                System.out.println("read query: " + stmt.toString());
+                if (stmt == null) {
+                    logger.severe("Database::stmt was null");
+                    return result;
+                }
+                logger.fine("read query: " + stmt.toString());
                 ResultSet rs = stmt.executeQuery();
 
                 if (rs.next()) {
@@ -199,7 +209,7 @@ public class Database {
                     String password = rs.getString("password");
                     String createdDate = rs.getString("timestamp");
                     String refreshToken = rs.getString("refresh_token");
-                    System.out.println("read: " + id + "/" + username);
+                    logger.fine("read: " + id + "/" + username);
                     result = new User(username, password, id, createdDate, refreshToken);
                 }
             } catch (SQLException e) {
@@ -215,7 +225,11 @@ public class Database {
 
     public String readRefreshToken(String patientId) {
         User user = this.readUser(Collections.singletonMap("patient_id", patientId));
-        return user.getRefreshToken();
+        if (user != null) {
+            return user.getRefreshToken();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -225,23 +239,24 @@ public class Database {
      * @return Client
      */
     public Client readClient(String clientId) {
-        System.out.println("Database::read(Users " + clientId + ")");
+        logger.info("Database::read(Users " + clientId + ")");
         Client result = null;
         if (clientId != null) {
             try (Connection connection = getConnection()) {
                 String sql = "SELECT TOP 1 id, secret, redirect, timestamp FROM Clients WHERE id = ? ORDER BY timestamp DESC;";
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                stmt.setString(1, clientId);
-                System.out.println("read query: " + stmt.toString());
-                ResultSet rs = stmt.executeQuery();
+                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                    stmt.setString(1, clientId);
+                    logger.fine("read query: " + stmt.toString());
+                    ResultSet rs = stmt.executeQuery();
 
-                if (rs.next()) {
-                    String id = rs.getString("id");
-                    String secret = rs.getString("secret");
-                    String redirectUri = rs.getString("redirect");
-                    String createdDate = rs.getString("timestamp");
-                    System.out.println("read: " + id + "/" + secret);
-                    result = new Client(id, secret, redirectUri, createdDate);
+                    if (rs.next()) {
+                        String id = rs.getString("id");
+                        String secret = rs.getString("secret");
+                        String redirectUri = rs.getString("redirect");
+                        String createdDate = rs.getString("timestamp");
+                        logger.fine("read: " + id + "/" + secret);
+                        result = new Client(id, secret, redirectUri, createdDate);
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -269,8 +284,12 @@ public class Database {
                 String sql = "INSERT INTO " + table.value() + " (" + setColumns(map.keySet()) + ") VALUES ("
                         + valueClause + ");";
                 PreparedStatement stmt = generateStatement(sql, Collections.singletonList(map), connection);
+                if (stmt == null) {
+                    logger.severe("Database::stmt was null");
+                    return result;
+                }
                 result = stmt.execute();
-                System.out.println(stmt.toString());
+                logger.fine(stmt.toString());
                 result = true;
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -286,7 +305,7 @@ public class Database {
      * @return boolean - whether or not the user was written.
      */
     public boolean write(User user) {
-        System.out.println("Database::write Users(" + user.toString() + ")");
+        logger.info("Database::write Users(" + user.toString() + ")");
         return write(Table.USERS, user.toMap());
     }
 
@@ -297,7 +316,7 @@ public class Database {
      * @return boolean - whether or not the client was written.
      */
     public boolean write(Client client) {
-        System.out.println("Database::write Clients(" + client.hashCode() + ")");
+        logger.info("Database::write Clients(" + client.hashCode() + ")");
         return write(Table.CLIENTS, client.toMap());
     }
 
@@ -309,20 +328,24 @@ public class Database {
      * @return boolean - whether or not the update was successful
      */
     private boolean update(Map<String, Object> constraintParams, Map<String, Object> data) {
-        System.out.println("Database::update(Users WHERE " + constraintParams.toString() + ", SET" + data.toString() + ")");
+        logger.info("Database::update(Users WHERE " + constraintParams.toString() + ", SET" + data.toString() + ")");
         boolean result = false;
         if (constraintParams != null && data != null) {
             try (Connection connection = getConnection()) {
                 String sql = "UPDATE Users SET " + generateClause(data, SET_CONCAT)
                         + ", timestamp = CURRENT_TIMESTAMP WHERE " + generateClause(constraintParams, WHERE_CONCAT)
                         + ";";
-                Collection<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
+                Collection<Map<String, Object>> maps = new ArrayList<>();
                 maps.add(data);
                 maps.add(constraintParams);
                 PreparedStatement stmt = generateStatement(sql, maps, connection);
+                if (stmt == null) {
+                    logger.severe("Database::stmt was null");
+                    return result;
+                }
                 stmt.execute();
-                result = stmt.getUpdateCount() > 0 ? true : false;
-                System.out.println(stmt.toString());
+                result = stmt.getUpdateCount() > 0;
+                logger.fine(stmt.toString());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -352,7 +375,7 @@ public class Database {
         int numValuesNeeded = (int) sql.chars().filter(ch -> ch == '?').count();
         int numValues = maps.stream().reduce(0, (subtotal, element) -> subtotal + element.size(), Integer::sum);
         if (numValues != numValuesNeeded) {
-            System.out.println("Database::generateStatement:Value mismatch. Need " + numValuesNeeded
+            logger.fine("Database::generateStatement:Value mismatch. Need " + numValuesNeeded
                     + " values but received " + numValues);
             return null;
         }
@@ -408,7 +431,11 @@ public class Database {
     private String setColumns(Set<String> keys) {
         Optional<String> reducedArr = Arrays.stream(keys.toArray(new String[0]))
                 .reduce((str1, str2) -> str1 + ", " + str2);
-        return reducedArr.get();
+        if (reducedArr.isPresent()) {
+            return reducedArr.get();
+        } else {
+            return null;
+        }
     }
 
 }

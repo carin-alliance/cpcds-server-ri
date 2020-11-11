@@ -6,6 +6,8 @@ import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,12 +24,15 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import ca.uhn.fhir.jpa.starter.ServerLogger;
 import ca.uhn.fhir.jpa.starter.authorization.TokenEndpoint.TokenType;
 
 public class AuthUtils {
 
     private static final String CLIENT_ID_KEY = "client_id";
     private static final String REDIRECT_URI_KEY = "redirect_uri";
+
+    private static final Logger logger = ServerLogger.getLogger();
 
     public static void initializeDB() {
         // Add default Clients and Users
@@ -79,8 +84,7 @@ public class AuthUtils {
                 .withClaim("username", username).sign(algorithm);
         } catch (JWTCreationException e) {
             // Invalid Signing configuration / Couldn't convert Claims.
-            System.out.println("AuthorizationEndpoint::generateAuthorizationCode:Unable to generate code for " + clientId);
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "AuthorizationEndpoint::generateAuthorizationCode:Unable to generate code for " + clientId, e);
             return null;
         }
     }
@@ -119,7 +123,7 @@ public class AuthUtils {
      */
     public static String clientIsAuthorized(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        System.out.println("TokenEndpoint::AuthHeader:" + authHeader);
+        logger.log(Level.FINE, "TokenEndpoint::AuthHeader:" + authHeader);
         if (authHeader != null) {
             String regex = "Basic (.*)";
             Pattern pattern = Pattern.compile(regex);
@@ -132,15 +136,15 @@ public class AuthUtils {
                 if (clientAuthMatcher.find() && clientAuthMatcher.groupCount() == 2) {
                     String clientId = clientAuthMatcher.group(1);
                     String clientSecret = clientAuthMatcher.group(2);
-                    System.out.println("TokenEndpoint::client:" + clientId + "(" + clientSecret + ")");
+                    logger.log(Level.FINE, "TokenEndpoint::client:" + clientId + "(" + clientSecret + ")");
                     if (Client.getClient(clientId).validateSecret(clientSecret)) {
-                        System.out.println("TokenEndpoint::clientIsAuthorized:" + clientId);
+                        logger.info("TokenEndpoint::clientIsAuthorized:" + clientId);
                         return clientId;
                     }
                 }
             }
         }
-        System.out.println("TokenEndpoint::clientIsAuthorized:false");
+        logger.info("TokenEndpoint::clientIsAuthorized:false");
         return null;
     }
 
@@ -170,13 +174,11 @@ public class AuthUtils {
                     .withClaim("patient_id", patientId).withJWTId(jwtId).sign(algorithm);
         } catch (JWTCreationException e) {
             // Invalid Signing configuration / Couldn't convert Claims.
-            System.out.println("TokenEndpoint::generateToken:Unable to generate token");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "TokenEndpoint::generateToken:Unable to generate token", e);
             return null;
         } catch (JWTVerificationException e) {
             // Invalid code
-            System.out.println("TokenEndpoint::generateToken:Unable to verify code");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "TokenEndpoint::generateToken:Unable to verify code", e);
             return null;
         }
     }
@@ -198,21 +200,18 @@ public class AuthUtils {
             DecodedJWT jwt = verifier.verify(code);
             String jwtClientId = jwt.getClaim(CLIENT_ID_KEY).asString();
             if (!clientId.equals(jwtClientId)) {
-                System.out.println(
+                logger.warning(
                         "TokenEndpoint::Authorization code is invalid. Client ID does not match authorization header");
             } else {
                 String username = jwt.getClaim("username").asString();
                 patientId = User.getUser(username).getPatientId();
             }
         } catch (SignatureVerificationException e) {
-            System.out.println("TokenEndpoint::Authorization code is invalid. Signature invalid");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "TokenEndpoint::Authorization code is invalid. Signature invalid", e);
         } catch (TokenExpiredException e) {
-            System.out.println("TokenEndpoint::Authorization code is invalid. Token expired");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "TokenEndpoint::Authorization code is invalid. Token expired", e);
         } catch (JWTVerificationException e) {
-            System.out.println("TokenEndpoint::Authorization code is invalid. Please obtain a new code");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "TokenEndpoint::Authorization code is invalid. Please obtain a new code", e);
         }
         return patientId;
     }
@@ -233,19 +232,18 @@ public class AuthUtils {
             String jwtId = jwt.getId();
             String jwtClientId = jwt.getClaim(CLIENT_ID_KEY).asString();
             if (!clientId.equals(jwtClientId)) {
-                System.out.println(
+                logger.warning(
                         "TokenEndpoint::Refresh token is invalid. Client ID does not match authorization header");
                 return null;
             }
 
             patientId = jwt.getClaim("patient_id").asString();
             if (!jwtId.equals(OauthEndpointController.getDB().readRefreshToken(patientId))) {
-                System.out.println("TokenEndpoint::Refresh token is invalid. Please reauthorize");
+                logger.warning("TokenEndpoint::Refresh token is invalid. Please reauthorize");
                 return null;
             }
         } catch (JWTVerificationException e) {
-            System.out.println("TokenEndpoint::Refresh token is invalid. Please reauthorize");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "TokenEndpoint::Refresh token is invalid. Please reauthorize", e);
         }
         return patientId;
     }

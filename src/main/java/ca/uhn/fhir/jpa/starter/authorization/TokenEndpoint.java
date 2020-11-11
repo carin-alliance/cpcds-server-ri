@@ -2,6 +2,7 @@ package ca.uhn.fhir.jpa.starter.authorization;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,10 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
+import ca.uhn.fhir.jpa.starter.ServerLogger;
+
 public class TokenEndpoint {
 
     private static final String ERROR_KEY = "error";
     private static final String ERROR_DESCRIPTION_KEY = "error_description";
+
+    private static final Logger logger = ServerLogger.getLogger();
 
     /**
      * Enum for types of tokens
@@ -60,11 +65,11 @@ public class TokenEndpoint {
             return new ResponseEntity<>(gson.toJson(response), headers, HttpStatus.BAD_REQUEST);
         }
 
-        System.out.println("TokenEndpoint::Token:Patient:" + patientId);
+        logger.fine("TokenEndpoint::Token:Patient:" + patientId);
         if (patientId != null) {
             String accessToken = AuthUtils.generateToken(token, baseUrl, clientId, patientId, UUID.randomUUID().toString(),
                     TokenType.ACCESS, request);
-            System.out.println("TokenEndpoint::Token:Generated token " + accessToken);
+            logger.fine("TokenEndpoint::Token:Generated token " + accessToken);
             if (accessToken != null) {
                 String jwtId = UUID.randomUUID().toString();
                 response.put("access_token", accessToken);

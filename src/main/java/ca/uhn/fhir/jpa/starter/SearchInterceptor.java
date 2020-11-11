@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
@@ -12,6 +13,9 @@ import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.interceptor.InterceptorAdapter;
 
 public class SearchInterceptor extends InterceptorAdapter {
+
+    private static final Logger logger = ServerLogger.getLogger();
+
     @Override
     public void incomingRequestPreHandled(RestOperationTypeEnum theOperation,
             ActionRequestDetails theProcessedRequest) {
@@ -21,19 +25,26 @@ public class SearchInterceptor extends InterceptorAdapter {
                 List<String> allowedIncludes = allowedIncludes(resourceType);
 
                 if (allowedSearchParameters == null && theRequestDetails.getParameters().size() > 0) {
-                    throw new MethodNotAllowedException("No search parameters are allowed for this query: " + theRequestDetails.getCompleteUrl() + "\n");
+                    String message = "No search parameters are allowed for this query: " + theRequestDetails.getCompleteUrl();
+                    logger.severe("SearchInterceptor::MethodNotAllowedException:" + message);
+                    throw new MethodNotAllowedException(message);
                 } else if (theRequestDetails.getParameters().size() > 0) {
                     // Check each of the search params is allowed
-                    if (!allowedSearchParameters.containsAll(theRequestDetails.getParameters().keySet()))  {
-                        throw new MethodNotAllowedException("Unsupported search parameter in query " + theRequestDetails.getCompleteUrl());
+                    if (allowedSearchParameters != null && !allowedSearchParameters.containsAll(theRequestDetails.getParameters().keySet()))  {
+                        String message = "Unsupported search parameter in query " + theRequestDetails.getCompleteUrl();
+                        logger.severe(message);
+                        throw new MethodNotAllowedException(message);
                     }
 
                     // Check each of the include params is allowed
                     String[] includes = theRequestDetails.getParameters().get("_include");
                     if (includes != null) {
                         for (String i : includes) {
-                            if (!allowedIncludes.contains(i)) 
-                                throw new MethodNotAllowedException("Unsupported _include parameter " + i);
+                            if (!allowedIncludes.contains(i)) {
+                                String message = "Unsupported _include parameter " + i;
+                                logger.severe(message);
+                                throw new MethodNotAllowedException(message);
+                            }
                         }
                     }
                 }

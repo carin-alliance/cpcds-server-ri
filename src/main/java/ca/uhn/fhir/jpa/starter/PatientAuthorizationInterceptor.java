@@ -1,6 +1,8 @@
 package ca.uhn.fhir.jpa.starter;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +26,8 @@ import ca.uhn.fhir.rest.server.interceptor.auth.RuleBuilder;
 @SuppressWarnings("ConstantConditions")
 public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
+    private static final Logger logger = ServerLogger.getLogger();
+
     @Override
     public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
 
@@ -32,7 +36,6 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
         String authHeader = theRequestDetails.getHeader("Authorization");
 
         if (authHeader != null) {
-
             try {
                 // Get the JWT token from the Authorization header
                 String regex = "Bearer (.*)";
@@ -46,8 +49,7 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
                 // Verify and decode the JWT token
                 Algorithm algorithm = Algorithm.RSA256(OauthEndpointController.getPublicKey(), null);
-                System.out.println("Verifying JWT token: ISS (" + theRequestDetails.getFhirServerBase() + ") AUD ("
-                        + theRequestDetails.getFhirServerBase() + ")");
+                logger.fine("Verifying JWT token ISS and AUD is " + theRequestDetails.getFhirServerBase());
                 JWTVerifier verifier = JWT.require(algorithm).withIssuer(theRequestDetails.getFhirServerBase())
                         .withAudience(theRequestDetails.getFhirServerBase()).build();
                 DecodedJWT jwt = verifier.verify(token);
@@ -59,14 +61,17 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
                 else
                     userIdPatientId = new IdType("Patient", patientId);
             } catch (SignatureVerificationException e) {
-                e.printStackTrace();
-                throw new AuthenticationException("Authorization failed: invalid signature", e);
+                String message = "Authorization failed: invalid signature";
+                logger.log(Level.SEVERE, message, e);
+                throw new AuthenticationException(message, e);
             } catch (TokenExpiredException e) {
-                e.printStackTrace();
-                throw new AuthenticationException("Authorization failed: access token expired", e);
+                String message = "Authorization failed: access token expired";
+                logger.log(Level.SEVERE, message, e);
+                throw new AuthenticationException(message, e);
             } catch (JWTVerificationException e) {
-                e.printStackTrace();
-                throw new AuthenticationException("Authorization failed", e);
+                String message = "Authorization failed";
+                logger.log(Level.SEVERE, message, e);
+                throw new AuthenticationException(message, e);
             }
 
             // If the user is a specific patient, we create the following rule chain:

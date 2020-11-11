@@ -11,6 +11,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.uhn.fhir.jpa.starter.authorization.Database.Table;
+import ca.uhn.fhir.jpa.starter.ServerLogger;
 
 @RestController
 public class OauthEndpointController {
@@ -32,24 +33,28 @@ public class OauthEndpointController {
     /**
      * TODO:
      *  Port introspect endpoint
-     *  Move & rename Authorization db
      *  Logger
      *  Update metadata
      *  Update .well-known/jwks
      *  Update readme
+     *  Check docker works (and auth db)
+     *  Remove code from generateToken
      */
 
     private static Database DB;
     private static RSAPublicKey publicKey;
     private static RSAPrivateKey privateKey;
+    private static final Logger logger = ServerLogger.getLogger();
     private static String keyId = "NjVBRjY5MDlCMUIwNzU4RTA2QzZFMDQ4QzQ2MDAyQjVDNjk1RTM2Qg";
 
     @PostConstruct
     protected static void postConstruct() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        DB = new Database();
-        AuthUtils.initializeDB();
-        initializeRSAKeys();
-        System.out.println("Authorization Endpoint Controller created.");
+        if (DB == null) {
+            DB = new Database();
+            AuthUtils.initializeDB();
+            initializeRSAKeys();
+            logger.info("Authorization Endpoint Controller created.");
+        }
     }
 
     private static void initializeRSAKeys() throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -96,17 +101,7 @@ public class OauthEndpointController {
     public static String getKeyId() {
         return keyId;
     }
-
-    @GetMapping(value = "/debug/Clients")
-    public String getClients() {
-        return DB.generateAndRunQuery(Table.CLIENTS);
-    }
-
-    @GetMapping(value = "/debug/Users")
-    public String getUsers() {
-        return DB.generateAndRunQuery(Table.USERS);
-    }
-
+    
     @GetMapping(value = "/register/user")
     public String getRegisterUserPage() {
         try {
@@ -145,7 +140,7 @@ public class OauthEndpointController {
         redirectURI = StringEscapeUtils.escapeJava(redirectURI);
         responseType = StringEscapeUtils.escapeJava(responseType);
 
-        System.out.println(
+        logger.info(
             "AuthorizationEndpoint::Authorization:Received /authorization?response_type=" + responseType + "&client_id="
                 + clientId + "&redirect_uri=" + redirectURI + "&scope=" + scope + "&state=" + state + "&aud=" + aud);
 
@@ -166,7 +161,7 @@ public class OauthEndpointController {
         redirectURI = StringEscapeUtils.escapeJava(redirectURI);
         responseType = StringEscapeUtils.escapeJava(responseType);
 
-        System.out.println(
+        logger.info(
             "AuthorizationEndpoint::Authorization:Received /authorization?response_type=" + responseType + "&client_id="
                 + clientId + "&redirect_uri=" + redirectURI + "&scope=" + scope + "&state=" + state + "&aud=" + aud);
 
@@ -181,8 +176,9 @@ public class OauthEndpointController {
         grantType = StringEscapeUtils.escapeJava(grantType);
         redirectURI = StringEscapeUtils.escapeJava(redirectURI);
 
-        System.out.println("TokenEndpoint::Token:Received request /token?grant_type=" + grantType + "&code=" + code
+        logger.info("TokenEndpoint::Token:Received request /token?grant_type=" + grantType + "&code=" + code
                 + "&redirect_uri=" + redirectURI);
+
         return TokenEndpoint.handleTokenRequest(request, grantType, code, redirectURI);
     }
 
@@ -193,8 +189,9 @@ public class OauthEndpointController {
         grantType = StringEscapeUtils.escapeJava(grantType);
         refreshToken = StringEscapeUtils.escapeJava(refreshToken);
 
-        System.out.println("TokenEndpoint::RefreshToken:Received request /token?grant_type=" + grantType + "&refresh_token="
+        logger.info("TokenEndpoint::RefreshToken:Received request /token?grant_type=" + grantType + "&refresh_token="
                 + refreshToken);
+
         return TokenEndpoint.handleTokenRequest(request, grantType, refreshToken, null);
     }
 }

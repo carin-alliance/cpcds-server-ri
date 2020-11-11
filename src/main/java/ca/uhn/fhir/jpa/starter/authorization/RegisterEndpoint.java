@@ -1,11 +1,7 @@
 package ca.uhn.fhir.jpa.starter.authorization;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,14 +11,18 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import ca.uhn.fhir.jpa.starter.ServerLogger;
+
 public class RegisterEndpoint {
+
+    private static final Logger logger = ServerLogger.getLogger();
 
     public static ResponseEntity<String> handleRegisterClient(String redirectUri) {
         // Escape all the query parameters
         redirectUri = StringEscapeUtils.escapeJava(redirectUri);
 
-        System.out.println("RegisterEndpoint::Register: /register/client");
-        System.out.println("RegisterClient:RedirectURI:" + redirectUri);
+        logger.info("RegisterEndpoint::Register: /register/client");
+        logger.fine("RegisterClient:RedirectURI:" + redirectUri);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 

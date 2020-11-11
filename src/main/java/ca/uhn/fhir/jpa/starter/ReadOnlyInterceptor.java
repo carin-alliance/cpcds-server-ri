@@ -1,10 +1,15 @@
 package ca.uhn.fhir.jpa.starter;
 
+import java.util.logging.Logger;
+
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.interceptor.InterceptorAdapter;
 
 public class ReadOnlyInterceptor extends InterceptorAdapter {
+
+    private static final Logger logger = ServerLogger.getLogger();
+
     @Override
     public void incomingRequestPreHandled(RestOperationTypeEnum theOperation,
             ActionRequestDetails theProcessedRequest) {
@@ -15,6 +20,7 @@ public class ReadOnlyInterceptor extends InterceptorAdapter {
                 && theOperation != RestOperationTypeEnum.SEARCH_TYPE
                 && theOperation != RestOperationTypeEnum.TRANSACTION && theOperation != RestOperationTypeEnum.VALIDATE
                 && theOperation != RestOperationTypeEnum.VREAD) {
+            logger.severe("ReadOnlyInterceptor::MethodNotAllowedException:" + theOperation.toString()); 
             throw new MethodNotAllowedException(theOperation.toString());
         }
     }
