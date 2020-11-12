@@ -168,7 +168,7 @@ public class OauthEndpointController {
        return AuthorizationEndpoint.handleAuthorizationPost(request, entity, aud, state, clientId, redirectURI, responseType);
     }
 
-    @PostMapping(value = "/token", params = { "grant_type", "code", "redirect_uri" })
+    @PostMapping(value = "/token", params = { "grant_type", "code", "redirect_uri" }, produces = { "application/json" }) 
     public ResponseEntity<String> postAccessToken(HttpServletRequest request, @RequestParam(name = "grant_type") String grantType,
             @RequestParam(name = "code") String code, @RequestParam(name = "redirect_uri") String redirectURI) {
         // Escape all the query parameters
@@ -182,7 +182,7 @@ public class OauthEndpointController {
         return TokenEndpoint.handleTokenRequest(request, grantType, code, redirectURI);
     }
 
-    @PostMapping(value = "/token", params = { "grant_type", "refresh_token" })
+    @PostMapping(value = "/token", params = { "grant_type", "refresh_token" }, produces = { "application/json" })
     public ResponseEntity<String> postRefreshToken(HttpServletRequest request, @RequestParam(name = "grant_type") String grantType,
             @RequestParam(name = "refresh_token") String refreshToken) {
         // Escape all the query parameters
@@ -193,5 +193,15 @@ public class OauthEndpointController {
                 + refreshToken);
 
         return TokenEndpoint.handleTokenRequest(request, grantType, refreshToken, null);
+    }
+
+    @PostMapping(value = "/introspect", params = { "token" }, produces = { "application/json" })
+    public ResponseEntity<String> postIntrospect(HttpServletRequest request, @RequestParam(name = "token") String token) {
+        // Escape all the query parameters
+        token = StringEscapeUtils.escapeJava(token);
+
+        logger.info("IntrospectEndpoint::Introspect:" + token);
+
+        return IntrospectionEndpoint.handleIntrospection(request, token);
     }
 }
