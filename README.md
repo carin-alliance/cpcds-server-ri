@@ -2,7 +2,10 @@
 
 This project is a reference FHIR server for the [Consumer-Directed Payer Data Exchange Implementation Guide](https://build.fhir.org/ig/HL7/carin-bb/toc.html) (also know as Carin Blue Button Implementation Guide). It is based on the [HAPI FHIR JPA Server](https://github.com/hapifhir/hapi-fhir-jpaserver-starter) (HAPI 4.1.0).
 
-The server is hosted live at http://ec2-18-217-72-168.us-east-2.compute.amazonaws.com:8080/cpcds-server/fhir
+The server is hosted live at http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/
+The fhir endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/fhir
+The oauth endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/oauth
+The debug endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/debug
 
 ## Quickstart
 
