@@ -2,10 +2,10 @@
 
 This project is a reference FHIR server for the [Consumer-Directed Payer Data Exchange Implementation Guide](https://build.fhir.org/ig/HL7/carin-bb/toc.html) (also know as Carin Blue Button Implementation Guide). It is based on the [HAPI FHIR JPA Server](https://github.com/hapifhir/hapi-fhir-jpaserver-starter) (HAPI 4.1.0).
 
-The server is hosted live at http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/
-The fhir endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/fhir
-The oauth endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/oauth
-The debug endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/debug
+The server is hosted live at http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/<br />
+- The fhir endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/fhir
+- The oauth endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/oauth
+- The debug endpoint is http://ec2-18-222-137-58.us-east-2.compute.amazonaws.com:8080/cpcds-server/debug
 
 ## Quickstart
 
@@ -48,7 +48,7 @@ Note: This has only been tested using Java 8. Later version may not be supported
 
 ## GET Requests
 
-This server is protected and requires users to authenticate before obtaining access to protected resources. The authorization server is hosted at the `/oauth` endpoint.
+This server is protected and requires users to authenticate before obtaining access to protected resources. The authorization server is hosted at the `/oauth` endpoint. The Capability Statement for this server is at the `/fhir/metadata` endpoint. The smart configuration file is at `/.well-known/smart-configuration`. Even with an access token, only the resources marked as must support in the IG will be available.
 
 Once an access token is received it must be sent in the `Authorization` header using the correct `token_type` returned by the auth server. Learn more about the server authorization from the [wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki)
 
