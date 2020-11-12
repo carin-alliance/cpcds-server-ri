@@ -62,6 +62,17 @@ public class AuthUtils {
     }
 
     /**
+     * Get the fhir base url from the HttpServletRequest
+     * Ex: http://localhost:8080/cpcds-server/fhir
+     * 
+     * @param request - the HttpServletRequest from the controller
+     * @return the fhir base url for the service
+     */
+    public static String getFhirBaseUrl(HttpServletRequest request) {
+        return getServiceBaseUrl(request) + "/fhir";
+    }
+
+    /**
      * Generate the Authorization code for the client with a 2 minute expiration
      * time
      * 
@@ -165,8 +176,8 @@ public class AuthUtils {
             if (patientId.equals("admin")) exp = LocalDateTime.now().plusDays(2000).atZone(ZoneId.systemDefault()).toInstant();
             else if (tokenType == TokenType.ACCESS) exp = LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant();
             else exp = LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant();
-            return JWT.create().withKeyId(OauthEndpointController.getKeyId()).withIssuer(baseUrl + "/fhir").withExpiresAt(Date.from(exp))
-                    .withIssuedAt(new Date()).withAudience(baseUrl + "/fhir").withClaim(CLIENT_ID_KEY, clientId)
+            return JWT.create().withKeyId(OauthEndpointController.getKeyId()).withIssuer(baseUrl).withExpiresAt(Date.from(exp))
+                    .withIssuedAt(new Date()).withAudience(baseUrl).withClaim(CLIENT_ID_KEY, clientId)
                     .withClaim("patient_id", patientId).withJWTId(jwtId).sign(algorithm);
         } catch (JWTCreationException e) {
             // Invalid Signing configuration / Couldn't convert Claims.
