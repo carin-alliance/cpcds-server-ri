@@ -1,4 +1,4 @@
 #!/bin/sh
 
-docker build -t blangley/cpcds-server-ri:write .
+docker build -t cpcds-write .
 

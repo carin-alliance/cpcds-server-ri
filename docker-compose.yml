@@ -1,7 +1,7 @@
 version: "3"
 services:
   cpcds-server-ri:
-    image: blangley/cpcds-server-ri:write
+    image: cpcds-write
     container_name: cpcds-server-ri
     restart: on-failure
     ports:
