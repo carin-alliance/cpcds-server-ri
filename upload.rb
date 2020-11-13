@@ -36,12 +36,14 @@ def upload_resource(resource, server)
     id = resource[:id]
     puts "Uploading #{resource_type}/#{id}"
     begin
-        HTTParty.put(
+        response = HTTParty.put(
         "#{server}/#{resource_type}/#{id}",
         body: resource.to_json,
         headers: { 'Content-Type': 'application/json' }
         )
+        puts " ... #{response.code}"
     rescue StandardError
+        puts " ... caught an error"
     end
 end
 
@@ -74,9 +76,9 @@ else
     server = ARGV[0]
 end
 
-puts "POSTING patient bundles to #{server}"
-upload_test_patient_data(server)
-puts "Uploaded #{$count} patient bundles to #{server}"
+# puts "POSTING patient bundles to #{server}"
+# upload_test_patient_data(server)
+# puts "Uploaded #{$count} patient bundles to #{server}"
 puts "PUTTING IG example resources to #{server}"
 upload_ig_examples(server)
 puts "DONE"
