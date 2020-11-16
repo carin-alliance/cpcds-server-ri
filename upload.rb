@@ -41,9 +41,11 @@ def upload_resource(resource, server)
         body: resource.to_json,
         headers: { 'Content-Type': 'application/json' }
         )
-        puts " ... #{response.code}"
+        if response.code != 201 && response.code != 200
+            puts " ... ERROR: #{response.code}"
+        end
     rescue StandardError
-        puts " ... caught an error"
+        puts " ... ERROR: Unable to upload resource. Make sure the server is accessible."
     end
 end
 
