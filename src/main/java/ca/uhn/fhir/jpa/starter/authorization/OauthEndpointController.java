@@ -104,11 +104,7 @@ public class OauthEndpointController {
     
     @GetMapping(value = "/register/user")
     public String getRegisterUserPage() {
-        try {
-            return new String(Files.readAllBytes(Paths.get("src/main/resources/templates/registerUser.html")));
-        } catch (IOException e) {
-            return "Error: Not Found";
-        }
+        return "Registering new clients has been disabled";
     } 
 
     @GetMapping(value = "/register/client")
@@ -120,7 +116,7 @@ public class OauthEndpointController {
         }
     } 
 
-    @PostMapping(value = "/register/client")
+    @PostMapping(value = "/register/client", produces = { "application/json" })
     public ResponseEntity<String> postRegisterClient(HttpServletRequest request, HttpEntity<String> entity,
         @RequestParam(name = "redirect_uri") String redirectUri) {
             return RegisterEndpoint.handleRegisterClient(redirectUri);

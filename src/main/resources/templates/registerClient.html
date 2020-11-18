@@ -80,7 +80,7 @@
         };
         request.open(
           "POST",
-          "/register/client?redirect_uri=" + redirectUri,
+          window.location.href + "?redirect_uri=" + redirectUri,
           true
         );
         request.send();
