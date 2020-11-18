@@ -327,12 +327,12 @@ public class Database {
      * @param data             - map of column to value for the SQL SET clause
      * @return boolean - whether or not the update was successful
      */
-    private boolean update(Map<String, Object> constraintParams, Map<String, Object> data) {
+    private boolean update(Table table, Map<String, Object> constraintParams, Map<String, Object> data) {
         logger.info("Database::update(Users WHERE " + constraintParams.toString() + ", SET" + data.toString() + ")");
         boolean result = false;
         if (constraintParams != null && data != null) {
             try (Connection connection = getConnection()) {
-                String sql = "UPDATE Users SET " + generateClause(data, SET_CONCAT)
+                String sql = "UPDATE " + table.value() + " SET " + generateClause(data, SET_CONCAT)
                         + ", timestamp = CURRENT_TIMESTAMP WHERE " + generateClause(constraintParams, WHERE_CONCAT)
                         + ";";
                 Collection<Map<String, Object>> maps = new ArrayList<>();
@@ -354,8 +354,12 @@ public class Database {
     }
 
     public boolean setRefreshTokenId(String patientId, String jwtId) {
-        return this.update(Collections.singletonMap("patient_id", patientId),
+        return this.update(Table.USERS, Collections.singletonMap("patient_id", patientId),
                 Collections.singletonMap("refresh_token", jwtId));
+    }
+
+    public boolean updateClient(Client client) {
+        return this.update(Table.CLIENTS, Collections.singletonMap("id", client.getId()), client.toMap());
     }
 
     /**
