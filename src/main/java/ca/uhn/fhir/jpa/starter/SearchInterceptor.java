@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
-import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.interceptor.InterceptorAdapter;
 
 public class SearchInterceptor extends InterceptorAdapter {
@@ -24,16 +24,12 @@ public class SearchInterceptor extends InterceptorAdapter {
                 List<String> allowedSearchParameters = allowedSearchParameters(resourceType);
                 List<String> allowedIncludes = allowedIncludes(resourceType);
 
-                if (allowedSearchParameters == null && theRequestDetails.getParameters().size() > 0) {
-                    String message = "No search parameters are allowed for this query: " + theRequestDetails.getCompleteUrl();
-                    logger.severe("SearchInterceptor::MethodNotAllowedException:" + message);
-                    throw new MethodNotAllowedException(message);
-                } else if (theRequestDetails.getParameters().size() > 0) {
+                if (theRequestDetails.getParameters().size() > 0) {
                     // Check each of the search params is allowed
-                    if (allowedSearchParameters != null && !allowedSearchParameters.containsAll(theRequestDetails.getParameters().keySet()))  {
+                    if (!allowedSearchParameters.containsAll(theRequestDetails.getParameters().keySet()))  {
                         String message = "Unsupported search parameter in query " + theRequestDetails.getCompleteUrl();
                         logger.severe(message);
-                        throw new MethodNotAllowedException(message);
+                        throw new InvalidRequestException(message);
                     }
 
                     // Check each of the include params is allowed
@@ -43,7 +39,7 @@ public class SearchInterceptor extends InterceptorAdapter {
                             if (!allowedIncludes.contains(i)) {
                                 String message = "Unsupported _include parameter " + i;
                                 logger.severe(message);
-                                throw new MethodNotAllowedException(message);
+                                throw new InvalidRequestException(message);
                             }
                         }
                     }
@@ -53,7 +49,7 @@ public class SearchInterceptor extends InterceptorAdapter {
     /**
      * Get list of the valid search parameters for the resource type
      * @param resourceType - the type of the resource
-     * @return a list of valid parameters or null
+     * @return a list of valid parameters
      */
     private static List<String> allowedSearchParameters(String resourceType) {
         Map<String, List<String>> searchParams = new HashMap<>();
@@ -67,7 +63,14 @@ public class SearchInterceptor extends InterceptorAdapter {
         eobParams.add("_include");
         searchParams.put("ExplanationOfBenefit", eobParams);
         searchParams.put("Coverage", Collections.singletonList("_include"));
-        return searchParams.get(resourceType);
+
+        List<String> allowedParams = searchParams.get(resourceType);
+        if (allowedParams == null) {
+            return Collections.singletonList("_format");
+        } else {
+            allowedParams.add("_format");
+            return allowedParams;
+        }
     }
 
     /**
