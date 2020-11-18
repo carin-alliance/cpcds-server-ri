@@ -56,6 +56,6 @@ public class WellKnownEndpointController {
         wellKnownJson.put(WELL_KNOWN_RESPONSE_TYPES_KEY, WELL_KNOWN_RESPONSE_TYPE_VALUES);
         wellKnownJson.put(WELL_KNOWN_CAPABILITIES_KEY, WELL_KNOWN_CAPABILITIES_VALUES);
 
-        return wellKnownJson.toString();
+        return wellKnownJson.toString(2);
     }
 }
