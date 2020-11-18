@@ -57,8 +57,7 @@ public class AuthUtils {
 	 * @return the base url for the service
 	 */
 	public static String getServiceBaseUrl(HttpServletRequest request) {
-		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-				+ request.getContextPath();
+		return request.getScheme() + "://" + request.getServerName() + request.getContextPath();
     }
 
     /**
