@@ -52,6 +52,7 @@ public class AuthUtils {
     /**
 	 * Get the base url of the service from the HttpServletRequest
      * Ex: http://localhost:8080/cpcds-server
+     * Ex: http://cpcds-ri.org/cpcds-server
 	 * 
 	 * @param request - the HttpServletRequest from the controller
 	 * @return the base url for the service
