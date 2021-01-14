@@ -18,6 +18,40 @@ def upload_test_patient_data(server)
     end
 end
 
+def upload_carrinBBExtracts_data(server)
+    file_path = File.join(__dir__, 'carrinBBExtracts', '**/*.json')
+    filenames =
+        Dir.glob(file_path)
+        .partition { |filename| filename.include? 'List' }
+        .flatten
+    puts "Uploading #{filenames.length} resources"
+    filenames.each_with_index do |filename, index|
+        resource = JSON.parse(File.read(filename), symbolize_names: true)
+        response = upload_resource(resource, server)
+        # binding.pry unless response.success?
+        if index % 100 == 0
+        puts index
+        end
+    end
+end
+
+def upload_out_data(server)
+    file_path = File.join(__dir__, 'orgs', '*.json')
+    filenames =
+        Dir.glob(file_path)
+        .partition { |filename| filename.include? 'List' }
+        .flatten
+    puts "Uploading #{filenames.length} resources"
+    filenames.each_with_index do |filename, index|
+        resource = JSON.parse(File.read(filename), symbolize_names: true)
+        response = upload_resource(resource, server)
+        # binding.pry unless response.success?
+        if index % 100 == 0
+        puts index
+        end
+    end
+end
+
 def upload_bundle(bundle, server)
     puts "Uploading bundle #{$count + 1}..."
     begin
@@ -81,6 +115,15 @@ end
 # puts "POSTING patient bundles to #{server}"
 # upload_test_patient_data(server)
 # puts "Uploaded #{$count} patient bundles to #{server}"
-puts "PUTTING IG example resources to #{server}"
-upload_ig_examples(server)
-puts "DONE"
+
+# puts "PUTTING carrinBBExtracts resources to #{server}"
+# upload_carrinBBExtracts_data(server)
+# puts "Uploaded resources to #{server}"
+
+puts "PUTTING out resources to #{server}"
+upload_out_data(server)
+puts "Uploaded resources to #{server}"
+
+# puts "PUTTING IG example resources to #{server}"
+# upload_ig_examples(server)
+# puts "DONE"
