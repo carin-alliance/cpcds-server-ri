@@ -70,7 +70,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>wellknown</servlet-name>
-        <url-pattern>/.well-known/*</url-pattern>
+        <url-pattern>/fhir/.well-known/*</url-pattern>
     </servlet-mapping>
 
 	<servlet>
