@@ -22,7 +22,7 @@ public class WellKnownEndpointController {
     private static final String WELL_KNOWN_CAPABILITIES_KEY = "capabilities";
 
     // http://hl7.org/fhir/smart-app-launch/conformance/index.html#core-capabilities
-    private static final String[] capabilityValues = { "launch-ehr", "launch-standalone" };
+    private static final String[] capabilityValues = { "launch-standalone", "client-confidential-symmetric", "context-standalone-patient", "permission-patient", "permission-user" };
     private static final JSONArray WELL_KNOWN_CAPABILITIES_VALUES = new JSONArray(capabilityValues);
 
     // http://build.fhir.org/ig/HL7/carin-bb/Authorization_Authentication_and_Registration.html#authorization-and-authentication

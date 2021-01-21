@@ -83,7 +83,13 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
                         .andThen().allow().read().resourcesOfType("ExplanationOfBenefit").inCompartment("Patient", userIdPatientId)
                         .andThen().allow().read().resourcesOfType("Patient").inCompartment("Patient", userIdPatientId)
                         .andThen().allow().read().resourcesOfType("Practitioner").withAnyId()
+                        .andThen().allow().read().resourcesOfType("PractitionerRole").withAnyId()
                         .andThen().allow().read().resourcesOfType("Organization").withAnyId()
+                        .andThen().allow().read().resourcesOfType("OrganizationAffiliation").withAnyId()
+                        .andThen().allow().read().resourcesOfType("MedicationKnowledge").withAnyId()
+                        .andThen().allow().read().resourcesOfType("List").withAnyId()
+                        .andThen().allow().read().resourcesOfType("Location").withAnyId()
+                        .andThen().allow().read().resourcesOfType("HealthcareService").withAnyId()
                         .andThen().allow().metadata().andThen().denyAll()
                         .build();
             }

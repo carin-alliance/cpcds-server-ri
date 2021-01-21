@@ -40,13 +40,21 @@ public class AuthUtils {
 		Client localhost = new Client("b0c46635-c0b4-448c-a8b9-9bd282d2e05a", "bUYbEj5wpazS8Xv1jyruFKpuXa24OGn9MHuZ3ygKexaI5mhKUIzVEBvbv2uggVf1cW6kYD3cgTbCIGK3kjiMcmJq3OG9bn85Fh2x7JKYgy7Jwagdzs0qufgkhPGDvEoVpImpA4clIhfwn58qoTrfHx86ooWLWJeQh4s0StEMqoxLqboywr8u11qmMHd1xwBLehGXUbqpEBlkelBHDWaiCjkhwZeRe4nVu4o8wSAbPQIECQcTjqYBUrBjHlMx5vXU", "http://localhost:4000/login");
 		User patient1 = new User("Patient1", BCrypt.hashpw("password", BCrypt.gensalt()), "Patient1");
 		User patientex1 = new User("PatientEx1", BCrypt.hashpw("password", BCrypt.gensalt()), "PatientEx1");
-		User admin = new User("admin", BCrypt.hashpw("password", BCrypt.gensalt()), "admin");
+        User admin = new User("admin", BCrypt.hashpw("password", BCrypt.gensalt()), "admin");
+		User patient2 = new User("Patient2", BCrypt.hashpw("password", BCrypt.gensalt()), "026f2676-d635-47b9-af1e-95de31cda9b1");
+		User patient3 = new User("Patient3", BCrypt.hashpw("password", BCrypt.gensalt()), "14c20e78-610b-405b-aad1-9c8f6109152c");
+		User patient4 = new User("Patient4", BCrypt.hashpw("password", BCrypt.gensalt()), "6da541e2-62f4-42a7-8009-23e2d97116df");
+		User patient5 = new User("Patient5", BCrypt.hashpw("password", BCrypt.gensalt()), "ec19f75c-c674-478c-8916-8acb2f1b0a68");
 
 		OauthEndpointController.getDB().write(heroku);
 		OauthEndpointController.getDB().write(localhost);
 		OauthEndpointController.getDB().write(patient1);
 		OauthEndpointController.getDB().write(patientex1);
         OauthEndpointController.getDB().write(admin);
+        OauthEndpointController.getDB().write(patient2);
+		OauthEndpointController.getDB().write(patient3);
+		OauthEndpointController.getDB().write(patient4);
+		OauthEndpointController.getDB().write(patient5);
     }
 
     /**
@@ -58,7 +66,10 @@ public class AuthUtils {
 	 * @return the base url for the service
 	 */
 	public static String getServiceBaseUrl(HttpServletRequest request) {
-		return request.getScheme() + "://" + request.getServerName() + request.getContextPath();
+        if (request.getServerName().contains("localhost")) 
+            return request.getScheme() + "://localhost:" + request.getServerPort() + request.getContextPath();
+        else 
+            return request.getScheme() + "://" + request.getServerName() + request.getContextPath();
     }
 
     /**
