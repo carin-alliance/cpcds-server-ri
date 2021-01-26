@@ -9,9 +9,22 @@ Clone the repo and build the server:
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
+git checkout cpcds-write
+./build-docker-image.sh
+docker-compose up
+```
+
+Or alternatively to run without Docker:
+
+```bash
+git clone https://github.com/carin-alliance/cpcds-server-ri.git
+cd cpcds-server-ri
+git checkout cpcds-write
 mvn dependency:resolve
 mvn jetty:run
 ```
+
+Running with Maven may cause h2 errors. If the server fails to start you will need to use the Docker apprroach.
 
 The server will then be browesable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
 
