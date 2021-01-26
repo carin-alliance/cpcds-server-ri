@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.uhn.fhir.jpa.starter.Metadata;
+import ca.uhn.fhir.jpa.starter.authorization.AuthUtils;
 
 @RestController
 public class WellKnownEndpointController {
@@ -20,6 +21,7 @@ public class WellKnownEndpointController {
     private static final String WELL_KNOWN_SUPPORTED_AUTH_METHODS_KEY = "token_endpoint_auth_methods_supported";
     private static final String WELL_KNOWN_RESPONSE_TYPES_KEY = "response_types_supported";
     private static final String WELL_KNOWN_CAPABILITIES_KEY = "capabilities";
+    private static final String WELL_KNOWN_SCOPES_SUPPORTED_KEY = "scopes_supported";
 
     // http://hl7.org/fhir/smart-app-launch/conformance/index.html#core-capabilities
     private static final String[] capabilityValues = { "launch-standalone", "client-confidential-symmetric", "context-standalone-patient", "permission-patient", "permission-user" };
@@ -31,6 +33,8 @@ public class WellKnownEndpointController {
 
     private static final String[] responseTypeValues = { "code", "refresh_token" };
     private static final JSONArray WELL_KNOWN_RESPONSE_TYPE_VALUES = new JSONArray(responseTypeValues);
+
+    private static final JSONArray WELL_KNOWN_SCOPES_SUPPORTED_VALUES = new JSONArray(AuthUtils.supportedScopes());
 
     @PostConstruct
     protected void postConstruct() {
@@ -55,6 +59,7 @@ public class WellKnownEndpointController {
         wellKnownJson.put(WELL_KNOWN_SUPPORTED_AUTH_METHODS_KEY, WELL_KNOWN_SUPPORTED_AUTH_METHODS_VALUES);
         wellKnownJson.put(WELL_KNOWN_RESPONSE_TYPES_KEY, WELL_KNOWN_RESPONSE_TYPE_VALUES);
         wellKnownJson.put(WELL_KNOWN_CAPABILITIES_KEY, WELL_KNOWN_CAPABILITIES_VALUES);
+        wellKnownJson.put(WELL_KNOWN_SCOPES_SUPPORTED_KEY, WELL_KNOWN_SCOPES_SUPPORTED_VALUES);
 
         return wellKnownJson.toString(2);
     }

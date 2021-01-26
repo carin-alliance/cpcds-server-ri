@@ -3,8 +3,10 @@ package ca.uhn.fhir.jpa.starter.authorization;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -264,5 +266,42 @@ public class AuthUtils {
             logger.log(Level.SEVERE, "TokenEndpoint::Refresh token is invalid. Please reauthorize", e);
         }
         return patientId;
+    }
+
+    /**
+     * Get an array of all scopes supported
+     * 
+     * @return String[] of scopes supported
+     */
+    public static List<String> supportedScopes() {
+        String[] scopes = { "patient/*.read", "user/*.read", "offline_access", "launch/patient", "openid", "fhirUser" };
+        return Arrays.asList(scopes);
+    }
+
+    /**
+     * Helper method to determine if the scope is supported
+     * 
+     * @param scope - the scope in question
+     * @return true if the scope is in supportedScopes, false otherwise
+     */
+    public static boolean isSupportedScope(String scope) {
+        return supportedScopes().contains(scope);
+    }
+
+    /**
+     * Format the scopes list to string of form "a, b, ..., z"
+     * 
+     * @param scopes - the list of scopes to format
+     * @return string in the form "a, b, ..., z"
+     */
+    public static String scopesToString(List<String> scopes) {
+        StringBuilder str = new StringBuilder();
+
+        for (int i = 0; i < scopes.size(); i++) {
+           str.append(scopes.get(i));
+           if (i != scopes.size() - 1) str.append(", ");
+        }
+
+        return str.toString();
     }
 }

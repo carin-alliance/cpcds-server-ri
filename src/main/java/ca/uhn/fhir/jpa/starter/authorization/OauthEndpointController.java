@@ -161,7 +161,7 @@ public class OauthEndpointController {
             "AuthorizationEndpoint::Authorization:Received /authorization?response_type=" + responseType + "&client_id="
                 + clientId + "&redirect_uri=" + redirectURI + "&scope=" + scope + "&state=" + state + "&aud=" + aud);
 
-       return AuthorizationEndpoint.handleAuthorizationPost(request, entity, aud, state, clientId, redirectURI, responseType);
+       return AuthorizationEndpoint.handleAuthorizationPost(request, entity, aud, scope, state, clientId, redirectURI, responseType);
     }
 
     @PostMapping(value = "/token", params = { "grant_type", "code", "redirect_uri" }, produces = { "application/json" }) 

@@ -35,7 +35,7 @@ public class AuthorizationEndpoint {
     }
 
     public static ResponseEntity<String> handleAuthorizationPost(HttpServletRequest request, HttpEntity<String> entity, 
-        String aud, String state, String clientId, String redirectURI, String responseType) {
+        String aud, String scope, String state, String clientId, String redirectURI, String responseType) {
         final String baseUrl = AuthUtils.getFhirBaseUrl(request);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         HashMap<String, String> attributes = new HashMap<>();
@@ -53,6 +53,10 @@ public class AuthorizationEndpoint {
             status = HttpStatus.BAD_REQUEST;
             attributes.put(ERROR_KEY, "unauthorized_client");
             attributes.put(ERROR_DESCRIPTION_KEY, "client is not registered");
+        } else if (!allValidScopes(scope)) {
+            status = HttpStatus.BAD_REQUEST;
+            attributes.put(ERROR_KEY, "invalid_scope");
+            attributes.put(ERROR_DESCRIPTION_KEY, "at least one requested scope was invalid");
         } else {
             User userRequest = gson.fromJson(entity.getBody(), User.class);
             logger.info("AuthorizationEndpoint::handleAuthorizationPost:Received login request from " + userRequest.getUsername());
@@ -84,6 +88,16 @@ public class AuthorizationEndpoint {
         redirectURI = AuthUtils.getRedirect(redirectURI, attributes);
         logger.info("Redirecting to " + redirectURI);
         return new ResponseEntity<>(gson.toJson(Collections.singletonMap("redirect", redirectURI)), status);
+    }
+
+    private static boolean allValidScopes(String scopes) {
+        String[] requestedScopes = scopes.split(" ");
+        for(String requestedScope : requestedScopes) {
+            if (!AuthUtils.isSupportedScope(requestedScope)) {
+                return false;
+            }
+        }
+        return true;
     }
     
 }

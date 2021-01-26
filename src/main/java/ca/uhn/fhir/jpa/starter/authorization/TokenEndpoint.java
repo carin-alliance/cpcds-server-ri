@@ -76,7 +76,7 @@ public class TokenEndpoint {
                 response.put("token_type", "bearer");
                 response.put("expires_in", "3600");
                 response.put("patient", patientId);
-                response.put("scope", "patient/*.read");
+                response.put("scope", AuthUtils.scopesToString(AuthUtils.supportedScopes()));
                 response.put("refresh_token",
                         AuthUtils.generateToken(token, baseUrl, clientId, patientId, jwtId, TokenType.REFRESH, request));
                 OauthEndpointController.getDB().setRefreshTokenId(patientId, jwtId);
