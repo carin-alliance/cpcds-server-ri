@@ -46,10 +46,7 @@ public class HapiProperties {
     static final String LOGGER_NAME = "logger.name";
     static final String MAX_FETCH_SIZE = "max_fetch_size";
     static final String MAX_PAGE_SIZE = "max_page_size";
-    static final String SERVER_BASE = "server_base";
-    static final String SERVER_ADDRESS = "server_address";
-    static final String AUTH_SERVER_BASE = "auth_server_base";
-    static final String AUTH_SERVER_ADDRESS = "auth_server_address";
+    static final String SERVER_ADDRESS = "SERVER_ADDRESS";
     static final String SERVER_ID = "server.id";
     static final String SERVER_NAME = "server.name";
     static final String SUBSCRIPTION_EMAIL_ENABLED = "subscription.email.enabled";
@@ -236,7 +233,7 @@ public class HapiProperties {
     }
 
     public static String getServerAddress() {
-        return HapiProperties.getProperty(SERVER_BASE) + HapiProperties.getProperty(SERVER_ADDRESS);
+        return System.getenv(SERVER_ADDRESS);
     }
 
     public static Integer getDefaultPageSize() {

@@ -14,6 +14,7 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.IdType;
 
 import ca.uhn.fhir.jpa.starter.authorization.OauthEndpointController;
@@ -30,79 +31,83 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
     @Override
     public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
-
-        IdType userIdPatientId = null;
-        boolean userIsAdmin = false;
         String authHeader = theRequestDetails.getHeader("Authorization");
 
         if (authHeader != null) {
-            try {
-                // Get the JWT token from the Authorization header
-                String regex = "Bearer (.*)";
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(authHeader);
-                String token = "";
-                if (matcher.find() && matcher.groupCount() == 1)
-                    token = matcher.group(1);
-                else
-                    throw new AuthenticationException("Authorization header is not in the form \"Bearer <token>\"");
+            // Get the JWT token from the Authorization header
+            String regex = "Bearer (.*)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(authHeader);
+            String token = "";
+            if (matcher.find() && matcher.groupCount() == 1) {
+                token = matcher.group(1);
 
-                // Verify and decode the JWT token
-                Algorithm algorithm = Algorithm.RSA256(OauthEndpointController.getPublicKey(), null);
-                logger.fine("Verifying JWT token ISS and AUD is " + theRequestDetails.getFhirServerBase());
-                JWTVerifier verifier = JWT.require(algorithm).withIssuer(theRequestDetails.getFhirServerBase())
-                        .withAudience(theRequestDetails.getFhirServerBase()).build();
-                DecodedJWT jwt = verifier.verify(token);
-                String patientId = jwt.getClaim("patient_id").asString();
-
-                // Set the userIdPatientId based on the token
-                if (patientId.equals("admin"))
-                    userIsAdmin = true;
-                else
-                    userIdPatientId = new IdType("Patient", patientId);
-            } catch (SignatureVerificationException e) {
-                String message = "Authorization failed: invalid signature";
-                logger.log(Level.SEVERE, message, e);
-                throw new AuthenticationException(message, e);
-            } catch (TokenExpiredException e) {
-                String message = "Authorization failed: access token expired";
-                logger.log(Level.SEVERE, message, e);
-                throw new AuthenticationException(message, e);
-            } catch (JWTVerificationException e) {
-                String message = "Authorization failed";
-                logger.log(Level.SEVERE, message, e);
-                throw new AuthenticationException(message, e);
-            }
-
-            // If the user is a specific patient, we create the following rule chain:
-            // Allow the user to read anything in their own patient compartment
-            // Allow the user to read anything not in a patient compartment
-            // If a client request doesn't pass either of the above, deny it
-            if (userIdPatientId != null) {
-                return new RuleBuilder().allow().read().resourcesOfType("Coverage").inCompartment("Patient", userIdPatientId)
-                        .andThen().allow().read().resourcesOfType("ExplanationOfBenefit").inCompartment("Patient", userIdPatientId)
-                        .andThen().allow().read().resourcesOfType("Patient").inCompartment("Patient", userIdPatientId)
-                        .andThen().allow().read().resourcesOfType("Practitioner").withAnyId()
-                        .andThen().allow().read().resourcesOfType("PractitionerRole").withAnyId()
-                        .andThen().allow().read().resourcesOfType("Organization").withAnyId()
-                        .andThen().allow().read().resourcesOfType("OrganizationAffiliation").withAnyId()
-                        .andThen().allow().read().resourcesOfType("MedicationKnowledge").withAnyId()
-                        .andThen().allow().read().resourcesOfType("List").withAnyId()
-                        .andThen().allow().read().resourcesOfType("Location").withAnyId()
-                        .andThen().allow().read().resourcesOfType("HealthcareService").withAnyId()
-                        .andThen().allow().metadata().andThen().denyAll()
-                        .build();
-            }
-
-            // If the user is an admin, allow everything
-            if (userIsAdmin) {
-                return new RuleBuilder().allowAll().build();
+                String adminToken = System.getenv("ADMIN_TOKEN");
+                if (adminToken != null && token.equals(adminToken)) {
+                    return adminAuthorizedRule();
+                } else {
+                    try {
+                        IIdType patientId = verify(token, theRequestDetails.getFhirServerBase());
+                        if (patientId != null) return authorizedRule(patientId);
+                        else return unauthorizedRule();
+                    } catch (SignatureVerificationException e) {
+                        String message = "Authorization failed: invalid signature";
+                        logger.log(Level.SEVERE, message, e);
+                        throw new AuthenticationException(message, e);
+                    } catch (TokenExpiredException e) {
+                        String message = "Authorization failed: access token expired";
+                        logger.log(Level.SEVERE, message, e);
+                        throw new AuthenticationException(message, e);
+                    } catch (Exception e) {
+                        String message = "Authorization failed";
+                        logger.log(Level.SEVERE, message, e);
+                        throw new AuthenticationException(message, e);
+                    }
+                }
+            } else {
+                throw new AuthenticationException(
+                    "Authorization header is not in the form \"Bearer <token>\"");
             }
         }
 
+        return unauthorizedRule();
+    }
+
+    private List<IAuthRule> adminAuthorizedRule() {
+        return new RuleBuilder().allowAll().build();
+    }
+
+    private List<IAuthRule> authorizedRule(IIdType userIdPatientId) {
+        return new RuleBuilder().allow().read().resourcesOfType("Coverage").inCompartment("Patient", userIdPatientId)
+                .andThen().allow().read().resourcesOfType("ExplanationOfBenefit").inCompartment("Patient", userIdPatientId)
+                .andThen().allow().read().resourcesOfType("Patient").inCompartment("Patient", userIdPatientId)
+                .andThen().allow().read().resourcesOfType("Practitioner").withAnyId()
+                .andThen().allow().read().resourcesOfType("PractitionerRole").withAnyId()
+                .andThen().allow().read().resourcesOfType("Organization").withAnyId()
+                .andThen().allow().read().resourcesOfType("OrganizationAffiliation").withAnyId()
+                .andThen().allow().read().resourcesOfType("MedicationKnowledge").withAnyId()
+                .andThen().allow().read().resourcesOfType("List").withAnyId()
+                .andThen().allow().read().resourcesOfType("Location").withAnyId()
+                .andThen().allow().read().resourcesOfType("HealthcareService").withAnyId()
+                .andThen().allow().metadata().andThen().denyAll()
+                .build();
+    }
+
+    private List<IAuthRule> unauthorizedRule() {
         // By default, deny everything except the metadata. This is for
         // unathorized users
         return new RuleBuilder().allow().metadata().andThen().denyAll().build();
-
     }
+
+    private IIdType verify(String token, String fhirBase) throws SignatureVerificationException, TokenExpiredException, JWTVerificationException {
+        Algorithm algorithm = Algorithm.RSA256(OauthEndpointController.getPublicKey(), null);
+        logger.fine("Verifying JWT token ISS and AUD is " + fhirBase);
+        JWTVerifier verifier = JWT.require(algorithm).withIssuer(fhirBase)
+                .withAudience(fhirBase).build();
+        DecodedJWT jwt = verifier.verify(token);
+        String patientId = jwt.getClaim("patient_id").asString();
+        if (patientId != null) return new IdType("Patient", patientId);
+        else return null;
+    }
+
 }
