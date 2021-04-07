@@ -64,7 +64,12 @@ Once an access token is received it must be sent in the `Authorization` header u
 
 ## Configuration
 
-If the address of CPCDS server changes it must be updated in `src/main/resources/hapi.properties` by modifying the `server_address` property respectivelty.
+Beyond on the normal HAPI configuration found in `src/main/resources/hapi.properties`, this server has a few other configurations.
+
+| ENV            | Required | Description                                                                                           |
+| -------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| SERVER_ADDRESS | Yes      | The base url for this server. For localhost this should be `http://localhost:8080/cpcds-server/fhir/` |
+| ADMIN_TOKEN    | No       | The value of the admin token to bypass authorization. If unset no admin token can be used.            |
 
 ## Uploading Test Data
 
