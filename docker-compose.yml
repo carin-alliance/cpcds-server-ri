@@ -8,3 +8,6 @@ services:
       - "8080:8080"
     volumes:
       - ./data:/var/lib/jetty/target
+    environment:
+      - SERVER_ADDRESS=http://cpcds-ri.org/cpcds-server/fhir/
+      - ADMIN_TOKEN=admin

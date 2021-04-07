@@ -12,20 +12,29 @@ The quickest way to get the server up and running is by pulling the built image 
 
 ```bash
 docker pull blangley/cpcds-server-ri
-docker run -p 8080:8080 blangley/cpcds-server-ri
+docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ blangley/cpcds-server-ri
 ```
 
 This will deploy the server to http://localhost:8080/cpcds-server/fhir.
 
+Note: A docker-compose file is also included which can be configured for your use case. To run using compose use `docker-compose up`.
+
 ## Building Locally with Docker
 
-To start the server simply build and run using docker. The container will automatically build and deploy using a tomcat server.
+The docker image can also be built locally before running. The container will automatically build and deploy using a tomcat server. You may need to configure some settings in `docker-compose.yml` before running.
 
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
+./build-docker-image.sh
+docker-compose up
+```
+
+Alternatively you can build and run using normal docker commands:
+
+```bash
 docker build -t cpcds-server-ri .
-docker run -p 8080:8080 cpcds-server-ri
+docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ cpcds-server-ri
 ```
 
 This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
@@ -37,13 +46,15 @@ Clone the repo and build the server:
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
+export SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/
 mvn dependency:resolve
 mvn jetty:run
 ```
 
 The server will then be browseable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
 
-Note: This has only been tested using Java 8. Later version may not be supported.
+Note: this has only been tested with Java 8, if you are using a different version of Java and experience issues try switching to Java 8.
+Note: a common error is about `.m2/repositories/com/h2database`. This is most likely due to running the server with a different version of Java. If you encounter this issue verify you are using Java 8, delete the `h2database` folder and run the server again.
 
 ## GET Requests
 
