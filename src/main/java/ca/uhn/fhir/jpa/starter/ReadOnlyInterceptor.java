@@ -13,7 +13,10 @@ public class ReadOnlyInterceptor extends InterceptorAdapter {
     @Override
     public void incomingRequestPreHandled(RestOperationTypeEnum theOperation,
             ActionRequestDetails theProcessedRequest) {
-        if (theOperation != RestOperationTypeEnum.HISTORY_INSTANCE
+        String authHeader = theProcessedRequest.getRequestDetails().getHeader("Authorization");
+        String adminToken = System.getenv("ADMIN_TOKEN");
+        if (!authHeader.equals("Bearer " + adminToken)
+                && theOperation != RestOperationTypeEnum.HISTORY_INSTANCE
                 && theOperation != RestOperationTypeEnum.HISTORY_SYSTEM
                 && theOperation != RestOperationTypeEnum.HISTORY_TYPE && theOperation != RestOperationTypeEnum.METADATA
                 && theOperation != RestOperationTypeEnum.READ && theOperation != RestOperationTypeEnum.SEARCH_SYSTEM
