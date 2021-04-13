@@ -35,6 +35,16 @@ def upload_carrinBBExtracts_data(server)
     end
 end
 
+def upload_sample_data(server)
+    file_path = File.join(__dir__, 'sample_data', '*.json')
+    filenames = Dir.glob(file_path)
+    puts "Uploading #{filenames.length} resources"
+    filenames.each_with_index do |filename, index|
+        resource = JSON.parse(File.read(filename), symbolize_names: true)
+        response = upload_resource(resource, server)
+    end
+end
+
 def upload_out_data(server)
     file_path = File.join(__dir__, 'orgs', '*.json')
     filenames =
@@ -120,9 +130,10 @@ end
 # upload_carrinBBExtracts_data(server)
 # puts "Uploaded resources to #{server}"
 
-puts "PUTTING out resources to #{server}"
-upload_out_data(server)
-puts "Uploaded resources to #{server}"
+# puts "PUTTING out resources to #{server}"
+# upload_out_data(server)
+upload_sample_data(server)
+# puts "Uploaded resources to #{server}"
 
 # puts "PUTTING IG example resources to #{server}"
 # upload_ig_examples(server)
