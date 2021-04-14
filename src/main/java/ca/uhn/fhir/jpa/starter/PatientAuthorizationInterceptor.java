@@ -49,7 +49,7 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
                     try {
                         IIdType patientId = verify(token, theRequestDetails.getFhirServerBase());
                         if (patientId == null) return unauthorizedRule();
-                        else if (patientId.getValue().equals("admin")) return adminAuthorizedRule();
+                        else if (patientId.getIdPart().equals("admin")) return adminAuthorizedRule();
                         else return authorizedRule(patientId);
                     } catch (SignatureVerificationException e) {
                         String message = "Authorization failed: invalid signature";
