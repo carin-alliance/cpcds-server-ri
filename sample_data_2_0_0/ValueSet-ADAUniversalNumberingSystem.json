@@ -1,0 +1,49 @@
+{
+  "resourceType": "ValueSet",
+  "id": "ADAUniversalNumberingSystem",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><ul><li>Include all codes defined in <a href=\"CodeSystem-ADAUniversalNumberingSystem.html\"><code>http://hl7.org/fhir/us/carin-bb/CodeSystem/ADAUniversalNumberingSystem</code></a></li></ul></div>"
+  },
+  "url": "http://hl7.org/fhir/us/carin-bb/ValueSet/ADAUniversalNumberingSystem",
+  "version": "1.0.0",
+  "name": "ADAUniversalNumberingSystem",
+  "title": "[TODO] American Dental Association Universal Numbering System",
+  "status": "active",
+  "date": "2021-04-25T06:32:54+00:00",
+  "publisher": "HL7 Financial Management Working Group",
+  "contact": [
+    {
+      "name": "HL7 Financial Management Working Group",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://www.hl7.org/Special/committees/fm/index.cfm"
+        },
+        {
+          "system": "email",
+          "value": "fm@lists.HL7.org"
+        }
+      ]
+    }
+  ],
+  "description": "[TODO] \nThe American Dental Association Universal Numbering System is a tooth notation system primarily used in the United States.\n\nTeeth are numbered from the viewpoint of the dental practitioner looking into the open mouth, clockwise starting from the distalmost right maxillary teeth.",
+  "jurisdiction": [
+    {
+      "coding": [
+        {
+          "system": "urn:iso:std:iso:3166",
+          "code": "US"
+        }
+      ]
+    }
+  ],
+  "copyright": "American Dental Association (ADA) developed Current Dental Terminology (CDT®) as a standardized language to help dentists and other members of the healthcare industry communicate effectively. CDT is revised and updated every year.\n\nThe ADA is the exclusive copyright owner of CDT, the Code on Dental Procedures and Nomenclature (the Code), and the ADA Dental Claim Form. Except as permitted by law, all use, copying or distribution of CDT, or any portion thereof (including the Code on Dental Procedures and Nomenclature) in any product or services (including works prepared for clients by consultants and other professionals), whether in printed, electronic or other format, requires a valid commercial user license from the ADA.\n\nFor more information : https://www.ada.org/en/publications/ada-catalog/cdt-products/licensing-for-commercial-users",
+  "compose": {
+    "include": [
+      {
+        "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/ADAUniversalNumberingSystem"
+      }
+    ]
+  }
+}

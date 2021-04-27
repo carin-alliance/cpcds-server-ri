@@ -1,0 +1,254 @@
+{
+  "resourceType": "CodeSystem",
+  "id": "ADAUniversalNumberingSystem",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>This code system http://hl7.org/fhir/us/carin-bb/CodeSystem/ADAUniversalNumberingSystem defines the following codes:</p><table class=\"codes\"><tr><td style=\"white-space:nowrap\"><b>Code</b></td><td><b>Display</b></td></tr><tr><td style=\"white-space:nowrap\">1<a name=\"ADAUniversalNumberingSystem-1\"> </a></td><td>Permanent teeth right maxillary third molar (wisdom tooth)</td></tr><tr><td style=\"white-space:nowrap\">2<a name=\"ADAUniversalNumberingSystem-2\"> </a></td><td>Permanent teeth right second molar (12-year molar)</td></tr><tr><td style=\"white-space:nowrap\">3<a name=\"ADAUniversalNumberingSystem-3\"> </a></td><td>Permanent teeth right first molar (6-year molar)</td></tr><tr><td style=\"white-space:nowrap\">4<a name=\"ADAUniversalNumberingSystem-4\"> </a></td><td>Permanent teeth right second premolar (bicuspid)</td></tr><tr><td style=\"white-space:nowrap\">5<a name=\"ADAUniversalNumberingSystem-5\"> </a></td><td>Permanent teeth right first premolar (bicuspid)</td></tr><tr><td style=\"white-space:nowrap\">6<a name=\"ADAUniversalNumberingSystem-6\"> </a></td><td>Permanent teeth right canine (cuspid)</td></tr><tr><td style=\"white-space:nowrap\">7<a name=\"ADAUniversalNumberingSystem-7\"> </a></td><td>Permanent teeth right lateral incisor</td></tr><tr><td style=\"white-space:nowrap\">8<a name=\"ADAUniversalNumberingSystem-8\"> </a></td><td>Permanent teeth right central incisor</td></tr><tr><td style=\"white-space:nowrap\">9<a name=\"ADAUniversalNumberingSystem-9\"> </a></td><td>Permanent teeth left maxillary central incisor</td></tr><tr><td style=\"white-space:nowrap\">10<a name=\"ADAUniversalNumberingSystem-10\"> </a></td><td>Permanent teeth left maxillary lateral incisor</td></tr><tr><td style=\"white-space:nowrap\">11<a name=\"ADAUniversalNumberingSystem-11\"> </a></td><td>Permanent teeth left maxillary canine (cuspid)</td></tr><tr><td style=\"white-space:nowrap\">12<a name=\"ADAUniversalNumberingSystem-12\"> </a></td><td>Permanent teeth left maxillary first premolar (bicuspid)</td></tr><tr><td style=\"white-space:nowrap\">13<a name=\"ADAUniversalNumberingSystem-13\"> </a></td><td>Permanent teeth left maxillary second premolar (bicuspid)</td></tr><tr><td style=\"white-space:nowrap\">14<a name=\"ADAUniversalNumberingSystem-14\"> </a></td><td>Permanent teeth left maxillary first molar (6-year molar)</td></tr><tr><td style=\"white-space:nowrap\">15<a name=\"ADAUniversalNumberingSystem-15\"> </a></td><td>Permanent teeth left maxillary second molar (12-year molar)</td></tr><tr><td style=\"white-space:nowrap\">16<a name=\"ADAUniversalNumberingSystem-16\"> </a></td><td>Permanent teeth left maxillary third molar (wisdom tooth)</td></tr><tr><td style=\"white-space:nowrap\">17<a name=\"ADAUniversalNumberingSystem-17\"> </a></td><td>Permanent teeth left mandibular third molar (wisdom tooth)</td></tr><tr><td style=\"white-space:nowrap\">18<a name=\"ADAUniversalNumberingSystem-18\"> </a></td><td>Permanent teeth left mandibular second molar (12-year molar)</td></tr><tr><td style=\"white-space:nowrap\">19<a name=\"ADAUniversalNumberingSystem-19\"> </a></td><td>Permanent teeth left mandibular first molar (6-year molar)</td></tr><tr><td style=\"white-space:nowrap\">20<a name=\"ADAUniversalNumberingSystem-20\"> </a></td><td>Permanent teeth left mandibular second premolar (bicuspid)</td></tr><tr><td style=\"white-space:nowrap\">21<a name=\"ADAUniversalNumberingSystem-21\"> </a></td><td>Permanent teeth left mandibular first premolar (bicuspid)</td></tr><tr><td style=\"white-space:nowrap\">22<a name=\"ADAUniversalNumberingSystem-22\"> </a></td><td>Permanent teeth left mandibular canine (cuspid)</td></tr><tr><td style=\"white-space:nowrap\">23<a name=\"ADAUniversalNumberingSystem-23\"> </a></td><td>Permanent teeth left mandibular lateral incisor</td></tr><tr><td style=\"white-space:nowrap\">24<a name=\"ADAUniversalNumberingSystem-24\"> </a></td><td>Permanent teeth left mandibular central incisor</td></tr><tr><td style=\"white-space:nowrap\">25<a name=\"ADAUniversalNumberingSystem-25\"> </a></td><td>Permanent teeth right mandibular central incisor</td></tr><tr><td style=\"white-space:nowrap\">26<a name=\"ADAUniversalNumberingSystem-26\"> </a></td><td>Permanent teeth right mandibular lateral incisor</td></tr><tr><td style=\"white-space:nowrap\">27<a name=\"ADAUniversalNumberingSystem-27\"> </a></td><td>Permanent teeth right mandibular canine (cuspid)</td></tr><tr><td style=\"white-space:nowrap\">28<a name=\"ADAUniversalNumberingSystem-28\"> </a></td><td>Permanent teeth right mandibular first premolar (bicuspid)</td></tr><tr><td style=\"white-space:nowrap\">29<a name=\"ADAUniversalNumberingSystem-29\"> </a></td><td>Permanent teeth right mandibular second premolar (bicuspid)</td></tr><tr><td style=\"white-space:nowrap\">30<a name=\"ADAUniversalNumberingSystem-30\"> </a></td><td>Permanent teeth right mandibular first molar (6-year molar)</td></tr><tr><td style=\"white-space:nowrap\">31<a name=\"ADAUniversalNumberingSystem-31\"> </a></td><td>Permanent teeth right mandibular second molar (12-year molar)</td></tr><tr><td style=\"white-space:nowrap\">32<a name=\"ADAUniversalNumberingSystem-32\"> </a></td><td>Permanent teeth right mandibular third molar (wisdom tooth)</td></tr><tr><td style=\"white-space:nowrap\">A<a name=\"ADAUniversalNumberingSystem-A\"> </a></td><td>Primary teeth right maxillarysecond molar</td></tr><tr><td style=\"white-space:nowrap\">B<a name=\"ADAUniversalNumberingSystem-B\"> </a></td><td>Primary teeth right maxillaryfirst molar</td></tr><tr><td style=\"white-space:nowrap\">C<a name=\"ADAUniversalNumberingSystem-C\"> </a></td><td>Primary teeth right maxillarycanine</td></tr><tr><td style=\"white-space:nowrap\">D<a name=\"ADAUniversalNumberingSystem-D\"> </a></td><td>Primary teeth right maxillarylateral incisor</td></tr><tr><td style=\"white-space:nowrap\">E<a name=\"ADAUniversalNumberingSystem-E\"> </a></td><td>Primary teeth right maxillarycentral incisor</td></tr><tr><td style=\"white-space:nowrap\">F<a name=\"ADAUniversalNumberingSystem-F\"> </a></td><td>Primary teeth left maxillarycentral incisor</td></tr><tr><td style=\"white-space:nowrap\">G<a name=\"ADAUniversalNumberingSystem-G\"> </a></td><td>Primary teeth left maxillarylateral incisor</td></tr><tr><td style=\"white-space:nowrap\">H<a name=\"ADAUniversalNumberingSystem-H\"> </a></td><td>Primary teeth left maxillarycanine</td></tr><tr><td style=\"white-space:nowrap\">I<a name=\"ADAUniversalNumberingSystem-I\"> </a></td><td>Primary teeth left maxillaryfirst molar</td></tr><tr><td style=\"white-space:nowrap\">J<a name=\"ADAUniversalNumberingSystem-J\"> </a></td><td>Primary teeth left maxillarysecond molar</td></tr><tr><td style=\"white-space:nowrap\">K<a name=\"ADAUniversalNumberingSystem-K\"> </a></td><td>Primary teeth left mandibularsecond molar</td></tr><tr><td style=\"white-space:nowrap\">L<a name=\"ADAUniversalNumberingSystem-L\"> </a></td><td>Primary teeth left mandibularfirst molar</td></tr><tr><td style=\"white-space:nowrap\">M<a name=\"ADAUniversalNumberingSystem-M\"> </a></td><td>Primary teeth left mandibularcanine</td></tr><tr><td style=\"white-space:nowrap\">N<a name=\"ADAUniversalNumberingSystem-N\"> </a></td><td>Primary teeth left mandibularlateral incisor</td></tr><tr><td style=\"white-space:nowrap\">O<a name=\"ADAUniversalNumberingSystem-O\"> </a></td><td>Primary teeth left mandibularcentral incisor</td></tr><tr><td style=\"white-space:nowrap\">P<a name=\"ADAUniversalNumberingSystem-P\"> </a></td><td>Primary teethright mandibularcentral incisor</td></tr><tr><td style=\"white-space:nowrap\">Q<a name=\"ADAUniversalNumberingSystem-Q\"> </a></td><td>Primary teethright mandibularlateral incisor</td></tr><tr><td style=\"white-space:nowrap\">R<a name=\"ADAUniversalNumberingSystem-R\"> </a></td><td>Primary teethright mandibularcanine</td></tr><tr><td style=\"white-space:nowrap\">S<a name=\"ADAUniversalNumberingSystem-S\"> </a></td><td>Primary teethright mandibularfirst molar</td></tr><tr><td style=\"white-space:nowrap\">T<a name=\"ADAUniversalNumberingSystem-T\"> </a></td><td>Primary teethright mandibularsecond molar</td></tr></table></div>"
+  },
+  "url": "http://hl7.org/fhir/us/carin-bb/CodeSystem/ADAUniversalNumberingSystem",
+  "version": "1.0.0",
+  "name": "ADAUniversalNumberingSystem",
+  "title": "[TODO] American Dental Association Universal Numbering System",
+  "status": "active",
+  "date": "2021-04-25T06:32:54+00:00",
+  "publisher": "HL7 Financial Management Working Group",
+  "contact": [
+    {
+      "name": "HL7 Financial Management Working Group",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://www.hl7.org/Special/committees/fm/index.cfm"
+        },
+        {
+          "system": "email",
+          "value": "fm@lists.HL7.org"
+        }
+      ]
+    }
+  ],
+  "description": "[TODO] \nThe American Dental Association Universal Numbering System is a tooth notation system primarily used in the United States.\n\nTeeth are numbered from the viewpoint of the dental practitioner looking into the open mouth, clockwise starting from the distalmost right maxillary teeth.",
+  "jurisdiction": [
+    {
+      "coding": [
+        {
+          "system": "urn:iso:std:iso:3166",
+          "code": "US"
+        }
+      ]
+    }
+  ],
+  "copyright": "American Dental Association (ADA) developed Current Dental Terminology (CDT®) as a standardized language to help dentists and other members of the healthcare industry communicate effectively. CDT is revised and updated every year.\n\nThe ADA is the exclusive copyright owner of CDT, the Code on Dental Procedures and Nomenclature (the Code), and the ADA Dental Claim Form. Except as permitted by law, all use, copying or distribution of CDT, or any portion thereof (including the Code on Dental Procedures and Nomenclature) in any product or services (including works prepared for clients by consultants and other professionals), whether in printed, electronic or other format, requires a valid commercial user license from the ADA.\n\nFor more information : https://www.ada.org/en/publications/ada-catalog/cdt-products/licensing-for-commercial-users",
+  "content": "complete",
+  "count": 52,
+  "concept": [
+    {
+      "code": "1",
+      "display": "Permanent teeth right maxillary third molar (wisdom tooth)"
+    },
+    {
+      "code": "2",
+      "display": "Permanent teeth right second molar (12-year molar)"
+    },
+    {
+      "code": "3",
+      "display": "Permanent teeth right first molar (6-year molar)"
+    },
+    {
+      "code": "4",
+      "display": "Permanent teeth right second premolar (bicuspid)"
+    },
+    {
+      "code": "5",
+      "display": "Permanent teeth right first premolar (bicuspid)"
+    },
+    {
+      "code": "6",
+      "display": "Permanent teeth right canine (cuspid)"
+    },
+    {
+      "code": "7",
+      "display": "Permanent teeth right lateral incisor"
+    },
+    {
+      "code": "8",
+      "display": "Permanent teeth right central incisor"
+    },
+    {
+      "code": "9",
+      "display": "Permanent teeth left maxillary central incisor"
+    },
+    {
+      "code": "10",
+      "display": "Permanent teeth left maxillary lateral incisor"
+    },
+    {
+      "code": "11",
+      "display": "Permanent teeth left maxillary canine (cuspid)"
+    },
+    {
+      "code": "12",
+      "display": "Permanent teeth left maxillary first premolar (bicuspid)"
+    },
+    {
+      "code": "13",
+      "display": "Permanent teeth left maxillary second premolar (bicuspid)"
+    },
+    {
+      "code": "14",
+      "display": "Permanent teeth left maxillary first molar (6-year molar)"
+    },
+    {
+      "code": "15",
+      "display": "Permanent teeth left maxillary second molar (12-year molar)"
+    },
+    {
+      "code": "16",
+      "display": "Permanent teeth left maxillary third molar (wisdom tooth)"
+    },
+    {
+      "code": "17",
+      "display": "Permanent teeth left mandibular third molar (wisdom tooth)"
+    },
+    {
+      "code": "18",
+      "display": "Permanent teeth left mandibular second molar (12-year molar)"
+    },
+    {
+      "code": "19",
+      "display": "Permanent teeth left mandibular first molar (6-year molar)"
+    },
+    {
+      "code": "20",
+      "display": "Permanent teeth left mandibular second premolar (bicuspid)"
+    },
+    {
+      "code": "21",
+      "display": "Permanent teeth left mandibular first premolar (bicuspid)"
+    },
+    {
+      "code": "22",
+      "display": "Permanent teeth left mandibular canine (cuspid)"
+    },
+    {
+      "code": "23",
+      "display": "Permanent teeth left mandibular lateral incisor"
+    },
+    {
+      "code": "24",
+      "display": "Permanent teeth left mandibular central incisor"
+    },
+    {
+      "code": "25",
+      "display": "Permanent teeth right mandibular central incisor"
+    },
+    {
+      "code": "26",
+      "display": "Permanent teeth right mandibular lateral incisor"
+    },
+    {
+      "code": "27",
+      "display": "Permanent teeth right mandibular canine (cuspid)"
+    },
+    {
+      "code": "28",
+      "display": "Permanent teeth right mandibular first premolar (bicuspid)"
+    },
+    {
+      "code": "29",
+      "display": "Permanent teeth right mandibular second premolar (bicuspid)"
+    },
+    {
+      "code": "30",
+      "display": "Permanent teeth right mandibular first molar (6-year molar)"
+    },
+    {
+      "code": "31",
+      "display": "Permanent teeth right mandibular second molar (12-year molar)"
+    },
+    {
+      "code": "32",
+      "display": "Permanent teeth right mandibular third molar (wisdom tooth)"
+    },
+    {
+      "code": "A",
+      "display": "Primary teeth right maxillarysecond molar"
+    },
+    {
+      "code": "B",
+      "display": "Primary teeth right maxillaryfirst molar"
+    },
+    {
+      "code": "C",
+      "display": "Primary teeth right maxillarycanine"
+    },
+    {
+      "code": "D",
+      "display": "Primary teeth right maxillarylateral incisor"
+    },
+    {
+      "code": "E",
+      "display": "Primary teeth right maxillarycentral incisor"
+    },
+    {
+      "code": "F",
+      "display": "Primary teeth left maxillarycentral incisor"
+    },
+    {
+      "code": "G",
+      "display": "Primary teeth left maxillarylateral incisor"
+    },
+    {
+      "code": "H",
+      "display": "Primary teeth left maxillarycanine"
+    },
+    {
+      "code": "I",
+      "display": "Primary teeth left maxillaryfirst molar"
+    },
+    {
+      "code": "J",
+      "display": "Primary teeth left maxillarysecond molar"
+    },
+    {
+      "code": "K",
+      "display": "Primary teeth left mandibularsecond molar"
+    },
+    {
+      "code": "L",
+      "display": "Primary teeth left mandibularfirst molar"
+    },
+    {
+      "code": "M",
+      "display": "Primary teeth left mandibularcanine"
+    },
+    {
+      "code": "N",
+      "display": "Primary teeth left mandibularlateral incisor"
+    },
+    {
+      "code": "O",
+      "display": "Primary teeth left mandibularcentral incisor"
+    },
+    {
+      "code": "P",
+      "display": "Primary teethright mandibularcentral incisor"
+    },
+    {
+      "code": "Q",
+      "display": "Primary teethright mandibularlateral incisor"
+    },
+    {
+      "code": "R",
+      "display": "Primary teethright mandibularcanine"
+    },
+    {
+      "code": "S",
+      "display": "Primary teethright mandibularfirst molar"
+    },
+    {
+      "code": "T",
+      "display": "Primary teethright mandibularsecond molar"
+    }
+  ]
+}

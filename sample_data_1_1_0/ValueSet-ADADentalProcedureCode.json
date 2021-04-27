@@ -1,0 +1,49 @@
+{
+  "resourceType": "ValueSet",
+  "id": "ADADentalProcedureCode",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><ul><li>Include all codes defined in <a href=\"CodeSystem-ADADentalProcedureCode.html\"><code>https://www.ada.org/en/publications/cdt</code></a></li></ul></div>"
+  },
+  "url": "http://hl7.org/fhir/us/carin-bb/ValueSet/ADADentalProcedureCode",
+  "version": "1.1.0",
+  "name": "ADADentalProcedureCode",
+  "title": "ADA Code on Dental Procedures and Nomenclature",
+  "status": "active",
+  "date": "2021-04-12T13:16:14-07:00",
+  "publisher": "HL7 Financial Management Working Group",
+  "contact": [
+    {
+      "name": "HL7 Financial Management Working Group",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://www.hl7.org/Special/committees/fm/index.cfm"
+        },
+        {
+          "system": "email",
+          "value": "fm@lists.HL7.org"
+        }
+      ]
+    }
+  ],
+  "description": "The purpose of the CDT Code is to achieve uniformity, consistency and specificity in accurately documenting dental treatment. One use of the CDT Code is to provide for the efficient processing of dental claims, and another is to populate an Electronic Health Record.\r\n\r\nOn August 17, 2000 the CDT Code was named as a HIPAA standard code set. Any claim submitted on a HIPAA standard electronic dental claim must use dental procedure codes from the version of the CDT Code in effect on the date of service. The CDT Code is also used on paper dental claims, and the ADA's paper claim form data content reflects the HIPAA electronic standard.\r\n\r\nCDT is published Annually. Versions should refect the YYYY of the release.\r\n\r\nThe Council on Dental Benefit Programs (CDBP) has ADA Bylaws responsibility for CDT Code maintenance. To fulfill this obligation CDBP established its Code Maintenance Committee (CMC), a body that includes representatives from various sectors of the dental community (e.g., ADA; dental specialty organizations; third-party payers). CMC members, by their votes, determine which of the requested actions are incorporated into the CDT Code.\r\n\r\nPlease see Code Maintenance Committee (CMC) page for information about the CMC's members and activities.\r\n\r\nTo obtain the underlying code systems, please see information [here](https://www.nubc.org/subscription-information)",
+  "jurisdiction": [
+    {
+      "coding": [
+        {
+          "system": "urn:iso:std:iso:3166",
+          "code": "US"
+        }
+      ]
+    }
+  ],
+  "copyright": "American Dental Association (ADA) developed Current Dental Terminology (CDT®) as a standardized language to help dentists and other members of the healthcare industry communicate effectively. CDT is revised and updated every year.\r\n\r\nThe ADA is the exclusive copyright owner of CDT, the Code on Dental Procedures and Nomenclature (the Code), and the ADA Dental Claim Form. Except as permitted by law, all use, copying or distribution of CDT, or any portion thereof (including the Code on Dental Procedures and Nomenclature) in any product or services (including works prepared for clients by consultants and other professionals), whether in printed, electronic or other format, requires a valid commercial user license from the ADA.\r\n\r\nFor more information : https://www.ada.org/en/publications/ada-catalog/cdt-products/licensing-for-commercial-users",
+  "compose": {
+    "include": [
+      {
+        "system": "https://www.ada.org/en/publications/cdt"
+      }
+    ]
+  }
+}

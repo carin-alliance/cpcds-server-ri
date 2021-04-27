@@ -1,0 +1,32 @@
+{
+  "resourceType": "Organization",
+  "id": "OrganizationDentalProvider1",
+  "meta": {
+    "lastUpdated": "2021-01-01T10:23:11+00:00",
+    "profile": [
+      "http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Organization",
+      "http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Organization|1.1.0"
+    ]
+  },
+  "language": "en-US",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en-US\" lang=\"en-US\"><p><b>Generated Narrative</b></p><p><b>identifier</b>: National Provider Identifier: 0025501002</p><p><b>active</b>: true</p><p><b>name</b>: Dental Provider 1</p></div>"
+  },
+  "identifier": [
+    {
+      "type": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType",
+            "code": "npi"
+          }
+        ]
+      },
+      "system": "http://hl7.org/fhir/sid/us-npi",
+      "value": "0025501002"
+    }
+  ],
+  "active": true,
+  "name": "Dental Provider 1"
+}
