@@ -42,10 +42,10 @@ Then execute the upload script
 
 ```bash
 bundle install
-bundle exec ruby upload.rb {FHIR Server}
+bundle exec ruby upload.rb {sample data directory} {FHIR Server}
 ```
 
-By default the upload script will use http://localhost:8080/cpcds-server/fhir as the FHIR server. To upload to a different endpoint provide the full URL as the first argument.
+By default the upload script will use `sample_data_2_0_0` as the sample data directory and http://localhost:8080/cpcds-server/fhir as the FHIR server. To upload to a different endpoint provide the full URL as the first argument.
 
 To clear the database delete the directory `target/database` and rerun the server.
 
@@ -73,3 +73,5 @@ Note: The upload script will only upload Patient, Claim, and ExplanationOfBenefi
 1. Stop the running image `sudo docker kill {container id}`. To obtain the container id run `sudo docker ps`.
 1. Pull the newly created image `sudo docker pull blangley/cpcds-server-ri`.
 1. Run the new docker image `sudo docker run -d -p 8080:8080 blangley/cpcds-server-ri`.
+
+Note: it is also possible to run this server without Docker to upload the data. To do that delete the `/target` directory, run `mvn jetty:run`, upload the data, and then copy `/target/database` and `/target/lucenefiles` into the `/data` directory.
