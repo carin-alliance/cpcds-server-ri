@@ -26,6 +26,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import ca.uhn.fhir.jpa.starter.HapiProperties;
 import ca.uhn.fhir.jpa.starter.ServerLogger;
 import ca.uhn.fhir.jpa.starter.authorization.TokenEndpoint.TokenType;
 
@@ -60,29 +61,18 @@ public class AuthUtils {
     }
 
     /**
-	 * Get the base url of the service from the HttpServletRequest
-     * Ex: http://localhost:8080/cpcds-server
-     * Ex: http://cpcds-ri.org/cpcds-server
-	 * 
-	 * @param request - the HttpServletRequest from the controller
-	 * @return the base url for the service
-	 */
-	public static String getServiceBaseUrl(HttpServletRequest request) {
-        if (request.getServerName().contains("localhost")) 
-            return request.getScheme() + "://localhost:" + request.getServerPort() + request.getContextPath();
-        else 
-            return request.getScheme() + "://" + request.getServerName() + request.getContextPath();
-    }
-
-    /**
      * Get the fhir base url from the HttpServletRequest
      * Ex: http://localhost:8080/cpcds-server/fhir
      * 
      * @param request - the HttpServletRequest from the controller
      * @return the fhir base url for the service
      */
-    public static String getFhirBaseUrl(HttpServletRequest request) {
-        return getServiceBaseUrl(request) + "/fhir";
+    public static String getFhirBaseUrl() {
+        String baseUrl = HapiProperties.getServerAddress();
+        if (baseUrl.endsWith("/")) 
+            return baseUrl.substring(0, baseUrl.length() - 1);
+        else   
+            return baseUrl;
     }
 
     /**

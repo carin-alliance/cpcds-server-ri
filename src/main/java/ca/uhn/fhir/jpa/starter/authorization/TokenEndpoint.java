@@ -40,7 +40,7 @@ public class TokenEndpoint {
         HashMap<String, String> response = new HashMap<>();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        String baseUrl = AuthUtils.getFhirBaseUrl(request);
+        String baseUrl = AuthUtils.getFhirBaseUrl();
 
         // Validate the client is authorized
         String clientId = AuthUtils.clientIsAuthorized(request);
