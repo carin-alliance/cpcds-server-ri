@@ -34,7 +34,7 @@ Alternatively you can build and run using normal docker commands:
 
 ```bash
 docker build -t cpcds-server-ri .
-docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ cpcds-server-ri
+docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ -e ADMIN_TOKEN=admin cpcds-server-ri
 ```
 
 This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
@@ -47,6 +47,7 @@ Clone the repo and build the server:
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
 export SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/
+export ADMIN_TOKEN=admin
 mvn dependency:resolve
 mvn jetty:run
 ```
