@@ -76,6 +76,7 @@ public class Metadata extends ServerCapabilityStatementProvider {
         explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Outpatient-Institutional");
         explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Pharmacy");
         explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Professional-NonClinician");
+        explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Oral");
         explanationOfBenefitResourceComponent.addSearchInclude("ExplanationOfBenefit:patient");
         explanationOfBenefitResourceComponent.addSearchInclude("ExplanationOfBenefit:provider");
         explanationOfBenefitResourceComponent.addSearchInclude("ExplanationOfBenefit:carre-team");
