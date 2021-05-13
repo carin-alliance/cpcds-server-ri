@@ -19,6 +19,11 @@ public class SearchInterceptor extends InterceptorAdapter {
     @Override
     public void incomingRequestPreHandled(RestOperationTypeEnum theOperation,
             ActionRequestDetails theProcessedRequest) {
+                // Ignore if using admin token
+                String authHeader = theProcessedRequest.getRequestDetails().getHeader("Authorization");
+                String adminHeader = "Bearer " + System.getenv("ADMIN_TOKEN");
+                if (adminHeader.equals(authHeader)) return;
+
                 RequestDetails theRequestDetails = theProcessedRequest.getRequestDetails();
                 String resourceType = theRequestDetails.getResourceName();
                 List<String> allowedSearchParameters = allowedSearchParameters(resourceType);
@@ -52,8 +57,9 @@ public class SearchInterceptor extends InterceptorAdapter {
      * @return a list of valid parameters
      */
     private static List<String> allowedSearchParameters(String resourceType) {
-        Map<String, List<String>> searchParams = new HashMap<>();
+        Map<String, ArrayList<String>> searchParams = new HashMap<>();
         ArrayList<String> eobParams = new ArrayList<>();
+        ArrayList<String> covParams = new ArrayList<>();
         eobParams.add("_id");
         eobParams.add("patient");
         eobParams.add("_lastUpdated");
@@ -61,10 +67,11 @@ public class SearchInterceptor extends InterceptorAdapter {
         eobParams.add("identifier");
         eobParams.add("service-date");
         eobParams.add("_include");
+        covParams.add("_include");
         searchParams.put("ExplanationOfBenefit", eobParams);
-        searchParams.put("Coverage", Collections.singletonList("_include"));
+        searchParams.put("Coverage", covParams);
 
-        List<String> allowedParams = searchParams.get(resourceType);
+        ArrayList<String> allowedParams = searchParams.get(resourceType);
         if (allowedParams == null) {
             return Collections.singletonList("_format");
         } else {
