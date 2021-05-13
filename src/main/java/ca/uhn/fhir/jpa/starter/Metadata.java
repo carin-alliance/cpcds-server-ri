@@ -76,7 +76,6 @@ public class Metadata extends ServerCapabilityStatementProvider {
         explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Outpatient-Institutional");
         explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Pharmacy");
         explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Professional-NonClinician");
-        explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Oral");
         explanationOfBenefitResourceComponent.addSearchInclude("ExplanationOfBenefit:patient");
         explanationOfBenefitResourceComponent.addSearchInclude("ExplanationOfBenefit:provider");
         explanationOfBenefitResourceComponent.addSearchInclude("ExplanationOfBenefit:carre-team");
@@ -144,7 +143,7 @@ public class Metadata extends ServerCapabilityStatementProvider {
 
         c.addImplementationGuide("http://hl7.org/fhir/us/carin-bb/ImplementationGuide/hl7.fhir.us.carin-bb");
 
-        CapabilityStatementImplementationComponent implementationComponent = new CapabilityStatementImplementationComponent(new StringType("MITRE CPCDS Reference Implementation for Carin BB STU2"));
+        CapabilityStatementImplementationComponent implementationComponent = new CapabilityStatementImplementationComponent(new StringType("MITRE CPCDS Reference Implementation for Carin BB 1.1.0"));
         implementationComponent.setUrl(HapiProperties.getServerAddress());
         c.setImplementation(implementationComponent);
         CapabilityStatementSoftwareComponent softwareComponent = new CapabilityStatementSoftwareComponent(new StringType("MITRE CPCDS RI"));
