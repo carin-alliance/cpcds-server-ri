@@ -1,7 +1,7 @@
 version: "3"
 services:
   cpcds-server-ri:
-    image: blangley/cpcds-server-ri
+    image: blangley/cpcds-server-ri:1.1.0
     container_name: cpcds-server-ri
     restart: on-failure
     ports:
@@ -9,5 +9,5 @@ services:
     volumes:
       - ./data:/var/lib/jetty/target
     environment:
-      - SERVER_ADDRESS=http://cpcds-ri.org/cpcds-server/fhir/
+      - SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/
       - ADMIN_TOKEN=admin
