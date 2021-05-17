@@ -58,17 +58,41 @@ public class Metadata extends ServerCapabilityStatementProvider {
         CapabilityStatementRestSecurityComponent securityComponent = new CapabilityStatementRestSecurityComponent();
         securityComponent.addExtension(oauthExtension);
 
+        // Create Interaction Components
         TypeRestfulInteractionEnumFactory f = new TypeRestfulInteractionEnumFactory();
         ResourceInteractionComponent readInteractionComponent = new ResourceInteractionComponent(new Enumeration<>(f, TypeRestfulInteraction.READ));
         ResourceInteractionComponent vreadInteractionComponent = new ResourceInteractionComponent(new Enumeration<>(f, TypeRestfulInteraction.VREAD));
         ResourceInteractionComponent searchTypeInteractionComponent = new ResourceInteractionComponent(new Enumeration<>(f, TypeRestfulInteraction.SEARCHTYPE));
 
+        // Create Search Param Components
+        CapabilityStatementRestResourceSearchParamComponent idSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        idSearchParamComponent.setDefinition("http://hl7.org/fhir/SearchParameter/Resource-id");
+        idSearchParamComponent.setName("_id");
+        CapabilityStatementRestResourceSearchParamComponent lastUpdatedSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        lastUpdatedSearchParamComponent.setDefinition("http://hl7.org/fhir/SearchParameter/Resource-lastUpdated");
+        lastUpdatedSearchParamComponent.setName("_lastUpdated");
+        CapabilityStatementRestResourceSearchParamComponent eobPatientSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        eobPatientSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-patient");
+        eobPatientSearchParamComponent.setName("patient");
+        CapabilityStatementRestResourceSearchParamComponent eobTypeSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        eobTypeSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-type");
+        eobTypeSearchParamComponent.setName("type");
+        CapabilityStatementRestResourceSearchParamComponent eobIdentifierSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        eobIdentifierSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-identifier");
+        eobIdentifierSearchParamComponent.setName("identifier");
+        CapabilityStatementRestResourceSearchParamComponent eobServiceDateSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        eobServiceDateSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-service-date");
+        eobServiceDateSearchParamComponent.setName("service-date");
+
+        // Create Coverage Resource component
         CapabilityStatementRestResourceComponent coverageResourceComponent = new CapabilityStatementRestResourceComponent();
         coverageResourceComponent.setType("Coverage");
         coverageResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Coverage");
+        coverageResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/davinci-pdex/StructureDefinition/hrex-coverage");
         coverageResourceComponent.addSearchInclude("Coverage:payor");
         coverageResourceComponent.addInteraction(readInteractionComponent);
 
+        // Create EOB Resource component
         CapabilityStatementRestResourceComponent explanationOfBenefitResourceComponent = new CapabilityStatementRestResourceComponent();
         explanationOfBenefitResourceComponent.setType("ExplanationOfBenefit");
         explanationOfBenefitResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Explanation-of-Benefit");
@@ -84,50 +108,35 @@ public class Metadata extends ServerCapabilityStatementProvider {
         explanationOfBenefitResourceComponent.addSearchInclude("ExplanationOfBenefit:*");
         explanationOfBenefitResourceComponent.addInteraction(readInteractionComponent);
         explanationOfBenefitResourceComponent.addInteraction(searchTypeInteractionComponent);
-
-        CapabilityStatementRestResourceSearchParamComponent idSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
-        idSearchParamComponent.setDefinition("http://hl7.org/fhir/SearchParameter/Resource-id");
-        idSearchParamComponent.setName("_id");
         explanationOfBenefitResourceComponent.addSearchParam(idSearchParamComponent);
-        CapabilityStatementRestResourceSearchParamComponent patientSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
-        patientSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-patient");
-        patientSearchParamComponent.setName("patient");
-        explanationOfBenefitResourceComponent.addSearchParam(patientSearchParamComponent);
-        CapabilityStatementRestResourceSearchParamComponent lastUpdatedSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
-        lastUpdatedSearchParamComponent.setDefinition("http://hl7.org/fhir/SearchParameter/Resource-lastUpdated");
-        lastUpdatedSearchParamComponent.setName("_lastUpdated");
+        explanationOfBenefitResourceComponent.addSearchParam(eobPatientSearchParamComponent);
         explanationOfBenefitResourceComponent.addSearchParam(lastUpdatedSearchParamComponent);
-        CapabilityStatementRestResourceSearchParamComponent typeSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
-        typeSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-type");
-        typeSearchParamComponent.setName("type");
-        explanationOfBenefitResourceComponent.addSearchParam(typeSearchParamComponent);
-        CapabilityStatementRestResourceSearchParamComponent identifierSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
-        identifierSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-identifier");
-        identifierSearchParamComponent.setName("identifier");
-        explanationOfBenefitResourceComponent.addSearchParam(identifierSearchParamComponent);
-        CapabilityStatementRestResourceSearchParamComponent serviceDateSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
-        serviceDateSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-service-date");
-        serviceDateSearchParamComponent.setName("service-date");
-        explanationOfBenefitResourceComponent.addSearchParam(serviceDateSearchParamComponent);
+        explanationOfBenefitResourceComponent.addSearchParam(eobTypeSearchParamComponent);
+        explanationOfBenefitResourceComponent.addSearchParam(eobIdentifierSearchParamComponent);
+        explanationOfBenefitResourceComponent.addSearchParam(eobServiceDateSearchParamComponent);
 
+        // Create Organization Resource Component
         CapabilityStatementRestResourceComponent organizationResourceComponent = new CapabilityStatementRestResourceComponent();
         organizationResourceComponent.setType("Organization");
         organizationResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Organization");
+        organizationResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization");
         organizationResourceComponent.addInteraction(readInteractionComponent);
         organizationResourceComponent.addInteraction(vreadInteractionComponent);
 
+        // Create Patient Resource Component
         CapabilityStatementRestResourceComponent patientResourceComponent = new CapabilityStatementRestResourceComponent();
         patientResourceComponent.setType("Patient");
         patientResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Patient");
+        patientResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient");
         patientResourceComponent.addInteraction(readInteractionComponent);
         patientResourceComponent.addInteraction(vreadInteractionComponent);
 
+        // Create Practitioner Resource Component
         CapabilityStatementRestResourceComponent practitionerResourceComponent = new CapabilityStatementRestResourceComponent();
         practitionerResourceComponent.setType("Practitioner");
         practitionerResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Practitioner");
         practitionerResourceComponent.addInteraction(readInteractionComponent);
         practitionerResourceComponent.addInteraction(vreadInteractionComponent);
-
 
         // Create new rest component
         CapabilityStatementRestComponent rest = new CapabilityStatementRestComponent();
