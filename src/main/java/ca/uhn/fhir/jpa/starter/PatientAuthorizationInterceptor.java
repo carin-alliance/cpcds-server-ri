@@ -71,11 +71,16 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
             }
         }
 
-        return unauthorizedRule();
+        // Allows endpoints to be accessible by both auth and nonauth
+        return readOnlyRule();
     }
 
     private List<IAuthRule> adminAuthorizedRule() {
         return new RuleBuilder().allowAll().build();
+    }
+
+    private List<IAuthRule> readOnlyRule() {
+        return new RuleBuilder().allow().read().allResources().withAnyId().build();
     }
 
     private List<IAuthRule> authorizedRule(IIdType userIdPatientId) {
