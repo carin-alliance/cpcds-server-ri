@@ -83,6 +83,12 @@ public class Metadata extends ServerCapabilityStatementProvider {
         CapabilityStatementRestResourceSearchParamComponent eobServiceDateSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
         eobServiceDateSearchParamComponent.setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-service-date");
         eobServiceDateSearchParamComponent.setName("service-date");
+        CapabilityStatementRestResourceSearchParamComponent patientSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        patientSearchParamComponent.setName("patient");
+        CapabilityStatementRestResourceSearchParamComponent beneficiarySearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        beneficiarySearchParamComponent.setName("beneficiary");
+        CapabilityStatementRestResourceSearchParamComponent subscriberSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+        subscriberSearchParamComponent.setName("subscriber");
 
         // Create Coverage Resource component
         CapabilityStatementRestResourceComponent coverageResourceComponent = new CapabilityStatementRestResourceComponent();
@@ -91,6 +97,9 @@ public class Metadata extends ServerCapabilityStatementProvider {
         coverageResourceComponent.addSupportedProfile("http://hl7.org/fhir/us/davinci-pdex/StructureDefinition/hrex-coverage");
         coverageResourceComponent.addSearchInclude("Coverage:payor");
         coverageResourceComponent.addInteraction(readInteractionComponent);
+        coverageResourceComponent.addSearchParam(patientSearchParamComponent);
+        coverageResourceComponent.addSearchParam(beneficiarySearchParamComponent);
+        coverageResourceComponent.addSearchParam(subscriberSearchParamComponent);
 
         // Create EOB Resource component
         CapabilityStatementRestResourceComponent explanationOfBenefitResourceComponent = new CapabilityStatementRestResourceComponent();

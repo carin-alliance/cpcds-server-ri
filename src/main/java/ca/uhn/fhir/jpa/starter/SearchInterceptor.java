@@ -69,6 +69,7 @@ public class SearchInterceptor extends InterceptorAdapter {
         eobParams.add("_include");
         covParams.add("_include");
         covParams.add("beneficiary");
+        covParams.add("patient");
         covParams.add("subscriber");
         searchParams.put("ExplanationOfBenefit", eobParams);
         searchParams.put("Coverage", covParams);

@@ -80,7 +80,7 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
     }
 
     private List<IAuthRule> readOnlyRule() {
-        return new RuleBuilder().allow().read().allResources().withAnyId().build();
+        return new RuleBuilder().allow().read().allResources().withAnyId().andThen().allow().metadata().build();
     }
 
     private List<IAuthRule> authorizedRule(IIdType userIdPatientId) {
