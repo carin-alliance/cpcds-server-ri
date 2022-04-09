@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker push blangley/cpcds-server-ri
+docker push vfotso10/cpcds-server-ri:patientaccess

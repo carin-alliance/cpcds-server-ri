@@ -1,7 +1,7 @@
 version: "3"
 services:
   cpcds-server-ri:
-    image: blangley/cpcds-server-ri:patientaccess
+    image: vfotso10/cpcds-server-ri:patientaccess
     container_name: cpcds-server-ri
     restart: on-failure
     ports:
