@@ -1,8 +1,6 @@
 package ca.uhn.fhir.jpa.starter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +9,7 @@ import org.hl7.fhir.r4.hapi.rest.server.ServerCapabilityStatementProvider;
 import org.hl7.fhir.r4.model.CapabilityStatement;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Enumeration;
 import org.hl7.fhir.r4.model.Extension;
-import org.hl7.fhir.r4.model.GraphDefinition;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.UriType;
 import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementImplementationComponent;
@@ -24,9 +20,7 @@ import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementRestSecurity
 import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementSoftwareComponent;
 import org.hl7.fhir.r4.model.CapabilityStatement.ReferenceHandlingPolicy;
 import org.hl7.fhir.r4.model.CapabilityStatement.ResourceInteractionComponent;
-import org.hl7.fhir.r4.model.CapabilityStatement.RestfulCapabilityMode;
 import org.hl7.fhir.r4.model.CapabilityStatement.TypeRestfulInteraction;
-import org.hl7.fhir.r4.model.CapabilityStatement.TypeRestfulInteractionEnumFactory;
 import org.hl7.fhir.r4.model.Enumerations.PublicationStatus;
 import org.hl7.fhir.r4.model.Enumerations.SearchParamType;
 
