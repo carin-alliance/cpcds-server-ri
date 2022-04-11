@@ -162,3 +162,8 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Local scripts
+initiate-upload.sh
+seed-db-process.sh
+terminate-upload.sh

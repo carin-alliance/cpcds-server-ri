@@ -66,8 +66,8 @@ end
 def upload_bundle(bundle, server)
     puts "Uploading bundle #{$count + 1}..."
     begin
-        response = HTTParty.post(server, 
-            body: bundle.to_json, 
+        response = HTTParty.post(server,
+            body: bundle.to_json,
             headers: { 'Content-Type': 'application/json' }
         )
         rescue StandardError
@@ -140,8 +140,12 @@ else
     data_dir = ARGV[0]
 end
 
+puts "POSTING patient bundles to #{server}"
+upload_test_patient_data(server)
 puts "PUTTING #{data_dir} to #{server}"
 upload_sample_data(server, data_dir)
+puts "PUTTING IG example resources to #{server}"
+upload_ig_examples(server)
 puts "Uploaded #{$count} resources to #{server}"
 puts "Retyring #{$retry_resources.length} resources..."
 upload_retry_resources(server)
