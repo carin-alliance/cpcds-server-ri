@@ -2,8 +2,10 @@
 
 This project is a reference FHIR server for the [Consumer-Directed Payer Data Exchange Implementation Guide](https://build.fhir.org/ig/HL7/carin-bb/toc.html) (also know as Carin Blue Button Implementation Guide). It is based on the [HAPI FHIR JPA Server](https://github.com/hapifhir/hapi-fhir-jpaserver-starter) (HAPI 4.1.0).
 
-The server is hosted live at http://cpcds-ri.org/cpcds-server/fhir.
-For more information on connecting visit the [Connectathon Wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/Connectathon-README)
+The server is hosted live at http://cpcds-ri.c3ib.org/cpcds-server/fhir/.
+
+For more information on connecting visit the [Connectathon Wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/Connectathon-README).
+
 For more information on the AWS server visit the [wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/AWS-Reference-Implementation).
 
 ## Quickstart
@@ -11,8 +13,8 @@ For more information on the AWS server visit the [wiki](https://github.com/carin
 The quickest way to get the server up and running is by pulling the built image from docker hub.
 
 ```bash
-docker pull blangley/cpcds-server-ri
-docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ blangley/cpcds-server-ri
+docker pull vfotso10/cpcds-server-ri:patientaccess
+docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ vfotso10/cpcds-server-ri:patientaccess
 ```
 
 This will deploy the server to http://localhost:8080/cpcds-server/fhir.
@@ -26,6 +28,7 @@ The docker image can also be built locally before running. The container will au
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
+git checkout patient-access
 ./build-docker-image.sh
 docker-compose up
 ```
@@ -46,6 +49,7 @@ Clone the repo and build the server:
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
+git checkout patient-access
 export SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/
 export ADMIN_TOKEN=admin
 mvn dependency:resolve
@@ -74,7 +78,7 @@ Beyond on the normal HAPI configuration found in `src/main/resources/hapi.proper
 
 ## Uploading Test Data
 
-The master branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch. The database is read from `target/database/h2.mv.db`. A copy of the database with the test data preloaded can be found in the `/data` directory. Copying this into `target/database` will allow the server to have a read only copy of the loaded database.
+The master and patient-access branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch. The database is read from `target/database/h2.mv.db`. A copy of the database with the test data preloaded can be found in the `/data` directory. Copying this into `target/database` will allow the server to have a read only copy of the loaded database.
 
 ## Security
 
@@ -82,6 +86,6 @@ Since this code base serves as the reference implementation for the Carin BB IG 
 
 1. Logger statements print secrets - in places such as `User.java` and `Client.java` the logger displays the hashed password and client secret. Caution should be used any time a secret value is logged. Care should be taken to protect the log files from malicious users.
 2. Debug endpoint - the debug endpoint provides public access to the Users and Client table which provides hashed passwords and client secrets. This endpoint also provides public access to the log file. The debug endpoint should be removed for a production enviornment.
-3. Managing keys - the RSA keys used to sign and validate the JWT tokens are hard coded in `App.java`. Your implementation must change these keys and ensure they are stored in a secure location. Consider having rotating keys.
+3. Managing keys - the RSA keys used to sign and validate the JWT tokens are hard coded in `authorization/OauthEndpointController.java`. Your implementation must change these keys and ensure they are stored in a secure location. Consider having rotating keys.
 
 This may not be an exhaustive list. The developers of this reference implementations are not responsible for any vulnerabilities in the code base. All use of this repository comes with the understanding this reference implementation is used for testing connections only.
