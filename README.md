@@ -39,7 +39,7 @@ docker build -t cpcds-server-ri .
 docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ -e ADMIN_TOKEN=admin cpcds-server-ri
 ```
 
-This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
+This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at <http://localhost:8080/cpcds-server> and the FHIR endpoint will be available at <http://localhost:8080/cpcds-server/fhir>
 
 ## Manual Build and Run
 
@@ -54,7 +54,7 @@ mvn dependency:resolve
 mvn jetty:run
 ```
 
-The server will then be browseable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
+The server will then be browseable at <http://localhost:8080/cpcds-server> and the FHIR endpoint will be available at <http://localhost:8080/cpcds-server/fhir>
 
 Note: this has only been tested with Java 8, if you are using a different version of Java and experience issues try switching to Java 8.
 Note: a common error is about `.m2/repositories/com/h2database`. This is most likely due to running the server with a different version of Java. If you encounter this issue verify you are using Java 8, delete the `h2database` folder and run the server again.
