@@ -2,7 +2,7 @@
 
 This project is a reference FHIR server for the [Consumer-Directed Payer Data Exchange Implementation Guide](https://build.fhir.org/ig/HL7/carin-bb/toc.html) (also know as Carin Blue Button Implementation Guide). It is based on the [HAPI FHIR JPA Server](https://github.com/hapifhir/hapi-fhir-jpaserver-starter) (HAPI 4.1.0).
 
-The server is hosted live at http://cpcds-ri.c3ib.org/cpcds-server/fhir/.
+The server is hosted live at <http://cpcds-ri.c3ib.org/cpcds-server/fhir/>.
 
 For more information on connecting visit the [Connectathon Wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/Connectathon-README).
 
@@ -17,7 +17,7 @@ docker pull vfotso10/cpcds-server-ri:patientaccess
 docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ vfotso10/cpcds-server-ri:patientaccess
 ```
 
-This will deploy the server to http://localhost:8080/cpcds-server/fhir.
+This will deploy the server to <http://localhost:8080/cpcds-server/fhir>.
 
 Note: A docker-compose file is also included which can be configured for your use case. To run using compose use `docker-compose up`.
 
