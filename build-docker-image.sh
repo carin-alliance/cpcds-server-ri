@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t vfotso10/cpcds-server-ri:patientaccess .
+docker build -t cpcds-server-ri:patientaccess .

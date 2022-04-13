@@ -28,7 +28,6 @@ The docker image can also be built locally before running. The container will au
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
-git checkout patient-access
 ./build-docker-image.sh
 docker-compose up
 ```
@@ -49,7 +48,6 @@ Clone the repo and build the server:
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
-git checkout patient-access
 export SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/
 export ADMIN_TOKEN=admin
 mvn dependency:resolve
@@ -78,7 +76,7 @@ Beyond on the normal HAPI configuration found in `src/main/resources/hapi.proper
 
 ## Uploading Test Data
 
-The master and patient-access branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch. The database is read from `target/database/h2.mv.db`. A copy of the database with the test data preloaded can be found in the `/data` directory. Copying this into `target/database` will allow the server to have a read only copy of the loaded database.
+The master branch of this repository sets up the server as read only. Uploading to the server will fail. To disable the read only interceptor switch to the `cpcds-write` branch. The database is read from `target/database/h2.mv.db`. A copy of the database with the test data preloaded can be found in the `/data` directory. Copying this into `target/database` will allow the server to have a read only copy of the loaded database.
 
 ## Security
 
