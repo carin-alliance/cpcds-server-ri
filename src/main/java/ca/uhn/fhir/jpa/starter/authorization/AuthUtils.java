@@ -26,6 +26,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import ca.uhn.fhir.jpa.starter.HapiProperties;
 import ca.uhn.fhir.jpa.starter.ServerLogger;
 import ca.uhn.fhir.jpa.starter.authorization.TokenEndpoint.TokenType;
 
@@ -41,37 +42,16 @@ public class AuthUtils {
 		Client heroku = new Client("6cfecf41-e364-44ab-a06f-77f8b0c56c2b", "XHNdbHQlOrWXQ8eeXHvZal1EDjI3n2ISlqhtP30Zc89Ad2NuzreoorWQ5P8dPrxtk267SJ23mbxlMzjriAGgkaTnm6Y9f1cOas4Z6xhWXxG43bkIKHhawMR6gGDXAuEWc8wXUHteZIi4YCX6E1qAvGdsXS1KBhkUf1CLcGmauhbCMd73CjMugT527mpLnIebuTp4LYDiJag0usCE6B6fYuTWV21AbvydLnLsMsk83T7aobE4p9R0upL2Ph3OFTE1", "https://cpcds-client-ri.herokuapp.com/login");
 		Client localhost = new Client("b0c46635-c0b4-448c-a8b9-9bd282d2e05a", "bUYbEj5wpazS8Xv1jyruFKpuXa24OGn9MHuZ3ygKexaI5mhKUIzVEBvbv2uggVf1cW6kYD3cgTbCIGK3kjiMcmJq3OG9bn85Fh2x7JKYgy7Jwagdzs0qufgkhPGDvEoVpImpA4clIhfwn58qoTrfHx86ooWLWJeQh4s0StEMqoxLqboywr8u11qmMHd1xwBLehGXUbqpEBlkelBHDWaiCjkhwZeRe4nVu4o8wSAbPQIECQcTjqYBUrBjHlMx5vXU", "http://localhost:4000/login");
 		User patient1 = new User("Patient1", BCrypt.hashpw("password", BCrypt.gensalt()), "Patient1");
-		User patientex1 = new User("PatientEx1", BCrypt.hashpw("password", BCrypt.gensalt()), "PatientEx1");
+		User examplePatient1 = new User("ExamplePatient1", BCrypt.hashpw("password", BCrypt.gensalt()), "ExamplePatient1");
+		User pdexPatient1 = new User("PDexPatient1", BCrypt.hashpw("password", BCrypt.gensalt()), "PDexPatient1");
         User admin = new User("admin", BCrypt.hashpw("password", BCrypt.gensalt()), "admin");
-		User patient2 = new User("Patient2", BCrypt.hashpw("password", BCrypt.gensalt()), "026f2676-d635-47b9-af1e-95de31cda9b1");
-		User patient3 = new User("Patient3", BCrypt.hashpw("password", BCrypt.gensalt()), "14c20e78-610b-405b-aad1-9c8f6109152c");
-		User patient4 = new User("Patient4", BCrypt.hashpw("password", BCrypt.gensalt()), "6da541e2-62f4-42a7-8009-23e2d97116df");
-		User patient5 = new User("Patient5", BCrypt.hashpw("password", BCrypt.gensalt()), "ec19f75c-c674-478c-8916-8acb2f1b0a68");
 
 		OauthEndpointController.getDB().write(heroku);
 		OauthEndpointController.getDB().write(localhost);
 		OauthEndpointController.getDB().write(patient1);
-		OauthEndpointController.getDB().write(patientex1);
         OauthEndpointController.getDB().write(admin);
-        OauthEndpointController.getDB().write(patient2);
-		OauthEndpointController.getDB().write(patient3);
-		OauthEndpointController.getDB().write(patient4);
-		OauthEndpointController.getDB().write(patient5);
-    }
-
-    /**
-	 * Get the base url of the service from the HttpServletRequest
-     * Ex: http://localhost:8080/cpcds-server
-     * Ex: http://cpcds-ri.org/cpcds-server
-	 * 
-	 * @param request - the HttpServletRequest from the controller
-	 * @return the base url for the service
-	 */
-	public static String getServiceBaseUrl(HttpServletRequest request) {
-        if (request.getServerName().contains("localhost")) 
-            return request.getScheme() + "://localhost:" + request.getServerPort() + request.getContextPath();
-        else 
-            return request.getScheme() + "://" + request.getServerName() + request.getContextPath();
+		OauthEndpointController.getDB().write(examplePatient1);
+		OauthEndpointController.getDB().write(pdexPatient1);
     }
 
     /**
@@ -81,8 +61,12 @@ public class AuthUtils {
      * @param request - the HttpServletRequest from the controller
      * @return the fhir base url for the service
      */
-    public static String getFhirBaseUrl(HttpServletRequest request) {
-        return getServiceBaseUrl(request) + "/fhir";
+    public static String getFhirBaseUrl() {
+        String baseUrl = HapiProperties.getServerAddress();
+        if (baseUrl.endsWith("/")) 
+            return baseUrl.substring(0, baseUrl.length() - 1);
+        else   
+            return baseUrl;
     }
 
     /**

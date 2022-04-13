@@ -17,7 +17,7 @@ public class IntrospectionEndpoint {
     public static ResponseEntity<String> handleIntrospection(HttpServletRequest request, String token) {
         JSONObject response = new JSONObject();
 
-        String baseUrl = AuthUtils.getFhirBaseUrl(request);
+        String baseUrl = AuthUtils.getFhirBaseUrl();
 
         try {
             Algorithm algorithm = Algorithm.RSA256(OauthEndpointController.getPublicKey(), null);

@@ -92,7 +92,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>authorization</servlet-name>
-        <url-pattern>/oauth/*</url-pattern>
+        <url-pattern>/fhir/oauth/*</url-pattern>
     </servlet-mapping>
 
 	<servlet>

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t cpcds-server-ri .
+docker build -t cpcds-server-ri:patientaccess .

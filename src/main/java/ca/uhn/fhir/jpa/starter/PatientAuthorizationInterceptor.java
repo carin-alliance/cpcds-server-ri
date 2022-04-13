@@ -27,88 +27,103 @@ import ca.uhn.fhir.rest.server.interceptor.auth.RuleBuilder;
 @SuppressWarnings("ConstantConditions")
 public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
-    private static final Logger logger = ServerLogger.getLogger();
+  private static final Logger logger = ServerLogger.getLogger();
 
-    @Override
-    public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
-        String authHeader = theRequestDetails.getHeader("Authorization");
+  @Override
+  public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
+    String authHeader = theRequestDetails.getHeader("Authorization");
 
-        if (authHeader != null) {
-            // Get the JWT token from the Authorization header
-            String regex = "Bearer (.*)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(authHeader);
-            String token = "";
-            if (matcher.find() && matcher.groupCount() == 1) {
-                token = matcher.group(1);
+    if (authHeader != null) {
+      // Get the JWT token from the Authorization header
+      String regex = "Bearer (.*)";
+      Pattern pattern = Pattern.compile(regex);
+      Matcher matcher = pattern.matcher(authHeader);
+      String token = "";
+      if (matcher.find() && matcher.groupCount() == 1) {
+        token = matcher.group(1);
 
-                String adminToken = System.getenv("ADMIN_TOKEN");
-                if (adminToken != null && token.equals(adminToken)) {
-                    return adminAuthorizedRule();
-                } else {
-                    try {
-                        IIdType patientId = verify(token, theRequestDetails.getFhirServerBase());
-                        if (patientId == null) return unauthorizedRule();
-                        else if (patientId.getIdPart().equals("admin")) return adminAuthorizedRule();
-                        else return authorizedRule(patientId);
-                    } catch (SignatureVerificationException e) {
-                        String message = "Authorization failed: invalid signature";
-                        logger.log(Level.SEVERE, message, e);
-                        throw new AuthenticationException(message, e);
-                    } catch (TokenExpiredException e) {
-                        String message = "Authorization failed: access token expired";
-                        logger.log(Level.SEVERE, message, e);
-                        throw new AuthenticationException(message, e);
-                    } catch (Exception e) {
-                        String message = "Authorization failed";
-                        logger.log(Level.SEVERE, message, e);
-                        throw new AuthenticationException(message, e);
-                    }
-                }
-            } else {
-                throw new AuthenticationException(
-                    "Authorization header is not in the form \"Bearer <token>\"");
-            }
+        String adminToken = System.getenv("ADMIN_TOKEN");
+        if (adminToken != null && token.equals(adminToken)) {
+          return adminAuthorizedRule();
+        } else {
+          try {
+            IIdType patientId = verify(token, theRequestDetails.getFhirServerBase());
+            if (patientId == null)
+              return unauthorizedRule("Unauthorized access: invalid token. Missing patient ID claim");
+            else if (patientId.getIdPart().equals("admin"))
+              return adminAuthorizedRule();
+            else
+              return authorizedRule(patientId);
+          } catch (SignatureVerificationException e) {
+            String message = "Authorization failed: invalid signature";
+            logger.log(Level.SEVERE, message, e);
+            throw new AuthenticationException(message, e);
+          } catch (TokenExpiredException e) {
+            String message = "Authorization failed: access token expired";
+            logger.log(Level.SEVERE, message, e);
+            throw new AuthenticationException(message, e);
+          } catch (Exception e) {
+            String message = "Authorization failed";
+            logger.log(Level.SEVERE, message, e);
+            throw new AuthenticationException(message, e);
+          }
         }
-
-        return unauthorizedRule();
+      } else {
+        throw new AuthenticationException(
+            "Authorization header is not in the form \"Bearer <token>\"");
+      }
     }
 
-    private List<IAuthRule> adminAuthorizedRule() {
-        return new RuleBuilder().allowAll().build();
-    }
+    // Allows endpoints to be accessible by both auth and nonauth
+    // return readOnlyRule();
 
-    private List<IAuthRule> authorizedRule(IIdType userIdPatientId) {
-        return new RuleBuilder().allow().read().resourcesOfType("Coverage").inCompartment("Patient", userIdPatientId)
-                .andThen().allow().read().resourcesOfType("ExplanationOfBenefit").inCompartment("Patient", userIdPatientId)
-                .andThen().allow().read().resourcesOfType("Patient").inCompartment("Patient", userIdPatientId)
-                .andThen().allow().read().resourcesOfType("Practitioner").withAnyId()
-                .andThen().allow().read().resourcesOfType("PractitionerRole").withAnyId()
-                .andThen().allow().read().resourcesOfType("Organization").withAnyId()
-                .andThen().allow().read().resourcesOfType("OrganizationAffiliation").withAnyId()
-                .andThen().allow().read().resourcesOfType("MedicationKnowledge").withAnyId()
-                .andThen().allow().read().resourcesOfType("List").withAnyId()
-                .andThen().allow().read().resourcesOfType("Location").withAnyId()
-                .andThen().allow().read().resourcesOfType("HealthcareService").withAnyId()
-                .andThen().allow().metadata().andThen().denyAll()
-                .build();
-    }
+    return unauthorizedRule("Unauthorized access: missing or invalid authorization token.");
+  }
 
-    private List<IAuthRule> unauthorizedRule() {
-        // By default, deny everything except the metadata. This is for
-        // unathorized users
-        return new RuleBuilder().allow().metadata().andThen().denyAll().build();
-    }
+  private List<IAuthRule> adminAuthorizedRule() {
+    return new RuleBuilder().allowAll().build();
+  }
 
-    private IIdType verify(String token, String fhirBase) throws SignatureVerificationException, TokenExpiredException, JWTVerificationException {
-        Algorithm algorithm = Algorithm.RSA256(OauthEndpointController.getPublicKey(), null);
-        logger.fine("Verifying JWT token ISS and AUD is " + fhirBase);
-        JWTVerifier verifier = JWT.require(algorithm).withIssuer(fhirBase)
-                .withAudience(fhirBase).build();
-        DecodedJWT jwt = verifier.verify(token);
-        String patientId = jwt.getClaim("patient_id").asString();
-        if (patientId != null) return new IdType("Patient", patientId);
-        else return null;
-    }
+  private List<IAuthRule> readOnlyRule() {
+    return new RuleBuilder().allow().read().allResources().withAnyId().andThen().allow().metadata().build();
+  }
+
+  private List<IAuthRule> authorizedRule(IIdType userIdPatientId) {
+    String message = "Unauthorized access: access limited to read of [Coverage, ExplantionOBenefit, Patient] in compartment with patient ID ";
+    message += userIdPatientId.getIdPart() + " and read of [Organization, Practitioner, PractitionerRole] resources.";
+    return new RuleBuilder().allow().read().resourcesOfType("Coverage").inCompartment("Patient", userIdPatientId)
+        .andThen().allow().read().resourcesOfType("ExplanationOfBenefit").inCompartment("Patient", userIdPatientId)
+        .andThen().allow().read().resourcesOfType("Patient").inCompartment("Patient", userIdPatientId)
+        .andThen().allow().read().resourcesOfType("Practitioner").withAnyId()
+        .andThen().allow().read().resourcesOfType("PractitionerRole").withAnyId()
+        .andThen().allow().read().resourcesOfType("Organization").withAnyId()
+        .andThen().allow().read().resourcesOfType("OrganizationAffiliation").withAnyId()
+        .andThen().allow().read().resourcesOfType("MedicationKnowledge").withAnyId()
+        .andThen().allow().read().resourcesOfType("List").withAnyId()
+        .andThen().allow().read().resourcesOfType("Location").withAnyId()
+        .andThen().allow().read().resourcesOfType("HealthcareService").withAnyId()
+        .andThen().allow().metadata().andThen().denyAll(message)
+        .build();
+  }
+
+  private List<IAuthRule> unauthorizedRule(String rule) {
+    // By default, deny everything except the metadata. This is for
+    // unathorized users
+    return new RuleBuilder().allow().metadata().andThen().denyAll(rule).build();
+  }
+
+  private IIdType verify(String token, String fhirBase)
+      throws SignatureVerificationException, TokenExpiredException, JWTVerificationException {
+    Algorithm algorithm = Algorithm.RSA256(OauthEndpointController.getPublicKey(), null);
+    logger.fine("Verifying JWT token ISS and AUD is " + fhirBase);
+    JWTVerifier verifier = JWT.require(algorithm).withIssuer(fhirBase)
+        .withAudience(fhirBase).build();
+    DecodedJWT jwt = verifier.verify(token);
+    String patientId = jwt.getClaim("patient_id").asString();
+    if (patientId != null)
+      return new IdType("Patient", patientId);
+    else
+      return null;
+  }
 
 }
