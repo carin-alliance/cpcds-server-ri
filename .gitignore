@@ -49,6 +49,13 @@ ehthumbs_vista.db
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
+# Bash script and pem files
+build-push-docker-image.sh
+initiate-upload.sh
+seed-db-process.sh
+terminate-upload.sh
+deploy-to-aws.sh
+
 # Windows Installer files
 *.cab
 *.msi
