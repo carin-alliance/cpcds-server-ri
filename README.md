@@ -2,7 +2,7 @@
 
 This project is a reference FHIR server for the [Consumer-Directed Payer Data Exchange Implementation Guide](https://build.fhir.org/ig/HL7/carin-bb/toc.html) (also know as Carin Blue Button Implementation Guide). It is based on the [HAPI FHIR JPA Server](https://github.com/hapifhir/hapi-fhir-jpaserver-starter) (HAPI 4.1.0).
 
-The server is hosted live at hhttp://cpcds-ri.c3ib.org/cpcds-server/fhir.
+The server is hosted live at http://cpcds-ri.c3ib.org/cpcds-server/fhir.
 For more information on connecting visit the [Connectathon Wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/Connectathon-README)
 For more information on the AWS server visit the [wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/AWS-Reference-Implementation).
 
