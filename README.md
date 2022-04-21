@@ -58,7 +58,7 @@ Note: a common error is about `.m2/repositories/com/h2database`. This is most li
 
 ## GET Requests
 
-This server is protected and requires users to authenticate before obtaining access to protected resources. The authorization server is hosted at the `/oauth` endpoint. The Capability Statement for this server is at the `/fhir/metadata` endpoint. The smart configuration file is at `/.well-known/smart-configuration`. Even with an access token, only the resources marked as must support in the IG will be available.
+This server is protected and requires users to authenticate before obtaining access to protected resources. The authorization server is hosted at the `/oauth` endpoint. The Capability Statement for this server is at the `/fhir/metadata` endpoint. The smart configuration file is at `fhir/.well-known/smart-configuration`. Even with an access token, only the resources marked as must support in the IG will be available.
 
 Once an access token is received it must be sent in the `Authorization` header using the correct `token_type` returned by the auth server. Learn more about the server authorization from the [wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki)
 
