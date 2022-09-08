@@ -98,12 +98,15 @@ def upload_resource(resource, server)
 end
 
 def upload_ig_examples(server)
-  # Update this specification download url with each IG version
-  definitions_url = "https://build.fhir.org/ig/HL7/carin-bb/branches/preapply_STU2/full-ig.zip"
+  # Update these specification download urls with each IG version
+  definitions_url = "https://build.fhir.org/ig/HL7/carin-bb/branches/preapply_STU2/definitions.json.zip"
+  examples_url = "https://build.fhir.org/ig/HL7/carin-bb/branches/preapply_STU2/examples.json.zip"
   definitions_data = HTTParty.get(definitions_url, verify: false)
+  examples_data = HTTParty.get(examples_url, verify: false)
   definitions_file = Tempfile.new
   begin
     definitions_file.write(definitions_data)
+    definitions_file.write(examples_data)
   rescue => e
     puts "Something went wrong while downloading the IG specification: #{e.message}"
     return
