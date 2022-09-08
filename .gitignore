@@ -45,6 +45,14 @@ ehthumbs_vista.db
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
+# Bash script and pem files
+deploy.sh
+initiate-upload.sh
+seed-db-process.sh
+terminate-upload.sh
+deploy-to-aws.sh
+mitre-CPCDS-pub.pem
+
 # Windows Installer files
 *.cab
 *.msi
