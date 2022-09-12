@@ -1,5 +1,6 @@
 package ca.uhn.fhir.jpa.starter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,13 +21,28 @@ public class SearchInterceptor extends InterceptorAdapter {
   @Override
   public void incomingRequestPreHandled(RestOperationTypeEnum theOperation,
       ActionRequestDetails theProcessedRequest) {
+    RequestDetails theRequestDetails = theProcessedRequest.getRequestDetails();
+    Map<String, String[]> parameters = theRequestDetails.getParameters();
+    // Check the value of date parameters is of correct type.
+    for (String k : parameters.keySet()) {
+      List<String> keys = Arrays.asList("_lastUpdated");
+      if (keys.contains(k)) {
+        try {
+          LocalDate.parse(parameters.get(k)[0]);
+        } catch (Exception e) {
+          String message = String.format("Incorrect value for search parameter %s provided. %s should be of type date",
+              k, k);
+          throwInvalidRequestException(message);
+        }
+      }
+    }
+    ;
     // Ignore if using admin token
-    String authHeader = theProcessedRequest.getRequestDetails().getHeader("Authorization");
+    String authHeader = theRequestDetails.getHeader("Authorization");
     String adminHeader = "Bearer " + System.getenv("ADMIN_TOKEN");
     if (adminHeader.equals(authHeader))
       return;
 
-    RequestDetails theRequestDetails = theProcessedRequest.getRequestDetails();
     String resourceType = theRequestDetails.getResourceName();
     List<String> allowedSearchParameters = allowedSearchParameters(resourceType);
     List<String> allowedIncludes = allowedIncludes(resourceType);
@@ -36,24 +52,22 @@ public class SearchInterceptor extends InterceptorAdapter {
     if (autoAllowedResources.contains(resourceType))
       return;
 
-    if (theRequestDetails.getParameters().size() > 0) {
+    if (parameters.size() > 0) {
       // Check each of the search params is allowed
-      if (!allowedSearchParameters.containsAll(theRequestDetails.getParameters().keySet())) {
+      if (!allowedSearchParameters.containsAll(parameters.keySet())) {
         String message = "Unsupported search parameter in query " + theRequestDetails.getCompleteUrl();
         message += ". Supported search parameters for " + resourceType + " are " + allowedSearchParameters.toString();
-        logger.severe(message);
-        throw new InvalidRequestException(message);
+        throwInvalidRequestException(message);
       }
 
       // Check each of the include params is allowed
-      String[] includes = theRequestDetails.getParameters().get("_include");
+      String[] includes = parameters.get("_include");
       if (includes != null) {
         for (String i : includes) {
           if (!allowedIncludes.contains(i)) {
             String message = "Unsupported _include parameter " + i;
             message += ". Supported _include for " + resourceType + " are " + allowedIncludes.toString();
-            logger.severe(message);
-            throw new InvalidRequestException(message);
+            throwInvalidRequestException(message);
           }
         }
       }
@@ -77,6 +91,7 @@ public class SearchInterceptor extends InterceptorAdapter {
     eobParams.add("identifier");
     eobParams.add("service-date");
     eobParams.add("service-start-date");
+    eobParams.add("billable-period-start");
     eobParams.add("_include");
 
     covParams.add("_include");
@@ -115,5 +130,10 @@ public class SearchInterceptor extends InterceptorAdapter {
     includesParams.put("ExplanationOfBenefit", eobIncludes);
     includesParams.put("Coverage", Collections.singletonList("Coverage:payor"));
     return includesParams.get(resourceType);
+  }
+
+  private static void throwInvalidRequestException(String message) {
+    logger.severe(message);
+    throw new InvalidRequestException(message);
   }
 }
