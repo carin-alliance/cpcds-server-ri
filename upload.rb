@@ -99,7 +99,7 @@ end
 
 def upload_ig_examples(server)
   # Update this specification download url with each IG version
-  definitions_url = "https://build.fhir.org/ig/HL7/carin-bb/branches/preapply_STU2/examples.json.zip"
+  definitions_url = "https://build.fhir.org/ig/HL7/carin-bb/examples.json.zip"
   definitions_data = HTTParty.get(definitions_url, verify: false)
   definitions_file = Tempfile.new
   begin
