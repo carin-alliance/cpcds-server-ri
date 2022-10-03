@@ -48,6 +48,7 @@ public class Metadata extends ServerCapabilityStatementProvider {
   public CapabilityStatement getServerConformance(HttpServletRequest request, RequestDetails requestDetails) {
 
     CapabilityStatement c = super.getServerConformance(request, requestDetails);
+    c.setName("CARIN CPCDS Reference Server");
     c.setTitle("CARIN Consumer Directed Payer Data Exchange Reference Implementation Server");
     c.addImplementationGuide("http://hl7.org/fhir/us/carin-bb/ImplementationGuide/hl7.fhir.us.carin-bb");
     c.addInstantiates("http://hl7.org/fhir/us/carin-bb/CapabilityStatement/c4bb");
@@ -113,7 +114,7 @@ public class Metadata extends ServerCapabilityStatementProvider {
   // Customize EOB resource component
   private void customizeEobResourceComponent(CapabilityStatementRestResourceComponent resource) {
     resource
-        .addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Explanation-of-Benefit")
+        .addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit")
         .addSupportedProfile(
             "http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Inpatient-Institutional")
         .addSupportedProfile(
@@ -131,7 +132,6 @@ public class Metadata extends ServerCapabilityStatementProvider {
   // Customize Coverage resource component
   private void customizeCoverageResourceComponent(CapabilityStatementRestResourceComponent resource) {
     resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Coverage")
-        .addSupportedProfile("http://hl7.org/fhir/us/davinci-pdex/StructureDefinition/hrex-coverage")
         .setSearchParam(getCoverageSearchParameters())
         .setSearchInclude(getCoverageSearchInclude());
   }
@@ -139,7 +139,6 @@ public class Metadata extends ServerCapabilityStatementProvider {
   // Customize Patient resource component
   private void customizePatientResourceComponent(CapabilityStatementRestResourceComponent resource) {
     resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Patient")
-        .addSupportedProfile("http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient")
         .setSearchInclude(new ArrayList<>())
         .setSearchParam(new ArrayList<>());
   }
@@ -147,7 +146,6 @@ public class Metadata extends ServerCapabilityStatementProvider {
   // Customize Organization resource component
   private void customizeOrganizationResourceComponent(CapabilityStatementRestResourceComponent resource) {
     resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Organization")
-        .addSupportedProfile("http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization")
         .setSearchInclude(new ArrayList<>())
         .setSearchParam(new ArrayList<>());
   }
@@ -169,7 +167,8 @@ public class Metadata extends ServerCapabilityStatementProvider {
     // Defining the service field
     CodeableConcept service = new CodeableConcept();
     ArrayList<Coding> codings = new ArrayList<>();
-    codings.add(new Coding("http://hl7.org/fhir/restful-security-service", "SMART-on-FHIR", "SMART on FHIR"));
+    codings.add(
+        new Coding("http://terminology.hl7.org/CodeSystem/restful-security-service", "SMART-on-FHIR", "SMART on FHIR"));
     service.setCoding(codings);
     service.setText("OAuth2 using SMART-on-FHIR profile (see http://docs.smarthealthit.org)");
 
@@ -243,6 +242,7 @@ public class Metadata extends ServerCapabilityStatementProvider {
     searchParamComponents.add(getEobIdentifierSearchParamComponent());
     searchParamComponents.add(getEobServiceDateSearchParamComponent());
     searchParamComponents.add(getEobServiceStartDateSearchParamComponent());
+    searchParamComponents.add(getEobBillablePeriodStartSearchParamComponent());
     return searchParamComponents;
   }
 
@@ -348,5 +348,17 @@ public class Metadata extends ServerCapabilityStatementProvider {
     eobServiceStartDateSearchParamComponent.setDocumentation("Starting Date of the service for the EOB");
 
     return eobServiceStartDateSearchParamComponent;
+  }
+
+  private CapabilityStatementRestResourceSearchParamComponent getEobBillablePeriodStartSearchParamComponent() {
+    CapabilityStatementRestResourceSearchParamComponent eobBillablePeriodStartSearchParamComponent = new CapabilityStatementRestResourceSearchParamComponent();
+    eobBillablePeriodStartSearchParamComponent
+        .setDefinition("http://hl7.org/fhir/us/carin-bb/SearchParameter/explanationofbenefit-billable-period-start");
+    eobBillablePeriodStartSearchParamComponent.setName("billable-period-start");
+    eobBillablePeriodStartSearchParamComponent.setType(SearchParamType.DATE);
+    eobBillablePeriodStartSearchParamComponent.setDocumentation(
+        "Starting Date of the service for the EOB using billablePeriod.period.start. The billable-period-start search parameter using the billablePeriod.period.start provides results with the earliest billablePeriod.start from a professional and non-clinician EOB or an oral EOB.");
+
+    return eobBillablePeriodStartSearchParamComponent;
   }
 }

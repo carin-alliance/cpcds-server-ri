@@ -4,6 +4,8 @@ This project is a reference FHIR server for the [Consumer-Directed Payer Data Ex
 
 The server is hosted live at <http://cpcds-ri.c3ib.org/cpcds-server/fhir/>.
 
+Check out the anticipated queries to interact with the server: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/13945262-cc64fdf8-935b-4cb9-9737-875a642045ed?action=collection%2Ffork&collection-url=entityId%3D13945262-cc64fdf8-935b-4cb9-9737-875a642045ed%26entityType%3Dcollection%26workspaceId%3D8ba89b37-bd7a-4de4-a385-e789c857c12c)
+
 For more information on connecting visit the [Connectathon Wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/Connectathon-README).
 
 For more information on the AWS server visit the [wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/AWS-Reference-Implementation).
