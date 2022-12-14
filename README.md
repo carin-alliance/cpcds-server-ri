@@ -6,7 +6,7 @@ The server is hosted live at http://cpcds-ri.c3ib.org/cpcds-server/fhir.
 For more information on connecting visit the [Connectathon Wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/Connectathon-README)
 For more information on the AWS server visit the [wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/AWS-Reference-Implementation).
 
-## Quickstart
+## Quickstart 
 
 The quickest way to get the server up and running is by pulling the built image from docker hub.
 
