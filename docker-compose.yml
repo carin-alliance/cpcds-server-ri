@@ -9,5 +9,5 @@ services:
     volumes:
       - ./data:/var/lib/jetty/target
     environment:
-      - SERVER_ADDRESS=http://cpcds-ri.org/cpcds-server/fhir/
+      - SERVER_ADDRESS=https://cpcds-server.lantanagroup.com/fhir/
       - ADMIN_TOKEN=admin
