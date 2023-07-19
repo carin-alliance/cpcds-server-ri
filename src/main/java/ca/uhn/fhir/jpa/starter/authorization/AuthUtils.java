@@ -1,5 +1,7 @@
 package ca.uhn.fhir.jpa.starter.authorization;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,6 +28,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import ca.uhn.fhir.jpa.starter.HapiProperties;
 import ca.uhn.fhir.jpa.starter.ServerLogger;
 import ca.uhn.fhir.jpa.starter.authorization.TokenEndpoint.TokenType;
 
@@ -68,10 +71,25 @@ public class AuthUtils {
 	 * @return the base url for the service
 	 */
 	public static String getServiceBaseUrl(HttpServletRequest request) {
-        if (request.getServerName().contains("localhost")) 
-            return request.getScheme() + "://localhost:" + request.getServerPort() + request.getContextPath();
-        else 
-            return request.getScheme() + "://" + request.getServerName() + request.getContextPath();
+        String baseUrl = "";
+        // configured base url checked first
+        try {
+            URL url = new URL(HapiProperties.getServerAddress());
+            baseUrl = url.getProtocol() + "://" + url.getHost();
+            if (url.getPort() > -1)
+                baseUrl += ":" + url.getPort();
+        } catch (MalformedURLException e) {
+        }
+
+        // otherwise use url from request
+        if (baseUrl.isEmpty()) {
+            if (request.getServerName().contains("localhost")) 
+                baseUrl = request.getScheme() + "://localhost:" + request.getServerPort() + request.getContextPath();
+            else 
+                baseUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath();
+        }
+
+        return baseUrl;
     }
 
     /**
