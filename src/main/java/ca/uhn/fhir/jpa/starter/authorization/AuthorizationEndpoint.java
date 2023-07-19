@@ -44,7 +44,7 @@ public class AuthorizationEndpoint {
         if (!aud.equals(baseUrl)) {
             status = HttpStatus.BAD_REQUEST;
             attributes.put(ERROR_KEY, "invalid_request");
-            attributes.put(ERROR_DESCRIPTION_KEY, "aud is invalid");
+            attributes.put(ERROR_DESCRIPTION_KEY, String.format("aud is invalid: received (%s) - expected (%s)", aud, baseUrl));
         } else if (!responseType.equals("code")) {
             status = HttpStatus.BAD_REQUEST;
             attributes.put(ERROR_KEY, "invalid_request");
