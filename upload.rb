@@ -5,7 +5,8 @@ require "fileutils"
 
 TEST_DATA_DIR = "CPCDS_patient_data"
 SAMPLE_DATA_DIR = "sample_data_2_0_0"
-FHIR_SERVER = "http://localhost:8080/cpcds-server/fhir"
+# FHIR_SERVER = "http://localhost:8080/cpcds-server/fhir"
+FHIR_SERVER = "http://hapi.fhir.org/baseR4"
 $count = 0
 $retry_resources = Array.new()
 
