@@ -53,12 +53,12 @@ public class Metadata extends ServerCapabilityStatementProvider {
     c.addImplementationGuide("http://hl7.org/fhir/us/carin-bb/ImplementationGuide/hl7.fhir.us.carin-bb");
     c.addInstantiates("http://hl7.org/fhir/us/carin-bb/CapabilityStatement/c4bb");
     c.setStatus(PublicationStatus.DRAFT);
-    c.setVersion("1.2.0");
+    c.setVersion("2.0.0");
     c.setExperimental(true);
     c.setPublisher("MITRE CARIN BB");
 
     CapabilityStatementImplementationComponent implementationComponent = new CapabilityStatementImplementationComponent(
-        new StringType("MITRE CPCDS Reference Implementation for Carin BB 1.2.0"));
+        new StringType("MITRE CPCDS Reference Implementation for Carin BB 2.0.0"));
     implementationComponent.setUrl(HapiProperties.getServerAddress());
     c.setImplementation(implementationComponent);
     CapabilityStatementSoftwareComponent softwareComponent = new CapabilityStatementSoftwareComponent(
@@ -101,6 +101,9 @@ public class Metadata extends ServerCapabilityStatementProvider {
           case "Patient":
             customizePatientResourceComponent(resource);
             break;
+          case "RelatedPerson":
+            customizeRelatedPersonResourceComponent(resource);
+            break;
           case "Practitioner":
             customizePractitionerResourceComponent(resource);
             break;
@@ -138,23 +141,26 @@ public class Metadata extends ServerCapabilityStatementProvider {
 
   // Customize Patient resource component
   private void customizePatientResourceComponent(CapabilityStatementRestResourceComponent resource) {
-    resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Patient")
-        .setSearchInclude(new ArrayList<>())
-        .setSearchParam(new ArrayList<>());
+    resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Patient");
+
+  }
+
+  // Customize Patient resource component
+  private void customizeRelatedPersonResourceComponent(CapabilityStatementRestResourceComponent resource) {
+    resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-RelatedPerson");
+
   }
 
   // Customize Organization resource component
   private void customizeOrganizationResourceComponent(CapabilityStatementRestResourceComponent resource) {
-    resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Organization")
-        .setSearchInclude(new ArrayList<>())
-        .setSearchParam(new ArrayList<>());
+    resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Organization");
+
   }
 
   // Customize Practitioner resource component
   private void customizePractitionerResourceComponent(CapabilityStatementRestResourceComponent resource) {
-    resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Practitioner")
-        .setSearchInclude(new ArrayList<>())
-        .setSearchParam(new ArrayList<>());
+    resource.addSupportedProfile("http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Practitioner");
+
   }
 
   /**

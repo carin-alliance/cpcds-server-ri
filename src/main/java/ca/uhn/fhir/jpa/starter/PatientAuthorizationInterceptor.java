@@ -89,11 +89,12 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
   }
 
   private List<IAuthRule> authorizedRule(IIdType userIdPatientId) {
-    String message = "Unauthorized access: access limited to read of [Coverage, ExplantionOBenefit, Patient] in compartment with patient ID ";
+    String message = "Unauthorized access: access limited to read of [Coverage, ExplantionOBenefit, Patient, RelatedPerson] in compartment with patient ID ";
     message += userIdPatientId.getIdPart() + " and read of [Organization, Practitioner, PractitionerRole] resources.";
     return new RuleBuilder().allow().read().resourcesOfType("Coverage").inCompartment("Patient", userIdPatientId)
         .andThen().allow().read().resourcesOfType("ExplanationOfBenefit").inCompartment("Patient", userIdPatientId)
         .andThen().allow().read().resourcesOfType("Patient").inCompartment("Patient", userIdPatientId)
+        .andThen().allow().read().resourcesOfType("RelatedPerson").inCompartment("Patient", userIdPatientId)
         .andThen().allow().read().resourcesOfType("Practitioner").withAnyId()
         .andThen().allow().read().resourcesOfType("PractitionerRole").withAnyId()
         .andThen().allow().read().resourcesOfType("Organization").withAnyId()

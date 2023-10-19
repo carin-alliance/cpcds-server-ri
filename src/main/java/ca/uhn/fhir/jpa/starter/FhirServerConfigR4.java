@@ -59,6 +59,7 @@ public class FhirServerConfigR4 extends BaseJavaConfigR4 {
     return resourceType.equals("ExplanationOfBenefit") ||
         resourceType.equals("Coverage") ||
         resourceType.equals("Patient") ||
+        resourceType.equals("RelatedPerson") ||
         resourceType.equals("Organization") ||
         resourceType.equals("Practitioner") ||
         resourceType.equals("StructureDefinition") ||
