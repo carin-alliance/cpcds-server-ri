@@ -84,3 +84,12 @@ Since this code base serves as the reference implementation for the Carin BB IG 
 3. Managing keys - the RSA keys used to sign and validate the JWT tokens are hard coded in `App.java`. Your implementation must change these keys and ensure they are stored in a secure location. Consider having rotating keys.
 
 This may not be an exhaustive list. The developers of this reference implementations are not responsible for any vulnerabilities in the code base. All use of this repository comes with the understanding this reference implementation is used for testing connections only.
+
+
+## Questions and Contributions
+Questions about the project can be asked in the [CARIN BlueButton stream on the FHIR Zulip Chat](https://chat.fhir.org/#narrow/stream/204607-CARIN-IG-for-Blue-Button.C2.AE).
+
+This project welcomes Pull Requests. Any issues identified with the RI should be submitted via the [GitHub issue tracker](https://github.com/carin-alliance/cpcds-server-ri/issues).
+
+As of October 1, 2022, The Lantana Consulting Group is responsible for the management and maintenance of this Reference Implementation.
+In addition to posting on FHIR Zulip Chat channel mentioned above you can contact [Corey Spears](mailto:corey.spears@lantanagroup.com) for questions or requests.
