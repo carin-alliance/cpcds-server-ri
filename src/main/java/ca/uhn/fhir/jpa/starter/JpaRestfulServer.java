@@ -8,6 +8,7 @@ import ca.uhn.fhir.jpa.binstore.BinaryStorageInterceptor;
 import ca.uhn.fhir.jpa.bulk.BulkDataExportProvider;
 import ca.uhn.fhir.jpa.dao.DaoConfig;
 import ca.uhn.fhir.jpa.dao.DaoRegistry;
+import ca.uhn.fhir.jpa.dao.IFhirResourceDao;
 import ca.uhn.fhir.jpa.dao.IFhirSystemDao;
 import ca.uhn.fhir.jpa.interceptor.CascadingDeleteInterceptor;
 import ca.uhn.fhir.jpa.provider.GraphQLProvider;
@@ -22,6 +23,7 @@ import ca.uhn.fhir.jpa.provider.r4.JpaSystemProviderR4;
 import ca.uhn.fhir.jpa.provider.r5.JpaConformanceProviderR5;
 import ca.uhn.fhir.jpa.provider.r5.JpaSystemProviderR5;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
+import ca.uhn.fhir.jpa.searchparam.registry.ISearchParamRegistry;
 import ca.uhn.fhir.jpa.subscription.SubscriptionInterceptorLoader;
 import ca.uhn.fhir.jpa.subscription.module.interceptor.SubscriptionDebugLogInterceptor;
 import ca.uhn.fhir.jpa.util.ResourceProviderFactory;
@@ -39,6 +41,7 @@ import ca.uhn.fhir.validation.ResultSeverityEnum;
 import java.util.HashSet;
 import java.util.TreeSet;
 import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.r4.model.SearchParameter;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
 import org.hl7.fhir.dstu3.model.Meta;
 import org.springframework.context.ApplicationContext;
@@ -65,6 +68,9 @@ public class JpaRestfulServer extends RestfulServer {
      */
     ApplicationContext appCtx = (ApplicationContext) getServletContext()
         .getAttribute("org.springframework.web.context.WebApplicationContext.ROOT");
+
+    DaoRegistry daoRegistry = appCtx.getBean(DaoRegistry.class);
+
     // Customize supported resource types
     Set<String> supportedResourceTypes = HapiProperties.getSupportedResourceTypes();
 
@@ -73,7 +79,6 @@ public class JpaRestfulServer extends RestfulServer {
     }
 
     if (!supportedResourceTypes.isEmpty()) {
-      DaoRegistry daoRegistry = appCtx.getBean(DaoRegistry.class);
       daoRegistry.setSupportedResourceTypes(supportedResourceTypes);
     }
 
@@ -103,6 +108,14 @@ public class JpaRestfulServer extends RestfulServer {
 
     registerProviders(resourceProviders.createProviders());
     registerProvider(systemProvider);
+
+    // custom search params
+    // IFhirResourceDao<SearchParameter> searchParamDao =
+    // daoRegistry.getResourceDao(SearchParameter.class);
+    // searchParamDao.create(new EobCustomSearchParams().coverageSearchParameter());
+    // ISearchParamRegistry searchParamRegistry =
+    // appCtx.getBean(ISearchParamRegistry.class);
+    // searchParamRegistry.forceRefresh();
 
     /*
      * The conformance provider exports the supported resources, search parameters,
@@ -265,7 +278,7 @@ public class JpaRestfulServer extends RestfulServer {
     }
 
     // Cascading deletes
-    DaoRegistry daoRegistry = appCtx.getBean(DaoRegistry.class);
+    // DaoRegistry daoRegistry = appCtx.getBean(DaoRegistry.class);
     IInterceptorBroadcaster interceptorBroadcaster = appCtx.getBean(IInterceptorBroadcaster.class);
     if (HapiProperties.getAllowCascadingDeletes()) {
       CascadingDeleteInterceptor cascadingDeleteInterceptor = new CascadingDeleteInterceptor(daoRegistry,
@@ -282,24 +295,24 @@ public class JpaRestfulServer extends RestfulServer {
     // Validation
     IValidatorModule validatorModule;
     switch (fhirVersion) {
-    case DSTU2:
-      validatorModule = appCtx.getBean("myInstanceValidatorDstu2", IValidatorModule.class);
-      break;
-    case DSTU3:
-      validatorModule = appCtx.getBean("myInstanceValidatorDstu3", IValidatorModule.class);
-      break;
-    case R4:
-      validatorModule = appCtx.getBean("myInstanceValidatorR4", IValidatorModule.class);
-      break;
-    case R5:
-      validatorModule = appCtx.getBean("myInstanceValidatorR5", IValidatorModule.class);
-      break;
-    // These versions are not supported by HAPI FHIR JPA
-    case DSTU2_HL7ORG:
-    case DSTU2_1:
-    default:
-      validatorModule = null;
-      break;
+      case DSTU2:
+        validatorModule = appCtx.getBean("myInstanceValidatorDstu2", IValidatorModule.class);
+        break;
+      case DSTU3:
+        validatorModule = appCtx.getBean("myInstanceValidatorDstu3", IValidatorModule.class);
+        break;
+      case R4:
+        validatorModule = appCtx.getBean("myInstanceValidatorR4", IValidatorModule.class);
+        break;
+      case R5:
+        validatorModule = appCtx.getBean("myInstanceValidatorR5", IValidatorModule.class);
+        break;
+      // These versions are not supported by HAPI FHIR JPA
+      case DSTU2_HL7ORG:
+      case DSTU2_1:
+      default:
+        validatorModule = null;
+        break;
     }
     if (validatorModule != null) {
       if (HapiProperties.getValidateRequestsEnabled()) {
