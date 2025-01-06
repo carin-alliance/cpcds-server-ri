@@ -143,7 +143,7 @@ public class HapiProperties {
     }
 
     private static String getProperty(String propertyName) {
-        String env = "HAPI_" + propertyName.toUpperCase(Locale.US);
+        String env = propertyName.toUpperCase(Locale.US);
         env = env.replace(".", "_");
         env = env.replace("-", "_");
 
