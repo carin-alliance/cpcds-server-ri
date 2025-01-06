@@ -2,7 +2,7 @@
 
 This project is a reference FHIR server for the [Consumer-Directed Payer Data Exchange Implementation Guide](https://build.fhir.org/ig/HL7/carin-bb/toc.html) (also know as Carin Blue Button Implementation Guide). It is based on the [HAPI FHIR JPA Server](https://github.com/hapifhir/hapi-fhir-jpaserver-starter) (HAPI 4.1.0).
 
-The server is hosted live at http://cpcds-ri.c3ib.org/cpcds-server/fhir.
+The server is hosted live at https://cpcds-server.lantanagroup.com/fhir.
 For more information on connecting visit the [Connectathon Wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/Connectathon-README)
 For more information on the AWS server visit the [wiki](https://github.com/carin-alliance/cpcds-server-ri/wiki/AWS-Reference-Implementation).
 
@@ -11,11 +11,11 @@ For more information on the AWS server visit the [wiki](https://github.com/carin
 The quickest way to get the server up and running is by pulling the built image from docker hub.
 
 ```bash
-docker pull blangley/cpcds-server-ri
-docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ blangley/cpcds-server-ri
+docker pull lantanagroup/cpcds-server-ri
+docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/fhir lantanagroup/cpcds-server-ri
 ```
 
-This will deploy the server to http://localhost:8080/cpcds-server/fhir.
+This will deploy the server to http://localhost:8080/fhir
 
 Note: A docker-compose file is also included which can be configured for your use case. To run using compose use `docker-compose up`.
 
@@ -34,10 +34,10 @@ Alternatively you can build and run using normal docker commands:
 
 ```bash
 docker build -t cpcds-server-ri .
-docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/ cpcds-server-ri
+docker run -p 8080:8080 -e SERVER_ADDRESS=http://localhost:8080/fhir cpcds-server-ri
 ```
 
-This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
+This will build a read only version of the server with the test data pre-loaded. The server will then be browesable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/fhir
 
 ## Manual Build and Run
 
@@ -46,12 +46,12 @@ Clone the repo and build the server:
 ```bash
 git clone https://github.com/carin-alliance/cpcds-server-ri.git
 cd cpcds-server-ri
-export SERVER_ADDRESS=http://localhost:8080/cpcds-server/fhir/
+export SERVER_ADDRESS=http://localhost:8080/fhir
 mvn dependency:resolve
 mvn jetty:run
 ```
 
-The server will then be browseable at http://localhost:8080/cpcds-server and the FHIR endpoint will be available at http://localhost:8080/cpcds-server/fhir
+The server will then be browseable at http://localhost:8080/ and the FHIR endpoint will be available at http://localhost:8080/fhir/
 
 Note: this has only been tested with Java 8, if you are using a different version of Java and experience issues try switching to Java 8.
 Note: a common error is about `.m2/repositories/com/h2database`. This is most likely due to running the server with a different version of Java. If you encounter this issue verify you are using Java 8, delete the `h2database` folder and run the server again.
@@ -68,7 +68,7 @@ Beyond on the normal HAPI configuration found in `src/main/resources/hapi.proper
 
 | ENV            | Required | Description                                                                                           |
 | -------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| SERVER_ADDRESS | Yes      | The base url for this server. For localhost this should be `http://localhost:8080/cpcds-server/fhir/` |
+| SERVER_ADDRESS | Yes      | The base url for this server. For localhost this should be `http://localhost:8080/fhir`               |
 | ADMIN_TOKEN    | No       | The value of the admin token to bypass authorization. If unset no admin token can be used.            |
 
 ## Uploading Test Data

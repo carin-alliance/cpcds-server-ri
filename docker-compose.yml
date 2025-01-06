@@ -1,7 +1,7 @@
 version: "3"
 services:
   cpcds-server-ri:
-    image: cpcds-server-ri
+    image: lantanagroup/cpcds-server-ri
     container_name: cpcds-server-ri
     restart: on-failure
     ports:
@@ -9,5 +9,5 @@ services:
     volumes:
       - ./data:/var/lib/jetty/target
     environment:
-      - SERVER_ADDRESS=https://cpcds-server.lantanagroup.com/fhir/
+      - SERVER_ADDRESS=http://localhost:8080/fhir
       - ADMIN_TOKEN=admin
