@@ -55,6 +55,7 @@ public class SearchInterceptor extends InterceptorAdapter {
         Map<String, List<String>> searchParams = new HashMap<>();
         ArrayList<String> eobParams = new ArrayList<>();
         eobParams.add("_id");
+        eobParams.add("coverage");
         eobParams.add("patient");
         eobParams.add("_lastUpdated");
         eobParams.add("type");
@@ -68,6 +69,7 @@ public class SearchInterceptor extends InterceptorAdapter {
         if (allowedParams == null) {
             return Collections.singletonList("_format");
         } else {
+            allowedParams = new ArrayList<>(allowedParams);
             allowedParams.add("_format");
             return allowedParams;
         }
