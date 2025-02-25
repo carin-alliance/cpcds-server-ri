@@ -337,3 +337,8 @@ hapi:
 #  protocol: 'http'
 #  schema_management_strategy: CREATE
 #  username: SomeUsername
+
+security:
+  admin_token: 'admin'
+  enabled: true
+  read_only: true

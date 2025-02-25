@@ -68,8 +68,8 @@ Beyond on the normal HAPI configuration found in `src/main/resources/hapi.proper
 
 | ENV            | Required | Description                                                                                           |
 | -------------- | -------- | ----------------------------------------------------------------------------------------------------- |
-| SERVER_ADDRESS | Yes      | The base url for this server. For localhost this should be `http://localhost:8080/fhir`               |
-| ADMIN_TOKEN    | No       | The value of the admin token to bypass authorization. If unset no admin token can be used.            |
+| HAPI_FHIR_SERVER_ADDRESS | Yes      | The base url for this server. For localhost this should be `http://localhost:8080/fhir`               |
+| SECURITY_ADMIN_TOKEN    | No       | The value of the admin token to bypass authorization. If unset no admin token can be used.            |
 
 ## Uploading Test Data
 

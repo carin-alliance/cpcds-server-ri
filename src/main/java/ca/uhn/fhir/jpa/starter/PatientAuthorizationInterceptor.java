@@ -28,9 +28,20 @@ import ca.uhn.fhir.rest.server.interceptor.auth.RuleBuilder;
 public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
 
     private static final Logger logger = ServerLogger.getLogger();
+    private SecurityProperties securityProperties;
+
+    public PatientAuthorizationInterceptor(SecurityProperties securityProperties) {
+        super();
+        this.securityProperties = securityProperties;
+    }
 
     @Override
     public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
+
+        if (!securityProperties.getEnabled()) {
+            return new RuleBuilder().allowAll().build();
+        }
+
         String authHeader = theRequestDetails.getHeader("Authorization");
 
         if (authHeader != null) {
@@ -42,7 +53,7 @@ public class PatientAuthorizationInterceptor extends AuthorizationInterceptor {
             if (matcher.find() && matcher.groupCount() == 1) {
                 token = matcher.group(1);
 
-                String adminToken = System.getenv("ADMIN_TOKEN");
+                String adminToken = securityProperties.getAdminToken();
                 if (adminToken != null && token.equals(adminToken)) {
                     return adminAuthorizedRule();
                 } else {

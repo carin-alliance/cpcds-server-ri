@@ -61,14 +61,17 @@ public class Application extends SpringBootServletInitializer {
 	@Autowired
 	private AppProperties appProperties;
 
+	@Autowired
+	private SecurityProperties securityProperties;
+
 	// primary /fhir endpoint servlet
 	@Bean
 	@Conditional(OnEitherVersion.class)
 	public ServletRegistrationBean<RestfulServer> hapiServletRegistration(RestfulServer restfulServer) {
 
 		restfulServer.registerInterceptor(new Metadata(appProperties));
-		restfulServer.registerInterceptor(new PatientAuthorizationInterceptor());
-		restfulServer.registerInterceptor(new ReadOnlyInterceptor());
+		restfulServer.registerInterceptor(new PatientAuthorizationInterceptor(securityProperties));
+		restfulServer.registerInterceptor(new ReadOnlyInterceptor(securityProperties));
 
 		ServletRegistrationBean<RestfulServer> servletRegistrationBean = new ServletRegistrationBean<RestfulServer>();
 		beanFactory.autowireBean(restfulServer);

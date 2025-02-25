@@ -5,7 +5,7 @@ services:
     container_name: cpcds-server-ri
     restart: on-failure
     environment:
-      ADMIN_TOKEN: "admin"
+      SECURITY_ADMIN_TOKEN: "admin"
       # SPRING_DATASOURCE_URL: "jdbc:postgresql://hapi-fhir-postgres:5432/hapi"
       # SPRING_DATASOURCE_USERNAME: "admin"
       # SPRING_DATASOURCE_PASSWORD: "admin"
