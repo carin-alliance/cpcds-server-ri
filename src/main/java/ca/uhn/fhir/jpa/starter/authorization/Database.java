@@ -4,9 +4,14 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternUtils;
+import org.springframework.util.FileCopyUtils;
+
 import ca.uhn.fhir.jpa.starter.ServerLogger;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -25,10 +30,10 @@ public class Database {
 
     private static final Logger logger = ServerLogger.getLogger();
 
-    private static final String CREATE_SQL_FILE = "src/main/java/ca/uhn/fhir/jpa/starter/authorization/CreateDatabase.sql";
+    private static final String CREATE_SQL_FILE = "db/CreateDatabase.sql";
 
-    private static final String STYLE_FILE = "src/main/resources/style.html";
-    private static final String SCRIPT_FILE = "src/main/resources/script.html";
+    private static final String STYLE_FILE = "db/style.html";
+    private static final String SCRIPT_FILE = "db/script.html";
 
     private static String style = "";
     private static String script = "";
@@ -80,15 +85,18 @@ public class Database {
         jdbcString = JDBC_TYPE + relativePath + JDBC_FILE + JDBC_OPTIONS;
         logger.info("JDBC: " + jdbcString);
         try (Connection connection = getConnection()) {
-            String sql = new String(Files.readAllBytes(Paths.get(CREATE_SQL_FILE).toAbsolutePath()));
+            Resource sqlResource = ResourcePatternUtils.getResourcePatternResolver(null).getResource("classpath:" + CREATE_SQL_FILE);
+            String sql = new String(FileCopyUtils.copyToByteArray(sqlResource.getInputStream()), StandardCharsets.UTF_8);
             logger.info(sql);
 
             try (PreparedStatement stmt = connection.prepareStatement(sql.replace("\"", ""))) {
                 stmt.execute();
             }
 
-            style = new String(Files.readAllBytes(Paths.get(STYLE_FILE).toAbsolutePath()));
-            script = new String(Files.readAllBytes(Paths.get(SCRIPT_FILE).toAbsolutePath()));
+            Resource styleResource = ResourcePatternUtils.getResourcePatternResolver(null).getResource("classpath:" + STYLE_FILE);
+            style = new String(FileCopyUtils.copyToByteArray(styleResource.getInputStream()), StandardCharsets.UTF_8);
+            Resource scriptResource = ResourcePatternUtils.getResourcePatternResolver(null).getResource("classpath:" + SCRIPT_FILE);
+            script = new String(FileCopyUtils.copyToByteArray(scriptResource.getInputStream()), StandardCharsets.UTF_8);
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }

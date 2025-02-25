@@ -2,6 +2,7 @@ package ca.uhn.fhir.jpa.starter.authorization;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
@@ -13,18 +14,22 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.uhn.fhir.jpa.starter.AppProperties;
 import ca.uhn.fhir.jpa.starter.ServerLogger;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class OauthEndpointController {
@@ -46,6 +51,10 @@ public class OauthEndpointController {
     private static RSAPrivateKey privateKey;
     private static final Logger logger = ServerLogger.getLogger();
     private static String keyId = "NjVBRjY5MDlCMUIwNzU4RTA2QzZFMDQ4QzQ2MDAyQjVDNjk1RTM2Qg";
+
+    @Autowired
+    private AppProperties appProperties;
+
 
     @PostConstruct
     protected static void postConstruct() throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -104,13 +113,14 @@ public class OauthEndpointController {
     
     @GetMapping(value = "/register/user")
     public String getRegisterUserPage() {
-        return "Registering new clients has been disabled";
+        return "Registering new users has been disabled";
     } 
 
     @GetMapping(value = "/register/client")
     public String getRegisterClientPage() {
         try {
-            return new String(Files.readAllBytes(Paths.get("src/main/resources/templates/registerClient.html")));
+            Resource resource = ResourcePatternUtils.getResourcePatternResolver(null).getResource("classpath:oauth/templates/registerClient.html");
+            return new String(FileCopyUtils.copyToByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             return "Error: Not Found";
         }
@@ -161,7 +171,7 @@ public class OauthEndpointController {
             "AuthorizationEndpoint::Authorization:Received /authorization?response_type=" + responseType + "&client_id="
                 + clientId + "&redirect_uri=" + redirectURI + "&scope=" + scope + "&state=" + state + "&aud=" + aud);
 
-       return AuthorizationEndpoint.handleAuthorizationPost(request, entity, aud, scope, state, clientId, redirectURI, responseType);
+       return AuthorizationEndpoint.handleAuthorizationPost(request, appProperties, entity, aud, scope, state, clientId, redirectURI, responseType);
     }
 
     @PostMapping(value = "/token", params = { "grant_type", "code", "redirect_uri" }, produces = { "application/json" }) 
@@ -175,7 +185,7 @@ public class OauthEndpointController {
         logger.info("TokenEndpoint::Token:Received request /token?grant_type=" + grantType + "&code=" + code
                 + "&redirect_uri=" + redirectURI);
 
-        return TokenEndpoint.handleTokenRequest(request, grantType, code, redirectURI);
+        return TokenEndpoint.handleTokenRequest(request, appProperties, grantType, code, redirectURI);
     }
 
     @PostMapping(value = "/token", params = { "grant_type", "refresh_token" }, produces = { "application/json" })
@@ -188,7 +198,7 @@ public class OauthEndpointController {
         logger.info("TokenEndpoint::RefreshToken:Received request /token?grant_type=" + grantType + "&refresh_token="
                 + refreshToken);
 
-        return TokenEndpoint.handleTokenRequest(request, grantType, refreshToken, null);
+        return TokenEndpoint.handleTokenRequest(request, appProperties, grantType, refreshToken, null);
     }
 
     @PostMapping(value = "/introspect", params = { "token" }, produces = { "application/json" })
@@ -198,6 +208,6 @@ public class OauthEndpointController {
 
         logger.info("IntrospectEndpoint::Introspect:" + token);
 
-        return IntrospectionEndpoint.handleIntrospection(request, token);
+        return IntrospectionEndpoint.handleIntrospection(request, appProperties, token);
     }
 }

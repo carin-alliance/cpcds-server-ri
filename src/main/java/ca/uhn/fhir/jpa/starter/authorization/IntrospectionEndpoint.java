@@ -1,12 +1,13 @@
 package ca.uhn.fhir.jpa.starter.authorization;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+
+import ca.uhn.fhir.jpa.starter.AppProperties;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,10 @@ import org.springframework.http.ResponseEntity;
 
 public class IntrospectionEndpoint {
 
-    public static ResponseEntity<String> handleIntrospection(HttpServletRequest request, String token) {
+    public static ResponseEntity<String> handleIntrospection(HttpServletRequest request, AppProperties appProperties, String token) {
         JSONObject response = new JSONObject();
 
-        String baseUrl = AuthUtils.getFhirBaseUrl(request);
+        String baseUrl = AuthUtils.getFhirBaseUrl(request, appProperties);
 
         try {
             Algorithm algorithm = Algorithm.RSA256(OauthEndpointController.getPublicKey(), null);

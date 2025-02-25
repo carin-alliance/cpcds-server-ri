@@ -5,8 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.uhn.fhir.jpa.starter.ServerLogger;
 import ca.uhn.fhir.jpa.starter.authorization.Client;
 import ca.uhn.fhir.jpa.starter.authorization.OauthEndpointController;
+import jakarta.servlet.http.HttpServletRequest;
 import ca.uhn.fhir.jpa.starter.authorization.Database.Table;
 
 @RestController

@@ -3,6 +3,7 @@ package ca.uhn.fhir.jpa.starter;
 import java.util.logging.Logger;
 
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
+import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.interceptor.InterceptorAdapter;
 
@@ -12,8 +13,8 @@ public class ReadOnlyInterceptor extends InterceptorAdapter {
 
     @Override
     public void incomingRequestPreHandled(RestOperationTypeEnum theOperation,
-            ActionRequestDetails theProcessedRequest) {
-        String authHeader = theProcessedRequest.getRequestDetails().getHeader("Authorization");
+            RequestDetails theProcessedRequest) {
+        String authHeader = theProcessedRequest.getHeader("Authorization");
         String adminHeader = "Bearer " + System.getenv("ADMIN_TOKEN");
         if (adminHeader.equals(authHeader)) return;
         else if (theOperation != RestOperationTypeEnum.HISTORY_INSTANCE

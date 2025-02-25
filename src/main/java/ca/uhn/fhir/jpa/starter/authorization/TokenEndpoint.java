@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -14,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 
+import ca.uhn.fhir.jpa.starter.AppProperties;
 import ca.uhn.fhir.jpa.starter.ServerLogger;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class TokenEndpoint {
 
@@ -30,7 +30,7 @@ public class TokenEndpoint {
         REFRESH, ACCESS;
     }
 
-    public static ResponseEntity<String> handleTokenRequest(HttpServletRequest request, String grantType, String token,
+    public static ResponseEntity<String> handleTokenRequest(HttpServletRequest request, AppProperties appProperties, String grantType, String token,
             String redirectURI) {
         // Set the headers for the response
         MultiValueMap<String, String> headers = new HttpHeaders();
@@ -40,7 +40,7 @@ public class TokenEndpoint {
         HashMap<String, String> response = new HashMap<>();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        String baseUrl = AuthUtils.getFhirBaseUrl(request);
+        String baseUrl = AuthUtils.getFhirBaseUrl(request, appProperties);
 
         // Validate the client is authorized
         String clientId = AuthUtils.clientIsAuthorized(request);

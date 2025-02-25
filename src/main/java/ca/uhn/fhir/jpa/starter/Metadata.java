@@ -3,47 +3,48 @@ package ca.uhn.fhir.jpa.starter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.hl7.fhir.r4.hapi.rest.server.ServerCapabilityStatementProvider;
+import org.hl7.fhir.instance.model.api.IBaseConformance;
 import org.hl7.fhir.r4.model.CapabilityStatement;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.UriType;
 import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementRestComponent;
 import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementRestSecurityComponent;
 import org.hl7.fhir.r4.model.CapabilityStatement.RestfulCapabilityMode;
-
+import ca.uhn.fhir.interceptor.api.Hook;
+import ca.uhn.fhir.interceptor.api.Pointcut;
+import ca.uhn.fhir.interceptor.api.Interceptor;
 import ca.uhn.fhir.jpa.starter.authorization.AuthUtils;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
+import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
+import jakarta.servlet.http.HttpServletRequest;
 
-public class Metadata extends ServerCapabilityStatementProvider {
+@Interceptor
+public class Metadata {
 
-    public static String getOauthTokenUrl(HttpServletRequest request) {
-        return AuthUtils.getServiceBaseUrl(request) + "/oauth/token"; 
+    private AppProperties appProperties;
+
+    public Metadata(AppProperties appProperties) {
+        this.appProperties = appProperties;
     }
 
-    public static String getOauthAuthorizationUrl(HttpServletRequest request) {
-        return AuthUtils.getServiceBaseUrl(request) + "/oauth/authorization"; 
-    }
+    @Hook(Pointcut.SERVER_CAPABILITY_STATEMENT_GENERATED)
+    public void customize(IBaseConformance theCapabilityStatement, RequestDetails theRequestDetails, HttpServletRequest theServletRequest) {
 
-    public static String getOauthIntrospectionUrl(HttpServletRequest request) {
-        return AuthUtils.getServiceBaseUrl(request) + "/oauth/introspect"; 
-    }
+        CapabilityStatement c = (CapabilityStatement) theCapabilityStatement;
 
-    public static String getOauthRegisterUrl(HttpServletRequest request) {
-        return AuthUtils.getServiceBaseUrl(request) + "/oauth/register/client"; 
-    }
-
-    @Override
-    public CapabilityStatement getServerConformance(HttpServletRequest request, RequestDetails requestDetails) {
-
-        CapabilityStatement c = super.getServerConformance(request, requestDetails);
+        if (theServletRequest == null) {
+            try {
+                theServletRequest = ((ServletRequestDetails) theRequestDetails).getServletRequest();
+            } catch (ClassCastException e) {
+                return;
+            }
+        }
 
         Extension oauthExtension = new Extension();
         ArrayList<Extension> uris = new ArrayList<>();
-        uris.add(new Extension("token", new UriType(getOauthTokenUrl(request))));
-        uris.add(new Extension("authorize", new UriType(getOauthAuthorizationUrl(request))));
-        uris.add(new Extension("introspect", new UriType(getOauthIntrospectionUrl(request))));
+        uris.add(new Extension("token", new UriType(AuthUtils.getOauthTokenUrl(theServletRequest, appProperties))));
+        uris.add(new Extension("authorize", new UriType(AuthUtils.getOauthAuthorizationUrl(theServletRequest, appProperties))));
+        uris.add(new Extension("introspect", new UriType(AuthUtils.getOauthIntrospectionUrl(theServletRequest, appProperties))));
         oauthExtension.setUrl("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris");
         oauthExtension.setExtension(uris);
 
@@ -68,6 +69,5 @@ public class Metadata extends ServerCapabilityStatementProvider {
         } else
             rest.setSecurity(securityComponent);
 
-        return c;
     }
 }

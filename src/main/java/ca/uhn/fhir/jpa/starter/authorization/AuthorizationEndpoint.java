@@ -1,23 +1,27 @@
 package ca.uhn.fhir.jpa.starter.authorization;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.util.FileCopyUtils;
 
+import ca.uhn.fhir.jpa.starter.AppProperties;
 import ca.uhn.fhir.jpa.starter.ServerLogger;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class AuthorizationEndpoint {
 
@@ -28,15 +32,16 @@ public class AuthorizationEndpoint {
 
     public static String handleAuthorizationGet() {
         try {
-            return new String(Files.readAllBytes(Paths.get("src/main/resources/templates/login.html")));
+            Resource resource = ResourcePatternUtils.getResourcePatternResolver(null).getResource("classpath:oauth/templates/login.html");
+            return new String(FileCopyUtils.copyToByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             return "Error: Not Found";
         }
     }
 
-    public static ResponseEntity<String> handleAuthorizationPost(HttpServletRequest request, HttpEntity<String> entity, 
+    public static ResponseEntity<String> handleAuthorizationPost(HttpServletRequest request, AppProperties appProperties, HttpEntity<String> entity, 
         String aud, String scope, String state, String clientId, String redirectURI, String responseType) {
-        final String baseUrl = AuthUtils.getFhirBaseUrl(request);
+        final String baseUrl = AuthUtils.getFhirBaseUrl(request, appProperties);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         HashMap<String, String> attributes = new HashMap<>();
 

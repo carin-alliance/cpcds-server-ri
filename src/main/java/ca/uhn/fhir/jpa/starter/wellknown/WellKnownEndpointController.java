@@ -1,15 +1,17 @@
 package ca.uhn.fhir.jpa.starter.wellknown;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.uhn.fhir.jpa.starter.AppProperties;
 import ca.uhn.fhir.jpa.starter.Metadata;
 import ca.uhn.fhir.jpa.starter.authorization.AuthUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class WellKnownEndpointController {
@@ -36,6 +38,9 @@ public class WellKnownEndpointController {
 
     private static final JSONArray WELL_KNOWN_SCOPES_SUPPORTED_VALUES = new JSONArray(AuthUtils.supportedScopes());
 
+    @Autowired
+    private AppProperties appProperties;
+
     @PostConstruct
     protected void postConstruct() {
         System.out.println("Well Known controller added.");
@@ -52,10 +57,10 @@ public class WellKnownEndpointController {
     public String getWellKnownJson(HttpServletRequest theRequest) {
 
         JSONObject wellKnownJson = new JSONObject();
-        wellKnownJson.put(WELL_KNOWN_AUTHORIZATION_ENDPOINT_KEY, Metadata.getOauthAuthorizationUrl(theRequest));
-        wellKnownJson.put(WELL_KNOWN_TOKEN_ENDPOINT_KEY, Metadata.getOauthTokenUrl(theRequest));
-        wellKnownJson.put(WELL_KNOWN_REGISTRATION_ENDPOINT, Metadata.getOauthRegisterUrl(theRequest));
-        wellKnownJson.put(WELL_KNOWN_INTROSPECTION_ENDPOINT, Metadata.getOauthIntrospectionUrl(theRequest));
+        wellKnownJson.put(WELL_KNOWN_AUTHORIZATION_ENDPOINT_KEY, AuthUtils.getOauthAuthorizationUrl(theRequest, appProperties));
+        wellKnownJson.put(WELL_KNOWN_TOKEN_ENDPOINT_KEY, AuthUtils.getOauthTokenUrl(theRequest, appProperties));
+        wellKnownJson.put(WELL_KNOWN_REGISTRATION_ENDPOINT, AuthUtils.getOauthRegisterUrl(theRequest, appProperties));
+        wellKnownJson.put(WELL_KNOWN_INTROSPECTION_ENDPOINT, AuthUtils.getOauthIntrospectionUrl(theRequest, appProperties));
         wellKnownJson.put(WELL_KNOWN_SUPPORTED_AUTH_METHODS_KEY, WELL_KNOWN_SUPPORTED_AUTH_METHODS_VALUES);
         wellKnownJson.put(WELL_KNOWN_RESPONSE_TYPES_KEY, WELL_KNOWN_RESPONSE_TYPE_VALUES);
         wellKnownJson.put(WELL_KNOWN_CAPABILITIES_KEY, WELL_KNOWN_CAPABILITIES_VALUES);

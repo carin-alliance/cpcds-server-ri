@@ -15,8 +15,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -28,9 +26,11 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import ca.uhn.fhir.jpa.starter.HapiProperties;
+import ca.uhn.fhir.jpa.starter.AppProperties;
 import ca.uhn.fhir.jpa.starter.ServerLogger;
 import ca.uhn.fhir.jpa.starter.authorization.TokenEndpoint.TokenType;
+import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class AuthUtils {
 
@@ -71,17 +71,17 @@ public class AuthUtils {
   }
 
   /**
-   * Get the base url of the service from the HttpServletRequest
+   * Get the base url of the service from the RequestDetails
    * Ex: http://localhost:8080
    * 
-   * @param request - the HttpServletRequest from the controller
+   * @param request - the RequestDetails from the controller
    * @return the base url for the service
    */
-  public static String getServiceBaseUrl(HttpServletRequest request) {
+  public static String getServiceBaseUrl(HttpServletRequest request, AppProperties appProperties) {
     String baseUrl = "";
     // configured base url checked first
     try {
-      URL url = new URL(HapiProperties.getServerAddress());
+      URL url = new URL(appProperties.getServer_address());
       baseUrl = url.getProtocol() + "://" + url.getHost();
       if (url.getPort() > -1)
         baseUrl += ":" + url.getPort();
@@ -100,18 +100,36 @@ public class AuthUtils {
   }
 
   /**
-   * Get the fhir base url from the HttpServletRequest
+   * Get the fhir base url from the RequestDetails
    * Ex: http://localhost:8080/fhir
    * 
    * @param request - the HttpServletRequest from the controller
    * @return the fhir base url for the service
    */
-  public static String getFhirBaseUrl(HttpServletRequest request) {
-    String baseUrl = HapiProperties.getServerAddress();
+  public static String getFhirBaseUrl(HttpServletRequest request, AppProperties appProperties) {
+    String baseUrl = appProperties.getServer_address();
+    if (baseUrl == null || baseUrl.isEmpty())
+      baseUrl = getServiceBaseUrl(request, appProperties) + "/fhir";
     if (baseUrl.endsWith("/"))
       return baseUrl.substring(0, baseUrl.length() - 1);
     else
       return baseUrl;
+  }
+
+  public static String getOauthTokenUrl(HttpServletRequest request, AppProperties appProperties) {
+    return getServiceBaseUrl(request, appProperties) + "/oauth/token"; 
+  }
+
+  public static String getOauthAuthorizationUrl(HttpServletRequest request, AppProperties appProperties) {
+      return getServiceBaseUrl(request, appProperties) + "/oauth/authorization"; 
+  }
+
+  public static String getOauthIntrospectionUrl(HttpServletRequest request, AppProperties appProperties) {
+      return getServiceBaseUrl(request, appProperties) + "/oauth/introspect"; 
+  }
+
+  public static String getOauthRegisterUrl(HttpServletRequest request, AppProperties appProperties) {
+      return getServiceBaseUrl(request, appProperties) + "/oauth/register/client"; 
   }
 
   /**
