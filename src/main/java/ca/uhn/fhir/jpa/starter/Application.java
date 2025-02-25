@@ -7,6 +7,7 @@ import ca.uhn.fhir.jpa.starter.authorization.OauthEndpointController;
 import ca.uhn.fhir.jpa.starter.cdshooks.StarterCdsHooksConfig;
 import ca.uhn.fhir.jpa.starter.cr.StarterCrDstu3Config;
 import ca.uhn.fhir.jpa.starter.cr.StarterCrR4Config;
+import ca.uhn.fhir.jpa.starter.custom.DataInitializer;
 import ca.uhn.fhir.jpa.starter.debug.DebugEndpointController;
 import ca.uhn.fhir.jpa.starter.mdm.MdmConfig;
 import ca.uhn.fhir.jpa.starter.wellknown.WellKnownEndpointController;
@@ -60,6 +61,7 @@ public class Application extends SpringBootServletInitializer {
 	@Autowired
 	private AppProperties appProperties;
 
+	// primary /fhir endpoint servlet
 	@Bean
 	@Conditional(OnEitherVersion.class)
 	public ServletRegistrationBean<RestfulServer> hapiServletRegistration(RestfulServer restfulServer) {
@@ -77,6 +79,7 @@ public class Application extends SpringBootServletInitializer {
 		return servletRegistrationBean;
 	}
 
+	// /fhir/.well-known endpoint servlet
 	@Bean
 	public ServletRegistrationBean<DispatcherServlet> dispatcherRegistration(DispatcherServlet dispatcherServlet) {
 		dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
@@ -87,6 +90,8 @@ public class Application extends SpringBootServletInitializer {
 		return registration;
 	}
 
+	
+	// /oauth endpoint servlet
 	@Bean
 	public ServletRegistrationBean<DispatcherServlet> oauthEndpointRegistration(DispatcherServlet dispatcherServlet) {
 			dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
@@ -97,6 +102,7 @@ public class Application extends SpringBootServletInitializer {
 			return registration;
 	}
 
+	// /debug endpoint servlet
 	@Bean
 	public ServletRegistrationBean<DispatcherServlet> debugEndpointRegistration(DispatcherServlet dispatcherServlet) {
 			dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
@@ -106,5 +112,11 @@ public class Application extends SpringBootServletInitializer {
 			registration.setLoadOnStartup(3);
 			return registration;
 	}
+
+	// Ensure data is loaded when the application starts
+  @Bean
+  public DataInitializer dataInitializer() {
+    return new DataInitializer();
+  }
 
 }
