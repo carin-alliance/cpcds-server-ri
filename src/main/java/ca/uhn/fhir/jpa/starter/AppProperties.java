@@ -8,7 +8,6 @@ import ca.uhn.fhir.jpa.packages.PackageInstallationSpec;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -992,12 +991,9 @@ public class AppProperties {
 		}
 	}
 
-
-
 	// custom properties
 
-  @Getter @Setter
-  private List<String> initialData = new ArrayList<>();
-
-	
+	@Getter
+	@Setter
+	private List<String> initialData = new ArrayList<>();
 }

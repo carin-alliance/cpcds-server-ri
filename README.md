@@ -9,7 +9,7 @@ Building and running the server locally requires either Docker or
 - Java 17+
 - Maven
 
-## Quickstart 
+## Quickstart
 
 The quickest way to get the server up and running is by pulling the built image from docker hub.
 
@@ -58,7 +58,7 @@ The server will then be browseable at http://localhost:8080/ and the FHIR endpoi
 
 By default, this server is protected and requires users to authenticate before obtaining access to protected resources. The authorization server is hosted at the `/oauth` endpoint. The Capability Statement for this server is at the `/fhir/metadata` endpoint. The smart configuration file is at `/fhir/.well-known/smart-configuration`. Even with an access token, only the resources marked as must support in the IG will be available.
 
-Security can be bypassed by using the admin token. The admin token is set in the `security.admin_token` configuration variable. If this variable is not set, the admin token will not be available. This token defaults to the value `admin` and would be supplied in an authorization header such as: `Authorization: Bearer admin` 
+Security can be bypassed by using the admin token. The admin token is set in the `security.admin_token` configuration variable. If this variable is not set, the admin token will not be available. This token defaults to the value `admin` and would be supplied in an authorization header such as: `Authorization: Bearer admin`
 
 Security can be disabled by setting the `security.enabled` property to `false`.
 

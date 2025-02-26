@@ -88,38 +88,39 @@ public class Application extends SpringBootServletInitializer {
 		dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
 		dispatcherServlet.setContextConfigLocation(WellKnownEndpointController.class.getName());
 
-		ServletRegistrationBean<DispatcherServlet> registration = new ServletRegistrationBean<>(dispatcherServlet, "/fhir/.well-known/*");
+		ServletRegistrationBean<DispatcherServlet> registration =
+				new ServletRegistrationBean<>(dispatcherServlet, "/fhir/.well-known/*");
 		registration.setLoadOnStartup(1);
 		return registration;
 	}
 
-	
 	// /oauth endpoint servlet
 	@Bean
 	public ServletRegistrationBean<DispatcherServlet> oauthEndpointRegistration(DispatcherServlet dispatcherServlet) {
-			dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
-			dispatcherServlet.setContextConfigLocation(OauthEndpointController.class.getName());
+		dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
+		dispatcherServlet.setContextConfigLocation(OauthEndpointController.class.getName());
 
-			ServletRegistrationBean<DispatcherServlet> registration = new ServletRegistrationBean<>(dispatcherServlet, "/oauth/*");
-			registration.setLoadOnStartup(2);
-			return registration;
+		ServletRegistrationBean<DispatcherServlet> registration =
+				new ServletRegistrationBean<>(dispatcherServlet, "/oauth/*");
+		registration.setLoadOnStartup(2);
+		return registration;
 	}
 
 	// /debug endpoint servlet
 	@Bean
 	public ServletRegistrationBean<DispatcherServlet> debugEndpointRegistration(DispatcherServlet dispatcherServlet) {
-			dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
-			dispatcherServlet.setContextConfigLocation(DebugEndpointController.class.getName());
+		dispatcherServlet.setContextClass(AnnotationConfigWebApplicationContext.class);
+		dispatcherServlet.setContextConfigLocation(DebugEndpointController.class.getName());
 
-			ServletRegistrationBean<DispatcherServlet> registration = new ServletRegistrationBean<>(dispatcherServlet, "/debug/*");
-			registration.setLoadOnStartup(3);
-			return registration;
+		ServletRegistrationBean<DispatcherServlet> registration =
+				new ServletRegistrationBean<>(dispatcherServlet, "/debug/*");
+		registration.setLoadOnStartup(3);
+		return registration;
 	}
 
 	// Ensure data is loaded when the application starts
-  @Bean
-  public DataInitializer dataInitializer() {
-    return new DataInitializer();
-  }
-
+	@Bean
+	public DataInitializer dataInitializer() {
+		return new DataInitializer();
+	}
 }
