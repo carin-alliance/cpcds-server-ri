@@ -1,13 +1,26 @@
 version: "3"
 services:
   cpcds-server-ri:
-    image: lantanagroup/cpcds-server-ri
+    build: .
     container_name: cpcds-server-ri
     restart: on-failure
+    environment:
+      SECURITY_ADMIN_TOKEN: "admin"
+      # SPRING_DATASOURCE_URL: "jdbc:postgresql://hapi-fhir-postgres:5432/hapi"
+      # SPRING_DATASOURCE_USERNAME: "admin"
+      # SPRING_DATASOURCE_PASSWORD: "admin"
+      # SPRING_DATASOURCE_DRIVERCLASSNAME: "org.postgresql.Driver"
     ports:
       - "8080:8080"
-    volumes:
-      - ./data:/var/lib/jetty/target
-    environment:
-      - SERVER_ADDRESS=http://localhost:8080/fhir
-      - ADMIN_TOKEN=admin
+#   hapi-fhir-postgres:
+#     image: postgres:15-alpine
+#     container_name: hapi-fhir-postgres
+#     restart: always
+#     environment:
+#       POSTGRES_DB: "hapi"
+#       POSTGRES_USER: "admin"
+#       POSTGRES_PASSWORD: "admin"
+#     volumes:
+#       - hapi-fhir-postgres:/var/lib/postgresql/data
+# volumes:
+#   hapi-fhir-postgres:

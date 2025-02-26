@@ -2,19 +2,12 @@
 target/
 *.iml
 
-# Image tar file
-cpcds-server.tar
-
-.classpath
-.project
-.vscode/
-
 # Compiled class file
 *.class
 
 # Log file
 *.log
-*.log.lck
+*.log.*
 
 # BlueJ files
 *.ctxt
@@ -127,6 +120,13 @@ local.properties
 
 # STS (Spring Tool Suite)
 .springBeans
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
 # Code Recommenders
 .recommenders/
@@ -166,3 +166,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Helm Chart dependencies
+**/charts/*.tgz

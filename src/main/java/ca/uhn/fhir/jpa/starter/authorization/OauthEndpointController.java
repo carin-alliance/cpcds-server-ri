@@ -1,9 +1,24 @@
 package ca.uhn.fhir.jpa.starter.authorization;
 
+import ca.uhn.fhir.jpa.starter.AppProperties;
+import ca.uhn.fhir.jpa.starter.ServerLogger;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
@@ -13,56 +28,45 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.text.StringEscapeUtils;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import ca.uhn.fhir.jpa.starter.ServerLogger;
-
 @RestController
 public class OauthEndpointController {
 
+	/**
+	 * TODO:
+	 *  Port introspect endpoint
+	 *  Logger
+	 *  Update metadata
+	 *  Update .well-known/jwks
+	 *  Update readme
+	 *  Check docker works (and auth db)
+	 *  Remove code from generateToken
+	 */
+	private static Database DB;
 
-    /**
-     * TODO:
-     *  Port introspect endpoint
-     *  Logger
-     *  Update metadata
-     *  Update .well-known/jwks
-     *  Update readme
-     *  Check docker works (and auth db)
-     *  Remove code from generateToken
-     */
+	private static RSAPublicKey publicKey;
+	private static RSAPrivateKey privateKey;
+	private static final Logger logger = ServerLogger.getLogger();
+	private static String keyId = "NjVBRjY5MDlCMUIwNzU4RTA2QzZFMDQ4QzQ2MDAyQjVDNjk1RTM2Qg";
 
-    private static Database DB;
-    private static RSAPublicKey publicKey;
-    private static RSAPrivateKey privateKey;
-    private static final Logger logger = ServerLogger.getLogger();
-    private static String keyId = "NjVBRjY5MDlCMUIwNzU4RTA2QzZFMDQ4QzQ2MDAyQjVDNjk1RTM2Qg";
+	@Autowired
+	private AppProperties appProperties;
 
-    @PostConstruct
-    protected static void postConstruct() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        if (DB == null) {
-            DB = new Database();
-            AuthUtils.initializeDB();
-            initializeRSAKeys();
-            logger.info("Authorization Endpoint Controller created.");
-        }
-    }
+	@PostConstruct
+	protected static void postConstruct() throws NoSuchAlgorithmException, InvalidKeySpecException {
+		if (DB == null) {
+			DB = new Database();
+			AuthUtils.initializeDB();
+			initializeRSAKeys();
+			logger.info("Authorization Endpoint Controller created.");
+		}
+	}
 
-    private static void initializeRSAKeys() throws NoSuchAlgorithmException, InvalidKeySpecException {
+	private static void initializeRSAKeys() throws NoSuchAlgorithmException, InvalidKeySpecException {
 		/*
 		 * Code to generate keys adpated from
 		 * https://stackoverflow.com/questions/24546397/generating-rsa-keys-for-given-
 		 * modulus-and-exponent
-		 * 
+		 *
 		 * p :
 		 * 72685705065169728266450789649852557970253453395982124202036441196258256631809
 		 * q :
@@ -86,118 +90,150 @@ public class OauthEndpointController {
 		privateKey = (RSAPrivateKey) kf.generatePrivate(privateKeySpec);
 	}
 
-    public static Database getDB() {
-        return DB;
-    }
+	public static Database getDB() {
+		return DB;
+	}
 
-    public static RSAPublicKey getPublicKey() {
-        return publicKey;
-    }
+	public static RSAPublicKey getPublicKey() {
+		return publicKey;
+	}
 
-    public static RSAPrivateKey getPrivateKey() {
-        return privateKey;
-    }
+	public static RSAPrivateKey getPrivateKey() {
+		return privateKey;
+	}
 
-    public static String getKeyId() {
-        return keyId;
-    }
-    
-    @GetMapping(value = "/register/user")
-    public String getRegisterUserPage() {
-        return "Registering new clients has been disabled";
-    } 
+	public static String getKeyId() {
+		return keyId;
+	}
 
-    @GetMapping(value = "/register/client")
-    public String getRegisterClientPage() {
-        try {
-            return new String(Files.readAllBytes(Paths.get("src/main/resources/templates/registerClient.html")));
-        } catch (IOException e) {
-            return "Error: Not Found";
-        }
-    } 
+	@GetMapping(value = "/register/user")
+	public String getRegisterUserPage() {
+		return "Registering new users has been disabled";
+	}
 
-    @PostMapping(value = "/register/client", produces = { "application/json" })
-    public ResponseEntity<String> postRegisterClient(HttpServletRequest request, HttpEntity<String> entity,
-        @RequestParam(name = "redirect_uri") String redirectUri) {
-            return RegisterEndpoint.handleRegisterClient(redirectUri);
-    }
+	@GetMapping(value = "/register/client")
+	public String getRegisterClientPage() {
+		try {
+			Resource resource = ResourcePatternUtils.getResourcePatternResolver(null)
+					.getResource("classpath:oauth/templates/registerClient.html");
+			return new String(FileCopyUtils.copyToByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			return "Error: Not Found";
+		}
+	}
 
-    @GetMapping(value = "/authorization", params = { "response_type", "client_id", "redirect_uri", "scope", 
-        "state", "aud" })
-    public String getAuthorization(@RequestParam(name = "response_type") String responseType,
-      @RequestParam(name = "client_id") String clientId, @RequestParam(name = "redirect_uri") String redirectURI,
-      @RequestParam(name = "scope") String scope, @RequestParam(name = "state") String state,
-      @RequestParam(name = "aud") String aud) {
-        // Escape all the query parameters
-        aud = StringEscapeUtils.escapeJava(aud);
-        scope = StringEscapeUtils.escapeJava(scope);
-        state = StringEscapeUtils.escapeJava(state);
-        clientId = StringEscapeUtils.escapeJava(clientId);
-        redirectURI = StringEscapeUtils.escapeJava(redirectURI);
-        responseType = StringEscapeUtils.escapeJava(responseType);
+	@PostMapping(
+			value = "/register/client",
+			produces = {"application/json"})
+	public ResponseEntity<String> postRegisterClient(
+			HttpServletRequest request,
+			HttpEntity<String> entity,
+			@RequestParam(name = "redirect_uri") String redirectUri) {
+		return RegisterEndpoint.handleRegisterClient(redirectUri);
+	}
 
-        logger.info(
-            "AuthorizationEndpoint::Authorization:Received /authorization?response_type=" + responseType + "&client_id="
-                + clientId + "&redirect_uri=" + redirectURI + "&scope=" + scope + "&state=" + state + "&aud=" + aud);
+	@GetMapping(
+			value = "/authorization",
+			params = {"response_type", "client_id", "redirect_uri", "scope", "state", "aud"})
+	public String getAuthorization(
+			@RequestParam(name = "response_type") String responseType,
+			@RequestParam(name = "client_id") String clientId,
+			@RequestParam(name = "redirect_uri") String redirectURI,
+			@RequestParam(name = "scope") String scope,
+			@RequestParam(name = "state") String state,
+			@RequestParam(name = "aud") String aud) {
+		// Escape all the query parameters
+		aud = StringEscapeUtils.escapeJava(aud);
+		scope = StringEscapeUtils.escapeJava(scope);
+		state = StringEscapeUtils.escapeJava(state);
+		clientId = StringEscapeUtils.escapeJava(clientId);
+		redirectURI = StringEscapeUtils.escapeJava(redirectURI);
+		responseType = StringEscapeUtils.escapeJava(responseType);
 
-       return AuthorizationEndpoint.handleAuthorizationGet();
-    }
+		logger.info("AuthorizationEndpoint::Authorization:Received /authorization?response_type=" + responseType
+				+ "&client_id=" + clientId + "&redirect_uri=" + redirectURI + "&scope=" + scope + "&state=" + state
+				+ "&aud=" + aud);
 
-    @PostMapping(value = "/authorization", params = { "response_type", "client_id", "redirect_uri", "scope", 
-        "state", "aud" })
-    public ResponseEntity<String> postAuthorization(HttpServletRequest request, HttpEntity<String> entity,
-      @RequestParam(name = "response_type") String responseType, @RequestParam(name = "client_id") String clientId,
-      @RequestParam(name = "redirect_uri") String redirectURI, @RequestParam(name = "scope") String scope,
-      @RequestParam(name = "state") String state, @RequestParam(name = "aud") String aud) {
-        // Escape all the query parameters
-        aud = StringEscapeUtils.escapeJava(aud);
-        scope = StringEscapeUtils.escapeJava(scope);
-        state = StringEscapeUtils.escapeJava(state);
-        clientId = StringEscapeUtils.escapeJava(clientId);
-        redirectURI = StringEscapeUtils.escapeJava(redirectURI);
-        responseType = StringEscapeUtils.escapeJava(responseType);
+		return AuthorizationEndpoint.handleAuthorizationGet();
+	}
 
-        logger.info(
-            "AuthorizationEndpoint::Authorization:Received /authorization?response_type=" + responseType + "&client_id="
-                + clientId + "&redirect_uri=" + redirectURI + "&scope=" + scope + "&state=" + state + "&aud=" + aud);
+	@PostMapping(
+			value = "/authorization",
+			params = {"response_type", "client_id", "redirect_uri", "scope", "state", "aud"})
+	public ResponseEntity<String> postAuthorization(
+			HttpServletRequest request,
+			HttpEntity<String> entity,
+			@RequestParam(name = "response_type") String responseType,
+			@RequestParam(name = "client_id") String clientId,
+			@RequestParam(name = "redirect_uri") String redirectURI,
+			@RequestParam(name = "scope") String scope,
+			@RequestParam(name = "state") String state,
+			@RequestParam(name = "aud") String aud) {
+		// Escape all the query parameters
+		aud = StringEscapeUtils.escapeJava(aud);
+		scope = StringEscapeUtils.escapeJava(scope);
+		state = StringEscapeUtils.escapeJava(state);
+		clientId = StringEscapeUtils.escapeJava(clientId);
+		redirectURI = StringEscapeUtils.escapeJava(redirectURI);
+		responseType = StringEscapeUtils.escapeJava(responseType);
 
-       return AuthorizationEndpoint.handleAuthorizationPost(request, entity, aud, scope, state, clientId, redirectURI, responseType);
-    }
+		logger.info("AuthorizationEndpoint::Authorization:Received /authorization?response_type=" + responseType
+				+ "&client_id=" + clientId + "&redirect_uri=" + redirectURI + "&scope=" + scope + "&state=" + state
+				+ "&aud=" + aud);
 
-    @PostMapping(value = "/token", params = { "grant_type", "code", "redirect_uri" }, produces = { "application/json" }) 
-    public ResponseEntity<String> postAccessToken(HttpServletRequest request, @RequestParam(name = "grant_type") String grantType,
-            @RequestParam(name = "code") String code, @RequestParam(name = "redirect_uri") String redirectURI) {
-        // Escape all the query parameters
-        code = StringEscapeUtils.escapeJava(code);
-        grantType = StringEscapeUtils.escapeJava(grantType);
-        redirectURI = StringEscapeUtils.escapeJava(redirectURI);
+		return AuthorizationEndpoint.handleAuthorizationPost(
+				request, appProperties, entity, aud, scope, state, clientId, redirectURI, responseType);
+	}
 
-        logger.info("TokenEndpoint::Token:Received request /token?grant_type=" + grantType + "&code=" + code
-                + "&redirect_uri=" + redirectURI);
+	@PostMapping(
+			value = "/token",
+			params = {"grant_type", "code", "redirect_uri"},
+			produces = {"application/json"})
+	public ResponseEntity<String> postAccessToken(
+			HttpServletRequest request,
+			@RequestParam(name = "grant_type") String grantType,
+			@RequestParam(name = "code") String code,
+			@RequestParam(name = "redirect_uri") String redirectURI) {
+		// Escape all the query parameters
+		code = StringEscapeUtils.escapeJava(code);
+		grantType = StringEscapeUtils.escapeJava(grantType);
+		redirectURI = StringEscapeUtils.escapeJava(redirectURI);
 
-        return TokenEndpoint.handleTokenRequest(request, grantType, code, redirectURI);
-    }
+		logger.info("TokenEndpoint::Token:Received request /token?grant_type=" + grantType + "&code=" + code
+				+ "&redirect_uri=" + redirectURI);
 
-    @PostMapping(value = "/token", params = { "grant_type", "refresh_token" }, produces = { "application/json" })
-    public ResponseEntity<String> postRefreshToken(HttpServletRequest request, @RequestParam(name = "grant_type") String grantType,
-            @RequestParam(name = "refresh_token") String refreshToken) {
-        // Escape all the query parameters
-        grantType = StringEscapeUtils.escapeJava(grantType);
-        refreshToken = StringEscapeUtils.escapeJava(refreshToken);
+		return TokenEndpoint.handleTokenRequest(request, appProperties, grantType, code, redirectURI);
+	}
 
-        logger.info("TokenEndpoint::RefreshToken:Received request /token?grant_type=" + grantType + "&refresh_token="
-                + refreshToken);
+	@PostMapping(
+			value = "/token",
+			params = {"grant_type", "refresh_token"},
+			produces = {"application/json"})
+	public ResponseEntity<String> postRefreshToken(
+			HttpServletRequest request,
+			@RequestParam(name = "grant_type") String grantType,
+			@RequestParam(name = "refresh_token") String refreshToken) {
+		// Escape all the query parameters
+		grantType = StringEscapeUtils.escapeJava(grantType);
+		refreshToken = StringEscapeUtils.escapeJava(refreshToken);
 
-        return TokenEndpoint.handleTokenRequest(request, grantType, refreshToken, null);
-    }
+		logger.info("TokenEndpoint::RefreshToken:Received request /token?grant_type=" + grantType + "&refresh_token="
+				+ refreshToken);
 
-    @PostMapping(value = "/introspect", params = { "token" }, produces = { "application/json" })
-    public ResponseEntity<String> postIntrospect(HttpServletRequest request, @RequestParam(name = "token") String token) {
-        // Escape all the query parameters
-        token = StringEscapeUtils.escapeJava(token);
+		return TokenEndpoint.handleTokenRequest(request, appProperties, grantType, refreshToken, null);
+	}
 
-        logger.info("IntrospectEndpoint::Introspect:" + token);
+	@PostMapping(
+			value = "/introspect",
+			params = {"token"},
+			produces = {"application/json"})
+	public ResponseEntity<String> postIntrospect(
+			HttpServletRequest request, @RequestParam(name = "token") String token) {
+		// Escape all the query parameters
+		token = StringEscapeUtils.escapeJava(token);
 
-        return IntrospectionEndpoint.handleIntrospection(request, token);
-    }
+		logger.info("IntrospectEndpoint::Introspect:" + token);
+
+		return IntrospectionEndpoint.handleIntrospection(request, appProperties, token);
+	}
 }

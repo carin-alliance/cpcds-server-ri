@@ -1,168 +1,341 @@
 package ca.uhn.fhir.jpa.starter;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.cr.config.RepositoryConfig;
+import ca.uhn.fhir.jpa.searchparam.config.NicknameServiceConfig;
+import ca.uhn.fhir.jpa.starter.cr.CrProperties;
+import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.api.CacheControlDirective;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
-import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
-import ca.uhn.fhir.test.utilities.JettyUtil;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
+import jakarta.websocket.ContainerProvider;
+import jakarta.websocket.Session;
+import jakarta.websocket.WebSocketContainer;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.DateType;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Measure;
+import org.hl7.fhir.r4.model.MeasureReport;
 import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Period;
+import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.Subscription;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Paths;
-import java.util.concurrent.Future;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static ca.uhn.fhir.util.TestUtil.waitForSize;
-import static org.junit.Assert.assertEquals;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opencds.cqf.fhir.utility.r4.Parameters.parameters;
+import static org.opencds.cqf.fhir.utility.r4.Parameters.stringPart;
 
-/**
- * Test R4 Server
- * 
- * Test code should be removed for production build
- */
-public class ExampleServerR4IT {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+	classes = {
+		Application.class,
+		NicknameServiceConfig.class,
+		RepositoryConfig.class
+	}, properties = {
+	"spring.datasource.url=jdbc:h2:mem:dbr4",
+	"hapi.fhir.enable_repository_validating_interceptor=true",
+	"hapi.fhir.fhir_version=r4",
+	"hapi.fhir.subscription.websocket_enabled=true",
+	//"hapi.fhir.mdm_enabled=true",
+	"hapi.fhir.cr.enabled=true",
+	"hapi.fhir.cr.caregaps.section_author=Organization/alphora-author",
+	"hapi.fhir.cr.caregaps.reporter=Organization/alphora",
+	"hapi.fhir.cr.cql.data.search_parameter_mode=USE_SEARCH_PARAMETERS",
+	"hapi.fhir.implementationguides.dk-core.name=hl7.fhir.dk.core",
+	"hapi.fhir.implementationguides.dk-core.version=1.1.0",
+	"hapi.fhir.auto_create_placeholder_reference_targets=true",
+	// Override is currently required when using MDM as the construction of the MDM
+	// beans are ambiguous as they are constructed multiple places. This is evident
+	// when running in a spring boot environment
+	"spring.main.allow-bean-definition-overriding=true"})
+class ExampleServerR4IT implements IServerSupport {
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ExampleServerR4IT.class);
+	private IGenericClient ourClient;
+	private FhirContext ourCtx;
 
-    private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ExampleServerR4IT.class);
-    private static IGenericClient ourClient;
-    private static FhirContext ourCtx;
-    private static int ourPort;
-    private static Server ourServer;
+	@Autowired
+	private CrProperties crProperties;
 
-    static {
-        HapiProperties.forceReload();
-        HapiProperties.setProperty(HapiProperties.DATASOURCE_URL, "jdbc:h2:mem:dbr4");
-        HapiProperties.setProperty(HapiProperties.FHIR_VERSION, "R4");
-        HapiProperties.setProperty(HapiProperties.SUBSCRIPTION_WEBSOCKET_ENABLED, "true");
-        ourCtx = FhirContext.forR4();
-    }
+	@LocalServerPort
+	private int port;
 
-    @Test
-    public void testCreateAndRead() {
-        ourLog.info("Base URL is: " + HapiProperties.getServerAddress());
-        String methodName = "testCreateResourceConditional";
+	@Test
+	@Order(0)
+	void testCreateAndRead() {
+		String methodName = "testCreateAndRead";
+		ourLog.info("Entering " + methodName + "()...");
 
-        Patient pt = new Patient();
-        pt.addName().setFamily(methodName);
-        IIdType id = ourClient.create().resource(pt).execute().getId();
+		Patient pt = new Patient();
+		pt.setActive(true);
+		pt.getBirthDateElement().setValueAsString("2020-01-01");
+		pt.addIdentifier().setSystem("http://foo").setValue("12345");
+		pt.addName().setFamily(methodName);
+		IIdType id = ourClient.create().resource(pt).execute().getId();
 
-        Patient pt2 = ourClient.read().resource(Patient.class).withId(id).execute();
-        assertEquals(methodName, pt2.getName().get(0).getFamily());
-    }
+		Patient pt2 = ourClient.read().resource(Patient.class).withId(id).execute();
+		assertEquals(methodName, pt2.getName().get(0).getFamily());
 
-    @Test
-    public void testWebsocketSubscription() throws Exception {
-        /*
-         * Create subscription
-         */
-        Subscription subscription = new Subscription();
-        subscription.setReason("Monitor new neonatal function (note, age will be determined by the monitor)");
-        subscription.setStatus(Subscription.SubscriptionStatus.REQUESTED);
-        subscription.setCriteria("Observation?status=final");
+	}
 
-        Subscription.SubscriptionChannelComponent channel = new Subscription.SubscriptionChannelComponent();
-        channel.setType(Subscription.SubscriptionChannelType.WEBSOCKET);
-        channel.setPayload("application/json");
-        subscription.setChannel(channel);
+	@Test
+	public void testCQLEvaluateMeasureEXM130() throws IOException {
+		String measureId = "ColorectalCancerScreeningsFHIR";
+		String measureUrl = "http://ecqi.healthit.gov/ecqms/Measure/ColorectalCancerScreeningsFHIR";
 
-        MethodOutcome methodOutcome = ourClient.create().resource(subscription).execute();
-        IIdType mySubscriptionId = methodOutcome.getId();
+		loadBundle("r4/EXM130/EXM130-7.3.000-bundle.json", ourCtx, ourClient);
 
-        // Wait for the subscription to be activated
-        waitForSize(1,
-                () -> ourClient.search().forResource(Subscription.class)
-                        .where(Subscription.STATUS.exactly().code("active"))
-                        .cacheControl(new CacheControlDirective().setNoCache(true)).returnBundle(Bundle.class).execute()
-                        .getEntry().size());
 
-        /*
-         * Attach websocket
-         */
+		Parameters inParams = new Parameters();
+		inParams.addParameter().setName("periodStart").setValue(new StringType("2019-01-01"));
+		inParams.addParameter().setName("periodEnd").setValue(new StringType("2019-12-31"));
+		inParams.addParameter().setName("reportType").setValue(new StringType("population"));
 
-        WebSocketClient myWebSocketClient = new WebSocketClient();
-        SocketImplementation mySocketImplementation = new SocketImplementation(mySubscriptionId.getIdPart(),
-                EncodingEnum.JSON);
+		Parameters outParams = ourClient
+			.operation()
+			.onInstance(new IdDt("Measure", measureId))
+			.named("$evaluate-measure")
+			.withParameters(inParams)
+			.cacheControl(new CacheControlDirective().setNoCache(true))
+			.withAdditionalHeader("Content-Type", "application/json")
+			.useHttpGet()
+			.execute();
 
-        myWebSocketClient.start();
-        URI echoUri = new URI("ws://localhost:" + ourPort + "/hapi-fhir-jpaserver/websocket");
-        ClientUpgradeRequest request = new ClientUpgradeRequest();
-        ourLog.info("Connecting to : {}", echoUri);
-        Future<Session> connection = myWebSocketClient.connect(mySocketImplementation, echoUri, request);
-        Session session = connection.get(2, TimeUnit.SECONDS);
+		List<Parameters.ParametersParameterComponent> response = outParams.getParameter();
+		assertFalse(response.isEmpty());
+		Parameters.ParametersParameterComponent component = response.get(0);
+		assertTrue(component.getResource() instanceof MeasureReport);
+		MeasureReport report = (MeasureReport) component.getResource();
+		assertEquals(measureUrl + "|0.0.003", report.getMeasure());
+	}
 
-        ourLog.info("Connected to WS: {}", session.isOpen());
+	public Parameters runCqlExecution(Parameters parameters) {
 
-        /*
-         * Create a matching resource
-         */
-        Observation obs = new Observation();
-        obs.setStatus(Observation.ObservationStatus.FINAL);
-        ourClient.create().resource(obs).execute();
+		var results = ourClient.operation().onServer()
+			.named("$cql")
+			.withParameters(parameters)
+			.execute();
+		return results;
+	}
 
-        // Give some time for the subscription to deliver
-        Thread.sleep(2000);
+	@Test
+	void testSimpleDateCqlExecutionProvider() {
+		Parameters params = parameters(stringPart("expression", "Interval[Today() - 2 years, Today())"));
+		Parameters results = runCqlExecution(params);
+		assertTrue(results.getParameter("return").getValue() instanceof Period);
+	}
 
-        /*
-         * Ensure that we receive a ping on the websocket
-         */
-        waitForSize(1, () -> mySocketImplementation.myPingCount);
+	private IBaseResource loadRec(String theLocation, FhirContext theCtx, IGenericClient theClient) throws IOException {
+		String json = stringFromResource(theLocation);
+		List<IBaseResource> resList = new ArrayList<>();
+		IBaseResource resource = (IBaseResource) theCtx.newJsonParser().parseResource(json);
+		resList.add(resource);
+		var result = theClient.transaction().withResources(resList).execute();
+		//.withResources(resource).execute();
+		return result.get(0);
+	}
 
-        /*
-         * Clean up
-         */
-        ourClient.delete().resourceById(mySubscriptionId).execute();
-    }
+	@Test
+	void testBatchPutWithIdenticalTags() {
+		String batchPuts = "{\n" +
+								 "\t\"resourceType\": \"Bundle\",\n" +
+								 "\t\"id\": \"patients\",\n" +
+								 "\t\"type\": \"batch\",\n" +
+								 "\t\"entry\": [\n" +
+								 "\t\t{\n" +
+								 "\t\t\t\"request\": {\n" +
+								 "\t\t\t\t\"method\": \"PUT\",\n" +
+								 "\t\t\t\t\"url\": \"Patient/pat-1\"\n" +
+								 "\t\t\t},\n" +
+								 "\t\t\t\"resource\": {\n" +
+								 "\t\t\t\t\"resourceType\": \"Patient\",\n" +
+								 "\t\t\t\t\"id\": \"pat-1\",\n" +
+								 "\t\t\t\t\"meta\": {\n" +
+								 "\t\t\t\t\t\"tag\": [\n" +
+								 "\t\t\t\t\t\t{\n" +
+								 "\t\t\t\t\t\t\t\"system\": \"http://mysystem.org\",\n" +
+								 "\t\t\t\t\t\t\t\"code\": \"value2\"\n" +
+								 "\t\t\t\t\t\t}\n" +
+								 "\t\t\t\t\t]\n" +
+								 "\t\t\t\t}\n" +
+								 "\t\t\t},\n" +
+								 "\t\t\t\"fullUrl\": \"/Patient/pat-1\"\n" +
+								 "\t\t},\n" +
+								 "\t\t{\n" +
+								 "\t\t\t\"request\": {\n" +
+								 "\t\t\t\t\"method\": \"PUT\",\n" +
+								 "\t\t\t\t\"url\": \"Patient/pat-2\"\n" +
+								 "\t\t\t},\n" +
+								 "\t\t\t\"resource\": {\n" +
+								 "\t\t\t\t\"resourceType\": \"Patient\",\n" +
+								 "\t\t\t\t\"id\": \"pat-2\",\n" +
+								 "\t\t\t\t\"meta\": {\n" +
+								 "\t\t\t\t\t\"tag\": [\n" +
+								 "\t\t\t\t\t\t{\n" +
+								 "\t\t\t\t\t\t\t\"system\": \"http://mysystem.org\",\n" +
+								 "\t\t\t\t\t\t\t\"code\": \"value2\"\n" +
+								 "\t\t\t\t\t\t}\n" +
+								 "\t\t\t\t\t]\n" +
+								 "\t\t\t\t}\n" +
+								 "\t\t\t},\n" +
+								 "\t\t\t\"fullUrl\": \"/Patient/pat-2\"\n" +
+								 "\t\t}\n" +
+								 "\t]\n" +
+								 "}";
+		Bundle bundle = FhirContext.forR4().newJsonParser().parseResource(Bundle.class, batchPuts);
+		ourClient.transaction().withBundle(bundle).execute();
+	}
 
-    @AfterClass
-    public static void afterClass() throws Exception {
-        ourServer.stop();
-    }
+	@Test
+	@Order(1)
+	void testWebsocketSubscription() throws Exception {
+		/*
+		 * Create subscription
+		 */
+		Subscription subscription = new Subscription();
+		subscription.setReason("Monitor new neonatal function (note, age will be determined by the monitor)");
+		subscription.setStatus(Subscription.SubscriptionStatus.REQUESTED);
+		subscription.setCriteria("Observation?status=final");
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        String path = Paths.get("").toAbsolutePath().toString();
+		Subscription.SubscriptionChannelComponent channel = new Subscription.SubscriptionChannelComponent();
+		channel.setType(Subscription.SubscriptionChannelType.WEBSOCKET);
+		channel.setPayload("application/json");
+		subscription.setChannel(channel);
 
-        ourLog.info("Project base path is: {}", path);
+		int initialActiveSubscriptionCount = activeSubscriptionCount();
 
-        ourServer = new Server(0);
+		MethodOutcome methodOutcome = ourClient.create().resource(subscription).execute();
+		IIdType mySubscriptionId = methodOutcome.getId();
 
-        WebAppContext webAppContext = new WebAppContext();
-        webAppContext.setContextPath("/hapi-fhir-jpaserver");
-        webAppContext.setDisplayName("HAPI FHIR");
-        webAppContext.setDescriptor(path + "/src/main/webapp/WEB-INF/web.xml");
-        webAppContext.setResourceBase(path + "/target/hapi-fhir-jpaserver-starter");
-        webAppContext.setParentLoaderPriority(true);
+		// Wait for the subscription to be activated
+		await().atMost(1, TimeUnit.MINUTES).until(this::activeSubscriptionCount, equalTo(initialActiveSubscriptionCount + 1));
 
-        ourServer.setHandler(webAppContext);
-        ourServer.start();
+		/*
+		 * Attach websocket
+		 */
 
-        ourPort = JettyUtil.getPortForStartedServer(ourServer);
+		SocketImplementation mySocketImplementation = new SocketImplementation(mySubscriptionId.getIdPart(),
+			EncodingEnum.JSON);
 
-        ourCtx.getRestfulClientFactory().setServerValidationMode(ServerValidationModeEnum.NEVER);
-        ourCtx.getRestfulClientFactory().setSocketTimeout(1200 * 1000);
-        String ourServerBase = HapiProperties.getServerAddress();
-        ourServerBase = "http://localhost:" + ourPort + "/hapi-fhir-jpaserver/fhir/";
+		URI echoUri = new URI("ws://localhost:" + port + "/websocket");
 
-        ourClient = ourCtx.newRestfulGenericClient(ourServerBase);
-        ourClient.registerInterceptor(new LoggingInterceptor(true));
-    }
+		WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
-    public static void main(String[] theArgs) throws Exception {
-        ourPort = 8080;
-        beforeClass();
-    }
+		ourLog.info("Connecting to : {}", echoUri);
+		Session session = container.connectToServer(mySocketImplementation, echoUri);
+		ourLog.info("Connected to WS: {}", session.isOpen());
+
+		/*
+		 * Create a matching resource
+		 */
+		Observation obs = new Observation();
+		obs.setStatus(Observation.ObservationStatus.FINAL);
+		ourClient.create().resource(obs).execute();
+
+		/*
+		 * Ensure that we receive a ping on the websocket
+		 */
+		waitForSize(1, () -> mySocketImplementation.myPingCount);
+
+		/*
+		 * Clean up
+		 */
+		ourClient.delete().resourceById(mySubscriptionId).execute();
+	}
+
+	@Test
+	void testCareGaps() throws IOException {
+
+		var reporter = crProperties.getCareGaps().getReporter();
+		var author = crProperties.getCareGaps().getSection_author();
+
+		assertTrue(reporter.equals("Organization/alphora"));
+		assertTrue(author.equals("Organization/alphora-author"));
+
+		String periodStartValid = "2019-01-01";
+		String periodEndValid = "2019-12-31";
+		String subjectPatientValid = "Patient/numer-EXM125";
+		String statusValid = "open-gap";
+		String measureIdValid = "BreastCancerScreeningFHIR";
+
+		loadBundle("r4/CareGaps/authreporter-bundle.json", ourCtx, ourClient);
+		loadBundle("r4/CareGaps/BreastCancerScreeningFHIR-bundle.json", ourCtx, ourClient);
+
+		Parameters params = new Parameters();
+		params.addParameter().setName("periodStart").setValue(new DateType(periodStartValid));
+		params.addParameter().setName("periodEnd").setValue(new DateType(periodEndValid));
+		params.addParameter().setName("subject").setValue(new StringType(subjectPatientValid));
+		params.addParameter().setName("status").setValue(new StringType(statusValid));
+		params.addParameter().setName("measureId").setValue(new IdType(measureIdValid));
+
+
+		assertDoesNotThrow(() -> {
+			ourClient.operation()
+				.onType(Measure.class)
+				.named("$care-gaps")
+				.withParameters(params)
+				.returnResourceType(Parameters.class)
+				.execute();
+		});
+	}
+
+	private int activeSubscriptionCount() {
+		return ourClient.search().forResource(Subscription.class).where(Subscription.STATUS.exactly().code("active"))
+			.cacheControl(new CacheControlDirective().setNoCache(true)).returnBundle(Bundle.class).execute().getEntry()
+			.size();
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"prometheus", "health", "metrics", "info"})
+	void testActuatorEndpointExists(String endpoint) throws IOException, URISyntaxException {
+
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpResponse response = httpclient.execute(new HttpGet(new URI("http", null, "localhost", port, "/actuator/" + endpoint, null, null)));
+		int statusCode = response.getStatusLine().getStatusCode();
+		assertEquals(200, statusCode);
+
+	}
+
+	@BeforeEach
+	void beforeEach() {
+
+		ourCtx = FhirContext.forR4();
+		ourCtx.getRestfulClientFactory().setServerValidationMode(ServerValidationModeEnum.NEVER);
+		ourCtx.getRestfulClientFactory().setSocketTimeout(1200 * 1000);
+		String ourServerBase = "http://localhost:" + port + "/fhir/";
+		ourClient = ourCtx.newRestfulGenericClient(ourServerBase);
+		//await().atMost(2, TimeUnit.MINUTES).until(() -> {
+		//	sleep(1000); // execute below function every 1 second
+		//	return activeSubscriptionCount() == 2; // 2 subscription based on mdm-rules.json
+		//});
+	}
 }
