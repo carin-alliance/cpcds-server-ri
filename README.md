@@ -15,7 +15,7 @@ The quickest way to get the server up and running is by pulling the built image 
 
 ```bash
 docker pull lantanagroup/cpcds-server-ri
-docker run -p 8080:8080 -e lantanagroup/cpcds-server-ri
+docker run -p 8080:8080 lantanagroup/cpcds-server-ri
 ```
 
 This will deploy the server to http://localhost:8080/fhir
