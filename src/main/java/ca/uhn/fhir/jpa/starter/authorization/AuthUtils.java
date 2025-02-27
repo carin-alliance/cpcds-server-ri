@@ -46,6 +46,10 @@ public class AuthUtils {
 				"b0c46635-c0b4-448c-a8b9-9bd282d2e05a",
 				"bUYbEj5wpazS8Xv1jyruFKpuXa24OGn9MHuZ3ygKexaI5mhKUIzVEBvbv2uggVf1cW6kYD3cgTbCIGK3kjiMcmJq3OG9bn85Fh2x7JKYgy7Jwagdzs0qufgkhPGDvEoVpImpA4clIhfwn58qoTrfHx86ooWLWJeQh4s0StEMqoxLqboywr8u11qmMHd1xwBLehGXUbqpEBlkelBHDWaiCjkhwZeRe4nVu4o8wSAbPQIECQcTjqYBUrBjHlMx5vXU",
 				"http://localhost:3000/login");
+		Client touchstone = new Client(
+				"a592bb65-5ebb-4b9a-a92d-eef2f7ab68a2",
+				"oCC1fgpIm4wXgVmrx3Cxy8xCdMoUX11lgSEQugUQpuf7ciVzlqqvoSyig9dgQtfWsheAfBY1teTBAPnZoE8TkeEEU2NEBFxJ58cE29rl7brFUqTlvWCC7M8c6IcIP2nwN0m88s2tPRYSGGjmNf77Q1fxz7kLfBKi86zR4YPvzSKGhXGCihvJHQAHRzw20FKtBgv9wpkiGF178XvjJxoXKHginvlSUmlFmzbdQWvjZbYEEIaJWiBZegcnmJhymXZM",
+				"https://touchstone.aegis.net/touchstone/oauth2/authcode/redirect");
 		User patient1 = new User("Patient1", BCrypt.hashpw("password", BCrypt.gensalt()), "Patient1");
 		User patientex1 = new User("PatientEx1", BCrypt.hashpw("password", BCrypt.gensalt()), "PatientEx1");
 		User admin = new User("admin", BCrypt.hashpw("password", BCrypt.gensalt()), "admin");
@@ -60,6 +64,7 @@ public class AuthUtils {
 
 		OauthEndpointController.getDB().write(hosted);
 		OauthEndpointController.getDB().write(localhost);
+		OauthEndpointController.getDB().write(touchstone);
 		OauthEndpointController.getDB().write(patient1);
 		OauthEndpointController.getDB().write(patientex1);
 		OauthEndpointController.getDB().write(admin);
