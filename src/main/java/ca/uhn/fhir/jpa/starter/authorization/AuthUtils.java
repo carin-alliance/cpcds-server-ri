@@ -365,7 +365,7 @@ public class AuthUtils {
 	 * @return String[] of scopes supported
 	 */
 	public static List<String> supportedScopes() {
-		String[] scopes = {"patient/*.read", "user/*.read", "offline_access", "launch/patient", "openid", "fhirUser"};
+		String[] scopes = {"patient/ExplanationOfBenefit.read", "patient/Coverage.read", "patient/RelatedPerson.read", "patient/*.read", "user/*.read", "offline_access", "launch/patient", "openid", "fhirUser"};
 		return Arrays.asList(scopes);
 	}
 
