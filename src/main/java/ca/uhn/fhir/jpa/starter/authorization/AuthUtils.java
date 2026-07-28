@@ -50,17 +50,17 @@ public class AuthUtils {
 				"a592bb65-5ebb-4b9a-a92d-eef2f7ab68a2",
 				"oCC1fgpIm4wXgVmrx3Cxy8xCdMoUX11lgSEQugUQpuf7ciVzlqqvoSyig9dgQtfWsheAfBY1teTBAPnZoE8TkeEEU2NEBFxJ58cE29rl7brFUqTlvWCC7M8c6IcIP2nwN0m88s2tPRYSGGjmNf77Q1fxz7kLfBKi86zR4YPvzSKGhXGCihvJHQAHRzw20FKtBgv9wpkiGF178XvjJxoXKHginvlSUmlFmzbdQWvjZbYEEIaJWiBZegcnmJhymXZM",
 				"https://touchstone.aegis.net/touchstone/oauth2/authcode/redirect");
-		User patient1 = new User("Patient1", BCrypt.hashpw("password", BCrypt.gensalt()), "Patient1");
-		User patientex1 = new User("PatientEx1", BCrypt.hashpw("password", BCrypt.gensalt()), "PatientEx1");
-		User admin = new User("admin", BCrypt.hashpw("password", BCrypt.gensalt()), "admin");
+		User patient1 = new User("Patient1", BCrypt.hashpw("P@ssw0rd", BCrypt.gensalt()), "Patient1");
+		User patientex1 = new User("PatientEx1", BCrypt.hashpw("P@ssw0rd", BCrypt.gensalt()), "PatientEx1");
+		User admin = new User("admin", BCrypt.hashpw("P@ssw0rd", BCrypt.gensalt()), "admin");
 		User patient2 = new User(
-				"Patient2", BCrypt.hashpw("password", BCrypt.gensalt()), "026f2676-d635-47b9-af1e-95de31cda9b1");
+				"Patient2", BCrypt.hashpw("P@ssw0rd", BCrypt.gensalt()), "026f2676-d635-47b9-af1e-95de31cda9b1");
 		User patient3 = new User(
-				"Patient3", BCrypt.hashpw("password", BCrypt.gensalt()), "14c20e78-610b-405b-aad1-9c8f6109152c");
+				"Patient3", BCrypt.hashpw("P@ssw0rd", BCrypt.gensalt()), "14c20e78-610b-405b-aad1-9c8f6109152c");
 		User patient4 = new User(
-				"Patient4", BCrypt.hashpw("password", BCrypt.gensalt()), "6da541e2-62f4-42a7-8009-23e2d97116df");
+				"Patient4", BCrypt.hashpw("P@ssw0rd", BCrypt.gensalt()), "6da541e2-62f4-42a7-8009-23e2d97116df");
 		User patient5 = new User(
-				"Patient5", BCrypt.hashpw("password", BCrypt.gensalt()), "ec19f75c-c674-478c-8916-8acb2f1b0a68");
+				"Patient5", BCrypt.hashpw("P@ssw0rd", BCrypt.gensalt()), "ec19f75c-c674-478c-8916-8acb2f1b0a68");
 
 		OauthEndpointController.getDB().write(hosted);
 		OauthEndpointController.getDB().write(localhost);
